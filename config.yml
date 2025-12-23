@@ -1,0 +1,5 @@
+# This is the main config file for Jimce
+
+# All options regarding the webserver
+server:
+  port: 8080

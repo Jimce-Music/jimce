@@ -1,1 +1,7 @@
-console.log("Hello via Bun!");
+// ################################################ //
+// Imports
+import logger from './logger'
+
+// ################################################ //
+// Initialization
+logger.info('Starting Jimce')

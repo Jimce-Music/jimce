@@ -1,0 +1,15 @@
+services:
+  db:
+    image: postgres:18
+    container_name: jimce_dev_db
+    environment:
+      POSTGRES_USER: jimce
+      POSTGRES_PASSWORD: jimce
+      POSTGRES_DB: jimce
+    ports:
+      - "5432:5432"
+    volumes:
+      - jimce_dev_db_data:/var/lib/postgresql/data
+
+volumes:
+  jimce_dev_db_data:

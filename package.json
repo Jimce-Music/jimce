@@ -13,7 +13,7 @@
   },
   "scripts": {
     "run": "bun run src/index.ts",
-    "dev": "bun run src/index.ts | bun x pino-pretty",
+    "dev": "docker compose -f compose-dev-db.yml up -d db && bun run src/index.ts | bun x pino-pretty && docker compose -f compose-dev-db.yml down",
     "prettier": "bunx prettier src/ --write"
   },
   "dependencies": {

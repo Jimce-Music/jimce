@@ -3,3 +3,11 @@
 # All options regarding the webserver
 server:
   port: 8080
+
+# All options regarding the PostgreSQL database (must be compliant with the db setup)
+database:
+  user: jimce
+  password: jimce
+  db: jimce
+  port: 5432
+  host: localhost

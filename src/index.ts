@@ -2,6 +2,7 @@
 // Imports
 import logger from './logger'
 import fastify from './fastify'
+import db, { migrate } from './db'
 
 // ################################################ //
 // Load config.yml
@@ -13,6 +14,7 @@ logger.info('Starting Jimce')
 
 // ################################################ //
 // Initialize database
+await migrate()
 
 // ################################################ //
 // Start webserver

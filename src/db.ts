@@ -4,6 +4,7 @@ import * as migrator from 'drizzle-orm/bun-sql/migrator'
 import config from './config'
 import logger from './logger'
 import path from 'path'
+import { sql } from 'drizzle-orm'
 
 export const client = new SQL(
     `postgres://${config.database.user}:${config.database.password}@${config.database.host}:${config.database.port}/${config.database.db}`
@@ -18,6 +19,10 @@ export async function migrate() {
     logger.info('Starting database migrations')
 
     try {
+        // UUID extension
+        await db.execute(sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`)
+
+        // DB migrations
         await migrator.migrate(db, {
             migrationsFolder: path.join(__dirname, 'db', 'drizzle')
         })

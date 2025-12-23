@@ -1,37 +1,37 @@
 {
-  "name": "jimce",
-  "module": "index.ts",
-  "type": "module",
-  "private": true,
-  "devDependencies": {
-    "@types/bun": "latest",
-    "delay-cli": "^3.0.0",
-    "drizzle-kit": "^0.31.8",
-    "pg": "^8.16.3",
-    "pino-pretty": "^13.1.3",
-    "prettier": "3.7.4"
-  },
-  "peerDependencies": {
-    "typescript": "^5"
-  },
-  "scripts": {
-    "run": "bun run src/index.ts",
-    "dev": "docker compose -f compose-dev-db.yml up -d && bun run src/index.ts | bun x pino-pretty && docker compose -f compose-dev-db.yml down",
-    "prettier": "bunx prettier src/ --write",
-    "db:studio": "bunx drizzle-kit studio --host 0.0.0.0",
-    "db:reset": "docker volume rm -f jimce_dev_db_data",
-    "db:gen": "bunx drizzle-kit generate",
-    "db:migrate": "bun run db:gen && docker compose -f compose-dev-db.yml up -d && bunx delay 1 && bunx drizzle-kit migrate && bunx delay 1 && docker compose -f compose-dev-db.yml down",
-    "db:up": "docker compose -f compose-dev-db.yml up",
-    "db:upd": "docker compose -f compose-dev-db.yml up -d",
-    "db:down": "docker compose -f compose-dev-db.yml down"
-  },
-  "dependencies": {
-    "@fastify/jwt": "^10.0.0",
-    "drizzle-orm": "^0.45.1",
-    "fastify": "^5.6.2",
-    "fastify-plugin": "^5.1.0",
-    "pino": "^10.1.0",
-    "zod": "^4.2.1"
-  }
+    "name": "jimce",
+    "module": "index.ts",
+    "type": "module",
+    "private": true,
+    "devDependencies": {
+        "@types/bun": "latest",
+        "delay-cli": "^3.0.0",
+        "drizzle-kit": "^0.31.8",
+        "pg": "^8.16.3",
+        "pino-pretty": "^13.1.3",
+        "prettier": "3.7.4"
+    },
+    "peerDependencies": {
+        "typescript": "^5"
+    },
+    "scripts": {
+        "run": "bun run src/index.ts",
+        "dev": "docker compose -f compose-dev-db.yml up -d && bun run db:gen && bun run src/index.ts | bun x pino-pretty && docker compose -f compose-dev-db.yml down",
+        "prettier": "bunx prettier src/ --write",
+        "db:studio": "bunx drizzle-kit studio --host 0.0.0.0",
+        "db:reset": "docker volume rm -f jimce_dev_db_data",
+        "db:gen": "bunx drizzle-kit generate",
+        "db:migrate": "bun run db:gen && docker compose -f compose-dev-db.yml up -d && bunx delay 1 && bunx drizzle-kit migrate && bunx delay 1 && docker compose -f compose-dev-db.yml down",
+        "db:up": "docker compose -f compose-dev-db.yml up",
+        "db:upd": "docker compose -f compose-dev-db.yml up -d",
+        "db:down": "docker compose -f compose-dev-db.yml down"
+    },
+    "dependencies": {
+        "@fastify/jwt": "^10.0.0",
+        "drizzle-orm": "^0.45.1",
+        "fastify": "^5.6.2",
+        "fastify-plugin": "^5.1.0",
+        "pino": "^10.1.0",
+        "zod": "^4.2.1"
+    }
 }

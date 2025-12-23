@@ -11,3 +11,7 @@ database:
   db: jimce
   port: 5432
   host: localhost
+
+# Authentication
+auth:
+  jwt_secret: dev-secret-CHANGE-IN-PROD!

@@ -8,4 +8,6 @@ export const client = new SQL(
 
 const db = drizzle({ client })
 
+// TODO: Add init function to auto apply migrations
+
 export default db

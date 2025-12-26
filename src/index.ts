@@ -3,11 +3,13 @@
 import logger from './logger'
 import fastify from './fastify'
 import db, { migrateDB } from './db'
+import fs from 'fs'
+import path from 'path'
+import { setupJWT } from './auth/jwt-routes'
 
 // ################################################ //
 // Load config.yml
 import config from './config'
-import { setupJWT } from './auth/jwt-routes'
 
 // ################################################ //
 // Initialization
@@ -27,6 +29,13 @@ import './routes/all'
 
 // Prepare launch
 await fastify.ready()
+
+// Write openapi.json
+const openapi = fastify.swagger()
+fs.writeFileSync(
+    path.join(__dirname, '..', 'openapi.json'),
+    JSON.stringify(openapi, null, 2)
+)
 
 // Start webserver
 try {

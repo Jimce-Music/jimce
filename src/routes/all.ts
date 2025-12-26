@@ -6,7 +6,7 @@
 import './main'
 
 // API
-//---
+import './api/oapi-test'
 
 // 404 / Catch-All
 import './404'

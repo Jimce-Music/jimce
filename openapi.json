@@ -1,0 +1,117 @@
+{
+  "openapi": "3.1.1",
+  "info": {
+    "title": "Jimce API",
+    "version": "0.0.0-dev"
+  },
+  "components": {
+    "schemas": {}
+  },
+  "paths": {
+    "/api/test-oapi": {
+      "post": {
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "jobId": {
+                    "description": "Job ID",
+                    "example": "60002023",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "jobId"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "jobId": {
+                      "description": "Job ID",
+                      "examples": [
+                        "60002023"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "jobId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "statusCode": {
+                      "type": "number",
+                      "const": 400
+                    },
+                    "code": {
+                      "description": "Internal code describing the error",
+                      "examples": [
+                        "FST_ERR_VALIDATION"
+                      ],
+                      "type": "string"
+                    },
+                    "error": {
+                      "type": "string",
+                      "const": "Bad Request"
+                    },
+                    "message": {
+                      "description": "Error message describing what went wrong",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "statusCode",
+                    "code",
+                    "error",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/generate-token": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      }
+    },
+    "/test-jwt": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      }
+    }
+  }
+}

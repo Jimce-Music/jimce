@@ -3,11 +3,15 @@
 import logger from './logger'
 import fastify from './fastify'
 import db, { migrateDB } from './db'
+import fs from 'fs'
+import path from 'path'
+import { setupJWT } from './auth/jwt-routes'
 
 // ################################################ //
 // Load config.yml
 import config from './config'
-import { setupJWT } from './auth/jwt-routes'
+// Load meta.yml
+import meta from './meta'
 
 // ################################################ //
 // Initialization
@@ -15,7 +19,11 @@ logger.info('Starting Jimce')
 
 // ################################################ //
 // Initialize database
-await migrateDB()
+if (meta.execution.disable_db) {
+    logger.info('Detected CI run, skipping database migrations')
+} else {
+    await migrateDB()
+}
 
 // ################################################ //
 // Setup auth
@@ -27,6 +35,13 @@ import './routes/all'
 
 // Prepare launch
 await fastify.ready()
+
+// Write openapi.json
+const openapi = fastify.swagger()
+fs.writeFileSync(
+    path.join(__dirname, '..', 'openapi.json'),
+    JSON.stringify(openapi, null, 2)
+)
 
 // Start webserver
 try {

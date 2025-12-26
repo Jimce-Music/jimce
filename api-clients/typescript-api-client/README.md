@@ -28,8 +28,9 @@ If not already done, you might need to add this `.npmrc` to your project before 
 But make sure to properly protect the tokens by adding `.npmrc` to the `.gitignore` and instead just committing a `.npmrc.example` similar to the shown one above.
 
 Then, use this minimal typescript template to get started using the api client:
+
 ```ts
-import * as api from '@jimce-music/jimce-api-ts''
+import * as api from '@jimce-music/jimce-api-ts'
 
 // Set config
 api.setConfig({

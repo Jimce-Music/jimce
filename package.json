@@ -4,6 +4,8 @@
     "type": "module",
     "private": true,
     "devDependencies": {
+        "@hey-api/client-fetch": "^0.13.1",
+        "@hey-api/openapi-ts": "^0.89.2",
         "@types/bun": "latest",
         "delay-cli": "^3.0.0",
         "drizzle-kit": "^0.31.8",
@@ -27,6 +29,7 @@
         "db:upd": "docker compose -f compose-dev-db.yml up -d",
         "db:down": "docker compose -f compose-dev-db.yml down",
         "ci:gen-openapi-json": "bun run scripts/openapi/gen-json.ts",
+        "ci:gen-ts-api-client": "bun x openapi-ts",
         "ci:ts-check": "bun x tsc --noEmit"
     },
     "dependencies": {

@@ -29,5 +29,25 @@ But make sure to properly protect the tokens by adding `.npmrc` to the `.gitigno
 
 Then, use this minimal typescript template to get started using the api client:
 ```ts
+import * as api from '@jimce-music/jimce-api-ts''
 
+// Set config
+api.setConfig({
+    baseUrl: 'https://localhost:8080',
+    // You could also set default headers (maybe after the auth)
+    headers: {
+        Authorization: 'Bearer <token>'
+    }
+})
+
+// Then make a request (fictional routes used here):
+const { data: token } = await api.getTestJwt()
+
+const req = await api.postApiTestOapi({
+    body: {
+        jobId: '123456'
+    }
+})
+console.log(req.error)
+console.log(req.data?.jobId)
 ```

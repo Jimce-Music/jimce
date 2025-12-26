@@ -4,7 +4,7 @@ A local first music server for everyone.
 
 ## Hosting Jimce
 
-Currently, Jimce is not ready to hot yet. But when it is, we will provide a docker-compose.yml file for you to get started in seconds.
+Currently, Jimce is not ready to host. But when it will be, we will provide a docker-compose.yml file for you to get started in seconds.
 
 ## Developing
 

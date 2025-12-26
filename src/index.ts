@@ -1,12 +1,13 @@
 // ################################################ //
 // Imports
 import logger from './logger'
-import fastify, { setupJWT } from './fastify'
-import db, { migrate } from './db'
+import fastify from './fastify'
+import db, { migrateDB } from './db'
 
 // ################################################ //
 // Load config.yml
 import config from './config'
+import { setupJWT } from './auth/jwt-routes'
 
 // ################################################ //
 // Initialization
@@ -14,7 +15,7 @@ logger.info('Starting Jimce')
 
 // ################################################ //
 // Initialize database
-await migrate()
+await migrateDB()
 
 // ################################################ //
 // Setup auth

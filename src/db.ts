@@ -15,7 +15,7 @@ const db = drizzle({ client })
 /**
  * This function will apply necessary database migrations during runtime
  */
-export async function migrate() {
+export async function migrateDB() {
     logger.info('Starting database migrations')
 
     try {

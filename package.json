@@ -26,7 +26,8 @@
         "db:up": "docker compose -f compose-dev-db.yml up",
         "db:upd": "docker compose -f compose-dev-db.yml up -d",
         "db:down": "docker compose -f compose-dev-db.yml down",
-        "ci:gen-openapi-json": "bun run scripts/openapi/gen-json.ts"
+        "ci:gen-openapi-json": "bun run scripts/openapi/gen-json.ts",
+        "ci:ts-check": "bun x tsc --noEmit"
     },
     "dependencies": {
         "@fastify/jwt": "^10.0.0",

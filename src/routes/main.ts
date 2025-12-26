@@ -8,7 +8,7 @@ fastify.get(
             response: {
                 200: z.string()
             },
-            hide: true
+            hide: true // -> Hides it in the OpenAPI.json spec
         }
     },
     (req, res) => {

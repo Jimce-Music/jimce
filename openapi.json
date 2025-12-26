@@ -8,16 +8,7 @@
     "schemas": {}
   },
   "paths": {
-    "/": {
-      "get": {
-        "responses": {
-          "200": {
-            "description": "Default Response"
-          }
-        }
-      }
-    },
-    "/api/test-oapi/{jobId}": {
+    "/api/test-oapi": {
       "post": {
         "requestBody": {
           "content": {
@@ -39,16 +30,6 @@
           },
           "required": true
         },
-        "parameters": [
-          {
-            "schema": {
-              "type": "string"
-            },
-            "in": "path",
-            "name": "jobId",
-            "required": true
-          }
-        ],
         "responses": {
           "201": {
             "description": "Default Response",

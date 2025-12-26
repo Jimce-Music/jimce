@@ -4,9 +4,10 @@ import {
     type FastifyZodOpenApiSchema,
     type FastifyZodOpenApiTypeProvider
 } from 'fastify-zod-openapi'
+import logger from '../../logger'
 
 fastify.withTypeProvider<FastifyZodOpenApiTypeProvider>().post(
-    '/api/test-oapi/:jobId',
+    '/api/test-oapi',
     {
         schema: {
             body: z.object({

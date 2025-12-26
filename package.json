@@ -17,6 +17,7 @@
     "scripts": {
         "run": "bun run src/index.ts",
         "dev": "docker compose -f compose-dev-db.yml up -d && bun run db:gen && bun run src/index.ts | bun x pino-pretty && docker compose -f compose-dev-db.yml down",
+        "dev:hot": "docker compose -f compose-dev-db.yml up -d && bun run db:gen && bun --hot run src/index.ts | bun x pino-pretty && docker compose -f compose-dev-db.yml down",
         "prettier": "bunx prettier src/ --write",
         "db:studio": "bunx drizzle-kit studio --host 0.0.0.0",
         "db:reset": "docker volume rm -f jimce_dev_db_data",

@@ -22,6 +22,12 @@ await migrateDB()
 await setupJWT()
 
 // ################################################ //
+// Register routes
+import './routes/all'
+
+// Prepare launch
+await fastify.ready()
+
 // Start webserver
 try {
     await fastify.listen({ port: config.server.port })

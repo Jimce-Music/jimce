@@ -1,6 +1,7 @@
 import inquirer from 'inquirer'
 import chalk from 'chalk'
 import fs from 'fs/promises'
+import fse from 'fs-extra'
 import path from 'path'
 
 const SRC_PATH = path.join(__dirname, '..', '..', 'src')
@@ -130,6 +131,7 @@ async function main(): Promise<void> {
             : ''
     )
 
+    await fse.ensureFile(ROUTE_FILE_PATH)
     await fs.writeFile(ROUTE_FILE_PATH, template, 'utf-8')
 
     // Import route in all.ts

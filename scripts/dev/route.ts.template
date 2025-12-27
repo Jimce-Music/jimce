@@ -20,6 +20,10 @@ import _failInternal from '$SRC$utils/failInternal'
 function failInternal(res: FastifyReply, err: unknown) {
     return _failInternal(res, err, import.meta.url)
 }
+import requireJWT from '$SRC$types/requireJWT'
+import { JWTPayloadZ } from '$SRC$types/JWTPayload'
+import SuccessIndicatorResponseZ from '$SRC$types/SuccessIndicatorResponseZ'
+§IF(ADMIN)%%%import ForbiddenResponseZ from '$SRC$types/ForbiddenResponseZ'%%%END(ADMIN)§
 
 fastify.withTypeProvider<FastifyZodOpenApiTypeProvider>().$METHOD_LOWERCASE$(
     '$PATH$',
@@ -27,19 +31,31 @@ fastify.withTypeProvider<FastifyZodOpenApiTypeProvider>().$METHOD_LOWERCASE$(
         schema: {
             hide: $HIDE$,
             summary: '', // TODO: Add summary and description
-            description: ``, // Expandable, more detailed description
+            description: ``, // Expandable, more detailed description§IF(AUTH)%%%
+            security: requireJWT,%%%END(AUTH)§
             $OPTIONAL_BODY$
             response: {
-                200: z.literal('OK'),
+                200: SuccessIndicatorResponseZ,
                 400: BadRequestResponseZ,
                 401: UnauthorizedResponseZ,
+                §IF(ADMIN)%%%403: ForbiddenResponseZ,%%%END(ADMIN)§
                 500: InternalServerErrorResponseZ
             }
         } satisfies FastifyZodOpenApiSchema
     },
     async (req, res) => {
-        try {
-            res.status(200).send('OK')
+        try {§IF(ADMIN)%%%
+            if (!req.isAdmin) {
+                return res.status(403).send({
+                    statusCode: 403,
+                    code: 'NOT_AN_ADMIN',
+                    error: 'Forbidden',
+                    message: 'You need admin rights to access this route'
+                })
+            }%%%END(ADMIN)§
+            const user = JWTPayloadZ.parse(req.user)
+
+            res.status(200).send({ success: true })
         } catch (err) {
             return failInternal(res, err)
         }   

@@ -27,6 +27,7 @@ async function main(): Promise<void> {
         method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'
         path: string
         package: string
+        requiresAuth: boolean
     }>([
         {
             type: 'confirm',
@@ -64,8 +65,30 @@ async function main(): Promise<void> {
                     ? true
                     : 'Route path may not be empty, try again'
             }
+        },
+        {
+            type: 'confirm',
+            name: 'requiresAuth',
+            default: true,
+            message: 'Should the route require auth?'
         }
     ])
+
+    let adminExclusive: boolean = false
+    if (answers.requiresAuth) {
+        const adminExclusiveAnswer = await inquirer.prompt<{
+            adminExclusive: boolean
+        }>([
+            {
+                type: 'confirm',
+                name: 'adminExclusive',
+                message: 'Should the route require admin permissions?',
+                default: false
+            }
+        ])
+
+        adminExclusive = adminExclusiveAnswer.adminExclusive
+    }
 
     answers.path = transformRouteName(answers.path)
 
@@ -120,8 +143,7 @@ async function main(): Promise<void> {
     template = template.replaceAll(
         '$OPTIONAL_BODY$',
         answers.method !== 'GET'
-            ? `
-            body: z.object({
+            ? `body: z.object({
                 dataField: z.string().meta({
                     description: 'Just some data field',
                     example: '32168'
@@ -129,6 +151,28 @@ async function main(): Promise<void> {
             }),
 `
             : ''
+    )
+
+    template = template.replace(
+        /\§IF\(AUTH\)%%%((.|\n)*)%%%END\(AUTH\)§/g,
+        (_, gr_1) => {
+            if (answers.requiresAuth) {
+                return gr_1
+            } else {
+                return ''
+            }
+        }
+    )
+
+    template = template.replace(
+        /\§IF\(ADMIN\)%%%((.|\n)*)%%%END\(ADMIN\)§/g,
+        (_, gr_1) => {
+            if (adminExclusive) {
+                return gr_1
+            } else {
+                return ''
+            }
+        }
     )
 
     await fse.ensureFile(ROUTE_FILE_PATH)

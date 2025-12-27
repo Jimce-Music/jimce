@@ -153,27 +153,36 @@ async function main(): Promise<void> {
             : ''
     )
 
-    template = template.replace(
-        /\§IF\(AUTH\)%%%((.|\n)*)%%%END\(AUTH\)§/g,
-        (_, gr_1) => {
-            if (answers.requiresAuth) {
-                return gr_1
-            } else {
-                return ''
-            }
-        }
-    )
+    if (answers.requiresAuth) {
+        template = template.replaceAll(
+            '$AUTH_1$',
+            'onRequest: [fastify.authenticate], // Secures route with JWT\n'
+        )
+        template = template.replaceAll('$AUTH_2$', 'security: requireJWT,')
+        template = template.replaceAll(
+            '$AUTH_3$',
+            `const user = JWTPayloadZ.parse(req.user)`
+        )
+    }
 
-    template = template.replace(
-        /\§IF\(ADMIN\)%%%((.|\n)*)%%%END\(ADMIN\)§/g,
-        (_, gr_1) => {
-            if (adminExclusive) {
-                return gr_1
-            } else {
-                return ''
-            }
-        }
-    )
+    if (adminExclusive) {
+        template = template.replaceAll(
+            '$ADMIN_0$',
+            "import ForbiddenResponseZ from '$SRC$types/ForbiddenResponseZ'"
+        )
+        template = template.replaceAll('$ADMIN_1$', '403: ForbiddenResponseZ,')
+        template = template.replaceAll(
+            '$ADMIN_2$',
+            `if (!req.isAdmin) {
+                return res.status(403).send({
+                    statusCode: 403,
+                    code: 'NOT_AN_ADMIN',
+                    error: 'Forbidden',
+                    message: 'You need admin rights to access this route'
+                })
+            }`
+        )
+    }
 
     await fse.ensureFile(ROUTE_FILE_PATH)
     await fs.writeFile(ROUTE_FILE_PATH, template, 'utf-8')

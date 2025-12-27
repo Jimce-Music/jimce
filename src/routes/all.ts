@@ -15,6 +15,7 @@ import './main'
 
 // Package: admin/users
 import './api/admin/users/getList-users.ts' // GET /api/admin/users/list-users
+import './api/admin/users/putCreateOrChange.ts' // POST /api/admin/users/create-or-change
 // --api-admin/users--§NEW_HERE§--
 
 // Package: auth

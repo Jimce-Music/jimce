@@ -78,6 +78,38 @@
         ],
         "additionalProperties": false
       },
+      "403-forbidden-response": {
+        "description": "A response sent by the server when lack the required permissions (HTTP 403)",
+        "type": "object",
+        "properties": {
+          "statusCode": {
+            "type": "number",
+            "const": 403
+          },
+          "code": {
+            "description": "Internal code describing the error",
+            "examples": [
+              "NOT_AN_ADMIN"
+            ],
+            "type": "string"
+          },
+          "error": {
+            "type": "string",
+            "const": "Forbidden"
+          },
+          "message": {
+            "description": "Error message describing what went wrong",
+            "type": "string"
+          }
+        },
+        "required": [
+          "statusCode",
+          "code",
+          "error",
+          "message"
+        ],
+        "additionalProperties": false
+      },
       "500-internal-server-error-response": {
         "description": "A response sent by the server when the server failed to process your request",
         "type": "object",
@@ -110,6 +142,27 @@
           "code",
           "error",
           "message"
+        ],
+        "additionalProperties": false
+      },
+      "success-indicator-response": {
+        "description": "A response sent by the server when your request is valid to indicate whether it was successful or not",
+        "type": "object",
+        "properties": {
+          "success": {
+            "description": "States whether the requested action was successful",
+            "type": "boolean"
+          },
+          "reason": {
+            "description": "An optional reason for the success or fail of your requested action",
+            "examples": [
+              "User already exists"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "success"
         ],
         "additionalProperties": false
       }
@@ -200,6 +253,133 @@
               }
             }
           },
+          "403": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/403-forbidden-response"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/500-internal-server-error-response"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/users/create-or-change": {
+      "put": {
+        "summary": "Creates or changes a new user",
+        "description": "Based on provided username, password, email and isAdmin bool, this route will create or update a new user.\n                When the user with the provided username already exists, the user will be updated instead of re-created.\n            \n                **Requires authentication**\n                **Requires admin privileges** \n            ",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "description": "The username which will be assigned to the user (if already in use, user will be updated)",
+                    "examples": [
+                      "test.user"
+                    ],
+                    "type": "string",
+                    "minLength": 3
+                  },
+                  "password": {
+                    "description": "The new password in plain text for the user. Optional when user already exists, necessary when creating from scratch. Must be at least 12 characters long",
+                    "type": "string",
+                    "minLength": 12
+                  },
+                  "email": {
+                    "description": "If provided, the new email of the user, if set to null, it will still be updated to null.",
+                    "examples": [
+                      "user@example.com"
+                    ],
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "email",
+                        "pattern": "^(?!\\.)(?!.*\\.\\.)([A-Za-z0-9_'+\\-\\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "isAdmin": {
+                    "description": "Declares whether the user shall have admin rights",
+                    "examples": [
+                      false,
+                      true
+                    ],
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "username",
+                  "email",
+                  "isAdmin"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/success-indicator-response"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/400-bad-request-response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/401-unauthorized-response"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/403-forbidden-response"
+                }
+              }
+            }
+          },
           "500": {
             "description": "Default Response",
             "content": {
@@ -215,14 +395,64 @@
     },
     "/api/auth/check-token": {
       "get": {
+        "summary": "Checks if token is still valid",
+        "description": "Checks if a token is still valid and returns the associated user, expiration date, user permissions, etc.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "responses": {
           "200": {
             "description": "Default Response",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "string",
-                  "const": "OK"
+                  "type": "object",
+                  "properties": {
+                    "payload": {
+                      "title": "JWT Payload",
+                      "description": "The Zod type for a JWT payload which can be accessed via req.user",
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "examples": [
+                            "5b9e340c-38ba-4495-b895-c3aee230134e"
+                          ],
+                          "description": "The uuid of the user",
+                          "type": "string"
+                        },
+                        "username": {
+                          "examples": [
+                            "test.user"
+                          ],
+                          "description": "The username of the user",
+                          "type": "string"
+                        },
+                        "validUntil": {
+                          "description": "The timestamp describing when the token will become invalidated",
+                          "examples": [
+                            "2025-12-27T18:17:16.990Z"
+                          ],
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "username",
+                        "validUntil"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "isAdmin": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "payload",
+                    "isAdmin"
+                  ],
+                  "additionalProperties": false
                 }
               }
             }
@@ -269,7 +499,20 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "properties": {}
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "minLength": 3
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 12
+                  }
+                },
+                "required": [
+                  "username",
+                  "password"
+                ]
               }
             }
           },
@@ -328,24 +571,6 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "/generate-token": {
-      "post": {
-        "responses": {
-          "200": {
-            "description": "Default Response"
-          }
-        }
-      }
-    },
-    "/test-jwt": {
-      "get": {
-        "responses": {
-          "200": {
-            "description": "Default Response"
           }
         }
       }

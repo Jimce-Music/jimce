@@ -1,5 +1,14 @@
 import * as z from 'zod'
 
+// Codec for ISO-String <-> Date
+const stringToDate = z
+    .string()
+    .refine((s) => !isNaN(Date.parse(s)), {
+        message: 'Invalid ISO date string'
+    })
+    .transform((s) => new Date(s))
+    .pipe(z.date()) // stellt sicher, dass das Ergebnis ein Date ist
+
 export const JWTPayloadZ = z
     .object({
         id: z.string().meta({
@@ -10,9 +19,10 @@ export const JWTPayloadZ = z
             examples: ['test.user'],
             description: 'The username of the user'
         }),
-        validUntil: z.date().meta({
+        validUntil: stringToDate.meta({
             description:
-                'The timestamp describing when the token will become invalidated'
+                'The timestamp describing when the token will become invalidated',
+            examples: ['2025-12-27T18:17:16.990Z']
         })
     })
     .meta({
@@ -22,3 +32,10 @@ export const JWTPayloadZ = z
     })
 
 export type JWTPayloadT = z.infer<typeof JWTPayloadZ>
+
+export function encodeJWTPayload(payload: JWTPayloadT) {
+    return {
+        ...payload,
+        validUntil: payload.validUntil.toISOString()
+    }
+}

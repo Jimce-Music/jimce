@@ -16,10 +16,15 @@ import { usersTable } from '../../../../db/schema'
 import BadRequestResponseZ from '../../../../types/BadRequestResponseZ'
 import InternalServerErrorResponseZ from '../../../../types/InternalServerErrorResponseZ'
 import UnauthorizedResponseZ from '../../../../types/UnauthorizedResponseZ'
+import requireJWT from '../../../../types/requireJWT'
+import { JWTPayloadZ } from '../../../../types/JWTPayload'
+import ForbiddenResponseZ from '../../../../types/ForbiddenResponseZ'
 
 fastify.withTypeProvider<FastifyZodOpenApiTypeProvider>().get(
     '/api/admin/users/list-users',
     {
+        onRequest: [fastify.authenticate], // Secures route with JWT
+
         schema: {
             hide: false,
             summary: 'Lists all users',
@@ -29,11 +34,7 @@ fastify.withTypeProvider<FastifyZodOpenApiTypeProvider>().get(
                 **Requires admin privileges** 
                 `, // Expandable, more detailed description
 
-            security: [
-                {
-                    bearerAuth: []
-                }
-            ],
+            security: requireJWT,
 
             response: {
                 200: z
@@ -60,12 +61,22 @@ fastify.withTypeProvider<FastifyZodOpenApiTypeProvider>().get(
                     .array(),
                 400: BadRequestResponseZ,
                 401: UnauthorizedResponseZ,
+                403: ForbiddenResponseZ,
                 500: InternalServerErrorResponseZ
             }
         } satisfies FastifyZodOpenApiSchema
     },
     async (req, res) => {
-        // TODO: Protect this route against non admins or non signed in users
+        // Check for admin privileges
+        if (!req.isAdmin) {
+            return res.status(403).send({
+                statusCode: 403,
+                code: 'NOT_AN_ADMIN',
+                error: 'Forbidden',
+                message: 'You need admin rights to access this route'
+            })
+        }
+        const user = JWTPayloadZ.parse(req.user)
 
         const users = await db
             .select({

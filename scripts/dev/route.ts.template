@@ -15,26 +15,43 @@ import config from '$SRC$config'
 import BadRequestResponseZ from '$SRC$types/BadRequestResponseZ'
 import InternalServerErrorResponseZ from '$SRC$types/InternalServerErrorResponseZ'
 import UnauthorizedResponseZ from '$SRC$types/UnauthorizedResponseZ'
+import type { FastifyReply } from 'fastify'
+import _failInternal from '$SRC$utils/failInternal'
+function failInternal(res: FastifyReply, err: unknown) {
+    return _failInternal(res, err, import.meta.url)
+}
+import requireJWT from '$SRC$types/requireJWT'
+import { JWTPayloadZ } from '$SRC$types/JWTPayload'
+import SuccessIndicatorResponseZ from '$SRC$types/SuccessIndicatorResponseZ'
+$ADMIN_0$
 
 fastify.withTypeProvider<FastifyZodOpenApiTypeProvider>().$METHOD_LOWERCASE$(
     '$PATH$',
     {
+        $AUTH_1$
         schema: {
             hide: $HIDE$,
             summary: '', // TODO: Add summary and description
             description: ``, // Expandable, more detailed description
+            $AUTH_2$
             $OPTIONAL_BODY$
             response: {
-                200: z.literal('OK'),
+                200: SuccessIndicatorResponseZ,
                 400: BadRequestResponseZ,
                 401: UnauthorizedResponseZ,
+                $ADMIN_1$
                 500: InternalServerErrorResponseZ
             }
         } satisfies FastifyZodOpenApiSchema
     },
     async (req, res) => {
-        res.status(200)
+        try {
+            $ADMIN_2$
+            $AUTH_3$
 
-        await res.send('OK')
+            res.status(200).send({ success: true })
+        } catch (err) {
+            return failInternal(res, err)
+        }   
     }
 )

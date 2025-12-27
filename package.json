@@ -32,7 +32,7 @@
         "ci:gen-openapi-json": "bun run scripts/openapi/gen-json.ts",
         "ci:gen-ts-api-client": "bun x openapi-ts",
         "ci:ts-check": "bun x tsc --noEmit",
-        "dev:add-route": "bun run scripts/dev/add-route.ts"
+        "dev:add-route": "bun run scripts/dev/add-route.ts && bun run prettier"
     },
     "dependencies": {
         "@fastify/jwt": "^10.0.0",

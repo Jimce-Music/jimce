@@ -27,6 +27,7 @@ async function main(): Promise<void> {
         method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'
         path: string
         package: string
+        requiresAuth: boolean
     }>([
         {
             type: 'confirm',
@@ -64,8 +65,30 @@ async function main(): Promise<void> {
                     ? true
                     : 'Route path may not be empty, try again'
             }
+        },
+        {
+            type: 'confirm',
+            name: 'requiresAuth',
+            default: true,
+            message: 'Should the route require auth?'
         }
     ])
+
+    let adminExclusive: boolean = false
+    if (answers.requiresAuth) {
+        const adminExclusiveAnswer = await inquirer.prompt<{
+            adminExclusive: boolean
+        }>([
+            {
+                type: 'confirm',
+                name: 'adminExclusive',
+                message: 'Should the route require admin permissions?',
+                default: false
+            }
+        ])
+
+        adminExclusive = adminExclusiveAnswer.adminExclusive
+    }
 
     answers.path = transformRouteName(answers.path)
 
@@ -120,8 +143,7 @@ async function main(): Promise<void> {
     template = template.replaceAll(
         '$OPTIONAL_BODY$',
         answers.method !== 'GET'
-            ? `
-            body: z.object({
+            ? `body: z.object({
                 dataField: z.string().meta({
                     description: 'Just some data field',
                     example: '32168'
@@ -130,6 +152,41 @@ async function main(): Promise<void> {
 `
             : ''
     )
+
+    if (answers.requiresAuth) {
+        template = template.replaceAll(
+            '$AUTH_1$',
+            'onRequest: [fastify.authenticate], // Secures route with JWT\n'
+        )
+        template = template.replaceAll('$AUTH_2$', 'security: requireJWT,')
+        template = template.replaceAll(
+            '$AUTH_3$',
+            `const user = JWTPayloadZ.parse(req.user)`
+        )
+    } else {
+        template = template.replace(/\$(AUTH)_[0-9]\$/g, '')
+    }
+
+    if (adminExclusive) {
+        template = template.replaceAll(
+            '$ADMIN_0$',
+            `import ForbiddenResponseZ from '${srcDirRelativePath}types/ForbiddenResponseZ'`
+        )
+        template = template.replaceAll('$ADMIN_1$', '403: ForbiddenResponseZ,')
+        template = template.replaceAll(
+            '$ADMIN_2$',
+            `if (!req.isAdmin) {
+                return res.status(403).send({
+                    statusCode: 403,
+                    code: 'NOT_AN_ADMIN',
+                    error: 'Forbidden',
+                    message: 'You need admin rights to access this route'
+                })
+            }`
+        )
+    } else {
+        template = template.replace(/\$(ADMIN)_[0-9]\$/g, '')
+    }
 
     await fse.ensureFile(ROUTE_FILE_PATH)
     await fs.writeFile(ROUTE_FILE_PATH, template, 'utf-8')

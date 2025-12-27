@@ -31,7 +31,8 @@ await setupJWT()
 
 // ################################################ //
 // Register routes
-import './routes/all'
+await import('./routes/all') // Dynamic import in order to first wait for JWT plugin to register
+logger.info('Registered all routes')
 
 // Prepare launch
 await fastify.ready()
@@ -42,6 +43,7 @@ fs.writeFileSync(
     path.join(__dirname, '..', 'openapi.json'),
     JSON.stringify(openapi, null, 2)
 )
+logger.info('Done writing openapi.json')
 
 // Start webserver
 try {

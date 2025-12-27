@@ -170,7 +170,7 @@ async function main(): Promise<void> {
     if (adminExclusive) {
         template = template.replaceAll(
             '$ADMIN_0$',
-            "import ForbiddenResponseZ from '$SRC$types/ForbiddenResponseZ'"
+            `import ForbiddenResponseZ from '${srcDirRelativePath}types/ForbiddenResponseZ'`
         )
         template = template.replaceAll('$ADMIN_1$', '403: ForbiddenResponseZ,')
         template = template.replaceAll(

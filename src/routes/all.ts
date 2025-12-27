@@ -8,7 +8,6 @@ import './main'
 // END GENERAL
 
 // START API
-import './api/oapi-test'
 // --api--§NEW_HERE§--
 
 // Package:

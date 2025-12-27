@@ -16,6 +16,7 @@ import { usersTable } from '../../../../db/schema'
 import BadRequestResponseZ from '../../../../types/BadRequestResponseZ'
 import InternalServerErrorResponseZ from '../../../../types/InternalServerErrorResponseZ'
 import UnauthorizedResponseZ from '../../../../types/UnauthorizedResponseZ'
+import requireJWT from '../../../../types/requireJWT'
 
 fastify.withTypeProvider<FastifyZodOpenApiTypeProvider>().get(
     '/api/admin/users/list-users',
@@ -29,11 +30,7 @@ fastify.withTypeProvider<FastifyZodOpenApiTypeProvider>().get(
                 **Requires admin privileges** 
                 `, // Expandable, more detailed description
 
-            security: [
-                {
-                    bearerAuth: []
-                }
-            ],
+            security: requireJWT,
 
             response: {
                 200: z

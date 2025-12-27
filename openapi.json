@@ -112,6 +112,27 @@
           "message"
         ],
         "additionalProperties": false
+      },
+      "success-indicator-response": {
+        "description": "A response sent by the server when your request is valid to indicate whether it was successful or not",
+        "type": "object",
+        "properties": {
+          "success": {
+            "description": "States whether the requested action was successful",
+            "type": "boolean"
+          },
+          "reason": {
+            "description": "An optional reason for the success or fail of your requested action",
+            "examples": [
+              "User already exists"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": false
       }
     }
   },
@@ -176,6 +197,113 @@
                     ],
                     "additionalProperties": false
                   }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/400-bad-request-response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/401-unauthorized-response"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/500-internal-server-error-response"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/users/create-or-change": {
+      "put": {
+        "summary": "Creates or changes a new user",
+        "description": "Based on provided username, password, email and isAdmin bool, this route will create or update a new user.\n                When the user with the provided username already exists, the user will be updated instead of re-created.\n            \n                **Requires authentication**\n                **Requires admin privileges** \n            ",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "description": "The username which will be assigned to the user (if already in use, user will be updated)",
+                    "examples": [
+                      "test.user"
+                    ],
+                    "type": "string",
+                    "minLength": 3
+                  },
+                  "password": {
+                    "description": "The new password in plain text for the user. Optional when user already exists, necessary when creating from scratch. Must be at least 12 characters long",
+                    "type": "string",
+                    "minLength": 12
+                  },
+                  "email": {
+                    "description": "If provided, the new email of the user, if set to null, it will still be updated to null.",
+                    "examples": [
+                      "user@example.com"
+                    ],
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "email",
+                        "pattern": "^(?!\\.)(?!.*\\.\\.)([A-Za-z0-9_'+\\-\\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "isAdmin": {
+                    "description": "Declares whether the user shall have admin rights",
+                    "examples": [
+                      false,
+                      true
+                    ],
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "username",
+                  "email",
+                  "isAdmin"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/success-indicator-response"
                 }
               }
             }

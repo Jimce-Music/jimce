@@ -12,6 +12,14 @@ import './main'
 
 // Package:
 // --api---§NEW_HERE§--
+
+// Package: admin/users
+import './api/admin/users/getList-users.ts' // GET /api/admin/users/list-users
+// --api-admin/users--§NEW_HERE§--
+
+// Package: auth
+import './api/auth/getCheck-token.ts' // GET /api/auth/check-token
+// --api-auth--§NEW_HERE§--
 // END API
 
 // START 404 / Catch-All

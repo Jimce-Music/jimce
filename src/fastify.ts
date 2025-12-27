@@ -33,7 +33,18 @@ await fastify.register(fastifySwagger, {
             title: 'Jimce API',
             version: `${meta.version}${meta.is_dev ? '-dev' : ''}`
         },
-        openapi: meta.openapi_version
+        openapi: meta.openapi_version,
+        components: {
+            securitySchemes: {
+                bearerAuth: {
+                    type: 'http',
+                    scheme: 'bearer',
+                    bearerFormat: 'JWT',
+                    description:
+                        'JWT Bearer token sent as Authorization: Bearer <token>'
+                }
+            }
+        }
     },
     ...fastifyZodOpenApiTransformers
 })

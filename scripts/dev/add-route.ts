@@ -38,7 +38,7 @@ async function main(): Promise<void> {
             type: 'confirm',
             name: 'isOpenAPI',
             default: true,
-            message: 'Should this route appear in the openapi spec?'
+            message: 'Should this route appear in the OpenAPI spec?'
         },
         {
             type: 'input',

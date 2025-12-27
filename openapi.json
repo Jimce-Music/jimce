@@ -5,51 +5,110 @@
     "version": "0.0.0-dev"
   },
   "components": {
-    "schemas": {}
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "JWT Bearer token sent as Authorization: Bearer <token>"
+      }
+    },
+    "schemas": {
+      "400-bad-request-response": {
+        "description": "A response sent by the server when your request is malformed (Code 400)",
+        "type": "object",
+        "properties": {
+          "statusCode": {
+            "type": "number",
+            "const": 400
+          },
+          "code": {
+            "description": "Internal code describing the error",
+            "examples": [
+              "FST_ERR_VALIDATION"
+            ],
+            "type": "string"
+          },
+          "error": {
+            "type": "string",
+            "const": "Bad Request"
+          },
+          "message": {
+            "description": "Error message describing what went wrong",
+            "type": "string"
+          }
+        },
+        "required": [
+          "statusCode",
+          "code",
+          "error",
+          "message"
+        ],
+        "additionalProperties": false
+      }
+    }
   },
   "paths": {
-    "/api/test-oapi": {
-      "post": {
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "jobId": {
-                    "description": "Job ID",
-                    "example": "60002023",
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "jobId"
-                ]
-              }
-            }
-          },
-          "required": true
-        },
+    "/api/admin/users/list-users": {
+      "get": {
+        "summary": "Lists all users",
+        "description": "Returns id, username, email and isAdmin for every registered user\n                \n                **Requires admin privileges** \n                ",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "responses": {
-          "201": {
+          "200": {
             "description": "Default Response",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "jobId": {
-                      "description": "Job ID",
-                      "examples": [
-                        "60002023"
-                      ],
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "jobId"
-                  ],
-                  "additionalProperties": false
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "description": "The uuid of the user",
+                        "examples": [
+                          "5b9e340c-38ba-4495-b895-c3aee230134e"
+                        ],
+                        "type": "string"
+                      },
+                      "username": {
+                        "type": "string"
+                      },
+                      "email": {
+                        "description": "If existent, the email of the user",
+                        "examples": [
+                          null,
+                          "user@example.com"
+                        ],
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "isAdmin": {
+                        "description": "Defines whether the user has admin privileges",
+                        "examples": [
+                          false
+                        ],
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "username",
+                      "email",
+                      "isAdmin"
+                    ],
+                    "additionalProperties": false
+                  }
                 }
               }
             }
@@ -59,35 +118,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "statusCode": {
-                      "type": "number",
-                      "const": 400
-                    },
-                    "code": {
-                      "description": "Internal code describing the error",
-                      "examples": [
-                        "FST_ERR_VALIDATION"
-                      ],
-                      "type": "string"
-                    },
-                    "error": {
-                      "type": "string",
-                      "const": "Bad Request"
-                    },
-                    "message": {
-                      "description": "Error message describing what went wrong",
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "statusCode",
-                    "code",
-                    "error",
-                    "message"
-                  ],
-                  "additionalProperties": false
+                  "$ref": "#/components/schemas/400-bad-request-response"
                 }
               }
             }

@@ -1,29 +1,29 @@
-// ROUTE: $PATH$
-// METHOD: $METHOD$
-// NAME: $NAME$
+// ROUTE: /api/auth/check-token
+// METHOD: GET
+// NAME: Check-token
 
-import fastify from '$SRC$fastify'
+import fastify from '../../../fastify'
 import * as z from 'zod'
 import {
     type FastifyZodOpenApiSchema,
     type FastifyZodOpenApiTypeProvider
 } from 'fastify-zod-openapi'
-import logger from '$SRC$logger'
-import db from '$SRC$db'
-import meta from '$SRC$meta'
-import config from '$SRC$config'
-import BadRequestResponseZ from '$SRC$types/BadRequestResponseZ'
+import logger from '../../../logger'
+import db from '../../../db'
+import meta from '../../../meta'
+import config from '../../../config'
+import BadRequestResponseZ from '../../../types/BadRequestResponseZ'
 import InternalServerErrorResponseZ from '../../../../types/InternalServerErrorResponseZ'
 import UnauthorizedResponseZ from '../../../../types/UnauthorizedResponseZ'
 
-fastify.withTypeProvider<FastifyZodOpenApiTypeProvider>().$METHOD_LOWERCASE$(
-    '$PATH$',
+fastify.withTypeProvider<FastifyZodOpenApiTypeProvider>().get(
+    '/api/auth/check-token',
     {
         schema: {
-            hide: $HIDE$,
+            hide: false,
             summary: '', // TODO: Add summary and description
             description: ``, // Expandable, more detailed description
-            $OPTIONAL_BODY$
+            
             response: {
                 200: z.literal('OK'),
                 400: BadRequestResponseZ,

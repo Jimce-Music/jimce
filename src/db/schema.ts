@@ -6,7 +6,8 @@ import {
     uuid,
     varchar,
     text,
-    serial
+    serial,
+    boolean
 } from 'drizzle-orm/pg-core'
 
 export const testTable = pgTable('test', {
@@ -21,7 +22,8 @@ export const usersTable = pgTable(
         id: uuid().notNull().primaryKey().defaultRandom(),
         username: text().notNull(),
         email: text(),
-        pwHash: text()
+        pwHash: text(),
+        isAdmin: boolean().notNull().default(false)
     },
     (table) => [uniqueIndex('username_idx').on(table.username)] // username as secondary index
 )

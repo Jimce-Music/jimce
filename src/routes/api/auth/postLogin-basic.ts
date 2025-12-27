@@ -17,6 +17,14 @@ import InternalServerErrorResponseZ from '../../../types/InternalServerErrorResp
 import UnauthorizedResponseZ from '../../../types/UnauthorizedResponseZ'
 import { JWTPayloadZ, type JWTPayloadT } from '../../../types/JWTPayload'
 
+import type { FastifyReply } from 'fastify'
+import _failInternal from '../../../utils/failInternal'
+import { usersTable } from '../../../db/schema'
+import { eq } from 'drizzle-orm'
+function failInternal(res: FastifyReply, err: unknown) {
+    return _failInternal(res, err, import.meta.url)
+}
+
 fastify.withTypeProvider<FastifyZodOpenApiTypeProvider>().post(
     '/api/auth/login-basic',
     {
@@ -25,7 +33,10 @@ fastify.withTypeProvider<FastifyZodOpenApiTypeProvider>().post(
             summary: 'Login via basic auth',
             description: `Ask server to issue a JWT based on user & password credentials`, // Expandable, more detailed description
 
-            body: z.object({}),
+            body: z.object({
+                username: z.string().min(3),
+                password: z.string().min(12)
+            }),
 
             response: {
                 200: z.object({
@@ -44,20 +55,73 @@ fastify.withTypeProvider<FastifyZodOpenApiTypeProvider>().post(
         } satisfies FastifyZodOpenApiSchema
     },
     async (req, res) => {
-        // FIXME: Check login data before issuing token
-
-        const tokenPayload: JWTPayloadT = {
-            id: '5b9e340c-38ba-4495-b895-c3aee230134e',
-            username: 'test.user',
-            validUntil: new Date(
-                Date.now() +
-                    2 * /*hours*/ 60 /*mins*/ * 60 /*secs*/ * 1_000 /*ms*/
+        // TODO: Fail automatically if basic auth is disabled
+        try {
+            // Check if login data is correct
+            // Check if user with same username exists
+            const matchingUsers = await db
+                .select()
+                .from(usersTable)
+                .where(eq(usersTable.username, req.body.username))
+            if (matchingUsers.length <= 0) {
+                return res.status(401).send({
+                    statusCode: 401,
+                    code: 'WRONG_CREDENTIALS',
+                    error: 'Unauthorized',
+                    message: 'Either the username or the password is incorrect.'
+                })
+            }
+            const matchingUser = matchingUsers[0]
+            if (typeof matchingUser === 'undefined')
+                return res.status(401).send({
+                    statusCode: 401,
+                    code: 'WRONG_CREDENTIALS',
+                    error: 'Unauthorized',
+                    message: 'Either the username or the password is incorrect.'
+                })
+            // Compare password hash
+            if (matchingUser.pwHash === null) {
+                logger.warn(
+                    `User ${req.body.username} tried to login with basic auth, but there was no pwHash found in the database`
+                )
+                return res.status(401).send({
+                    statusCode: 401,
+                    code: 'WRONG_CREDENTIALS',
+                    error: 'Unauthorized',
+                    message: 'Either the username or the password is incorrect.'
+                })
+            }
+            const isValidPW = await Bun.password.verify(
+                req.body.password,
+                matchingUser.pwHash
             )
-            // TODO: Use actual db data
+            if (!isValidPW) {
+                logger.info(
+                    `Login with invalid password rejected: ${req.body.username}`
+                )
+                return res.status(401).send({
+                    statusCode: 401,
+                    code: 'WRONG_CREDENTIALS',
+                    error: 'Unauthorized',
+                    message: 'Either the username or the password is incorrect.'
+                })
+            }
+
+            // Sign and send token
+            const tokenPayload: JWTPayloadT = {
+                id: matchingUser.id,
+                username: matchingUser.username,
+                validUntil: new Date(
+                    Date.now() +
+                        2 * /*hours*/ 60 /*mins*/ * 60 /*secs*/ * 1_000 /*ms*/ // TODO: Adjust token valid time
+                )
+            }
+
+            const token = fastify.jwt.sign(JWTPayloadZ.parse(tokenPayload))
+
+            res.status(200).send({ token })
+        } catch (err) {
+            return failInternal(res, err)
         }
-
-        const token = fastify.jwt.sign(JWTPayloadZ.parse(tokenPayload))
-
-        res.send({ token })
     }
 )

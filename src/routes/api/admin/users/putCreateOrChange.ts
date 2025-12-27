@@ -19,10 +19,14 @@ import SuccessIndicatorResponseZ from '../../../../types/SuccessIndicatorRespons
 import { usersTable } from '../../../../db/schema'
 import { eq } from 'drizzle-orm'
 import requireJWT from '../../../../types/requireJWT'
+import { JWTPayloadZ } from '../../../../types/JWTPayload'
+import ForbiddenResponseZ from '../../../../types/ForbiddenResponseZ'
 
 fastify.withTypeProvider<FastifyZodOpenApiTypeProvider>().put(
     '/api/admin/users/create-or-change',
     {
+        onRequest: [fastify.authenticate], // Secures route with JWT
+
         schema: {
             hide: false,
             summary: 'Creates or changes a new user',
@@ -67,12 +71,22 @@ fastify.withTypeProvider<FastifyZodOpenApiTypeProvider>().put(
                 200: SuccessIndicatorResponseZ,
                 400: BadRequestResponseZ,
                 401: UnauthorizedResponseZ,
+                403: ForbiddenResponseZ,
                 500: InternalServerErrorResponseZ
             }
         } satisfies FastifyZodOpenApiSchema
     },
     async (req, res) => {
-        // TODO: Check privileges here
+        // Check privileges
+        const user = JWTPayloadZ.parse(req.user)
+        if (!req.isAdmin) {
+            return res.status(403).send({
+                statusCode: 403,
+                code: 'NOT_AN_ADMIN',
+                error: 'Forbidden',
+                message: 'You need admin rights to access this route'
+            })
+        }
 
         let reason: string = ''
 

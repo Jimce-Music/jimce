@@ -163,6 +163,8 @@ async function main(): Promise<void> {
             '$AUTH_3$',
             `const user = JWTPayloadZ.parse(req.user)`
         )
+    } else {
+        template = template.replace(/\$(AUTH)_[0-9]\$/g, '')
     }
 
     if (adminExclusive) {
@@ -182,6 +184,8 @@ async function main(): Promise<void> {
                 })
             }`
         )
+    } else {
+        template = template.replace(/\$(ADMIN)_[0-9]\$/g, '')
     }
 
     await fse.ensureFile(ROUTE_FILE_PATH)

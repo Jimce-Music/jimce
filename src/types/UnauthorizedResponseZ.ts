@@ -5,7 +5,7 @@ export default z
         statusCode: z.literal(401),
         code: z.string().meta({
             description: 'Internal code describing the error',
-            examples: ['FST_ERR_VALIDATION']
+            examples: ['FST_JWT_NO_AUTHORIZATION_IN_HEADER']
         }),
         error: z.literal('Unauthorized'),
         message: z.string().meta({

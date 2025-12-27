@@ -19,6 +19,7 @@ import './api/admin/users/getList-users.ts' // GET /api/admin/users/list-users
 
 // Package: auth
 import './api/auth/getCheck-token.ts' // GET /api/auth/check-token
+import './api/auth/postLogin-basic.ts' // POST /api/auth/login-basic
 // --api-auth--§NEW_HERE§--
 // END API
 

@@ -13,8 +13,8 @@ import db from '$SRC$db'
 import meta from '$SRC$meta'
 import config from '$SRC$config'
 import BadRequestResponseZ from '$SRC$types/BadRequestResponseZ'
-import InternalServerErrorResponseZ from '../../../../types/InternalServerErrorResponseZ'
-import UnauthorizedResponseZ from '../../../../types/UnauthorizedResponseZ'
+import InternalServerErrorResponseZ from '$SRC$types/InternalServerErrorResponseZ'
+import UnauthorizedResponseZ from '$SRC$types/UnauthorizedResponseZ'
 
 fastify.withTypeProvider<FastifyZodOpenApiTypeProvider>().$METHOD_LOWERCASE$(
     '$PATH$',

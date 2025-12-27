@@ -45,6 +45,73 @@
           "message"
         ],
         "additionalProperties": false
+      },
+      "401-unauthorized-response": {
+        "description": "A response sent by the server when your request is not authorized",
+        "type": "object",
+        "properties": {
+          "statusCode": {
+            "type": "number",
+            "const": 401
+          },
+          "code": {
+            "description": "Internal code describing the error",
+            "examples": [
+              "FST_JWT_NO_AUTHORIZATION_IN_HEADER"
+            ],
+            "type": "string"
+          },
+          "error": {
+            "type": "string",
+            "const": "Unauthorized"
+          },
+          "message": {
+            "description": "Error message describing what went wrong",
+            "type": "string"
+          }
+        },
+        "required": [
+          "statusCode",
+          "code",
+          "error",
+          "message"
+        ],
+        "additionalProperties": false
+      },
+      "500-internal-server-error-response": {
+        "description": "A response sent by the server when the server failed to process your request",
+        "type": "object",
+        "properties": {
+          "statusCode": {
+            "type": "number",
+            "const": 500
+          },
+          "code": {
+            "description": "Internal code describing the error",
+            "examples": [
+              "FST_ERR_RESPONSE_SERIALIZATION"
+            ],
+            "type": "string"
+          },
+          "error": {
+            "type": "string",
+            "const": "Internal Server Error"
+          },
+          "message": {
+            "description": "Error message describing what went wrong",
+            "examples": [
+              "Response does not match the schema"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "statusCode",
+          "code",
+          "error",
+          "message"
+        ],
+        "additionalProperties": false
       }
     }
   },
@@ -52,7 +119,7 @@
     "/api/admin/users/list-users": {
       "get": {
         "summary": "Lists all users",
-        "description": "Returns id, username, email and isAdmin for every registered user\n                \n                **Requires admin privileges** \n                ",
+        "description": "Returns id, username, email and isAdmin for every registered user\n                \n                **Requires authentication**\n                **Requires admin privileges** \n                ",
         "security": [
           {
             "bearerAuth": []
@@ -119,6 +186,145 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/400-bad-request-response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/401-unauthorized-response"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/500-internal-server-error-response"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/check-token": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "const": "OK"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/400-bad-request-response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/401-unauthorized-response"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/500-internal-server-error-response"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/login-basic": {
+      "post": {
+        "summary": "Login via basic auth",
+        "description": "Ask server to issue a JWT based on user & password credentials",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "description": "The Json Web Token (JWT) issued by the server",
+                      "examples": [
+                        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "token"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/400-bad-request-response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/401-unauthorized-response"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/500-internal-server-error-response"
                 }
               }
             }

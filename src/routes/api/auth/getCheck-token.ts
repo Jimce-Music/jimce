@@ -13,8 +13,8 @@ import db from '../../../db'
 import meta from '../../../meta'
 import config from '../../../config'
 import BadRequestResponseZ from '../../../types/BadRequestResponseZ'
-import InternalServerErrorResponseZ from '../../../../types/InternalServerErrorResponseZ'
-import UnauthorizedResponseZ from '../../../../types/UnauthorizedResponseZ'
+import InternalServerErrorResponseZ from '../../../types/InternalServerErrorResponseZ'
+import UnauthorizedResponseZ from '../../../types/UnauthorizedResponseZ'
 
 fastify.withTypeProvider<FastifyZodOpenApiTypeProvider>().get(
     '/api/auth/check-token',
@@ -23,7 +23,7 @@ fastify.withTypeProvider<FastifyZodOpenApiTypeProvider>().get(
             hide: false,
             summary: '', // TODO: Add summary and description
             description: ``, // Expandable, more detailed description
-            
+
             response: {
                 200: z.literal('OK'),
                 400: BadRequestResponseZ,

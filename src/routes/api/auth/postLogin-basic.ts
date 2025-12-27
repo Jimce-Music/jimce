@@ -15,7 +15,11 @@ import config from '../../../config'
 import BadRequestResponseZ from '../../../types/BadRequestResponseZ'
 import InternalServerErrorResponseZ from '../../../types/InternalServerErrorResponseZ'
 import UnauthorizedResponseZ from '../../../types/UnauthorizedResponseZ'
-import { JWTPayloadZ, type JWTPayloadT } from '../../../types/JWTPayload'
+import {
+    encodeJWTPayload,
+    JWTPayloadZ,
+    type JWTPayloadT
+} from '../../../types/JWTPayload'
 
 import type { FastifyReply } from 'fastify'
 import _failInternal from '../../../utils/failInternal'
@@ -117,7 +121,7 @@ fastify.withTypeProvider<FastifyZodOpenApiTypeProvider>().post(
                 )
             }
 
-            const token = fastify.jwt.sign(JWTPayloadZ.parse(tokenPayload))
+            const token = fastify.jwt.sign(encodeJWTPayload(tokenPayload))
 
             res.status(200).send({ token })
         } catch (err) {

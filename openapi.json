@@ -343,14 +343,64 @@
     },
     "/api/auth/check-token": {
       "get": {
+        "summary": "Checks if token is still valid",
+        "description": "Checks if a token is still valid and returns the associated user, expiration date, user permissions, etc.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "responses": {
           "200": {
             "description": "Default Response",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "string",
-                  "const": "OK"
+                  "type": "object",
+                  "properties": {
+                    "payload": {
+                      "title": "JWT Payload",
+                      "description": "The Zod type for a JWT payload which can be accessed via req.user",
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "examples": [
+                            "5b9e340c-38ba-4495-b895-c3aee230134e"
+                          ],
+                          "description": "The uuid of the user",
+                          "type": "string"
+                        },
+                        "username": {
+                          "examples": [
+                            "test.user"
+                          ],
+                          "description": "The username of the user",
+                          "type": "string"
+                        },
+                        "validUntil": {
+                          "description": "The timestamp describing when the token will become invalidated",
+                          "examples": [
+                            "2025-12-27T18:17:16.990Z"
+                          ],
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "username",
+                        "validUntil"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "isAdmin": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "payload",
+                    "isAdmin"
+                  ],
+                  "additionalProperties": false
                 }
               }
             }
@@ -469,24 +519,6 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "/generate-token": {
-      "post": {
-        "responses": {
-          "200": {
-            "description": "Default Response"
-          }
-        }
-      }
-    },
-    "/test-jwt": {
-      "get": {
-        "responses": {
-          "200": {
-            "description": "Default Response"
           }
         }
       }

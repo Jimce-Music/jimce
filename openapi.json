@@ -78,6 +78,38 @@
         ],
         "additionalProperties": false
       },
+      "403-forbidden-response": {
+        "description": "A response sent by the server when lack the required permissions (HTTP 403)",
+        "type": "object",
+        "properties": {
+          "statusCode": {
+            "type": "number",
+            "const": 403
+          },
+          "code": {
+            "description": "Internal code describing the error",
+            "examples": [
+              "NOT_AN_ADMIN"
+            ],
+            "type": "string"
+          },
+          "error": {
+            "type": "string",
+            "const": "Forbidden"
+          },
+          "message": {
+            "description": "Error message describing what went wrong",
+            "type": "string"
+          }
+        },
+        "required": [
+          "statusCode",
+          "code",
+          "error",
+          "message"
+        ],
+        "additionalProperties": false
+      },
       "500-internal-server-error-response": {
         "description": "A response sent by the server when the server failed to process your request",
         "type": "object",
@@ -221,6 +253,16 @@
               }
             }
           },
+          "403": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/403-forbidden-response"
+                }
+              }
+            }
+          },
           "500": {
             "description": "Default Response",
             "content": {
@@ -324,6 +366,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/401-unauthorized-response"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/403-forbidden-response"
                 }
               }
             }

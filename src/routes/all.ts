@@ -2,11 +2,19 @@
  * This file will register all fastify routes which are not dedicated to special internal purposes (like JWT auth)
  */
 
-// General
+// START General
 import './main'
+// ----§NEW_HERE§--
+// END GENERAL
 
-// API
+// START API
 import './api/oapi-test'
+// --api--§NEW_HERE§--
 
-// 404 / Catch-All
+// Package:
+// --api---§NEW_HERE§--
+// END API
+
+// START 404 / Catch-All
 import './404'
+// END 404 / Catch-All

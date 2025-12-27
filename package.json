@@ -9,6 +9,7 @@
         "@types/bun": "latest",
         "delay-cli": "^3.0.0",
         "drizzle-kit": "^0.31.8",
+        "inquirer": "^13.1.0",
         "pg": "^8.16.3",
         "pino-pretty": "^13.1.3",
         "prettier": "3.7.4"
@@ -30,12 +31,14 @@
         "db:down": "docker compose -f compose-dev-db.yml down",
         "ci:gen-openapi-json": "bun run scripts/openapi/gen-json.ts",
         "ci:gen-ts-api-client": "bun x openapi-ts",
-        "ci:ts-check": "bun x tsc --noEmit"
+        "ci:ts-check": "bun x tsc --noEmit",
+        "dev:add-route": "bun run scripts/dev/add-route.ts"
     },
     "dependencies": {
         "@fastify/jwt": "^10.0.0",
         "@fastify/swagger": "^9.6.1",
         "@fastify/swagger-ui": "^5.2.3",
+        "chalk": "^5.6.2",
         "drizzle-orm": "^0.45.1",
         "fastify": "^5.6.2",
         "fastify-plugin": "^5.1.0",

@@ -1,5 +1,13 @@
 {
-    "cSpell.words": ["bunx", "jimce", "openapi", "postgres", "postgresql"],
+    "cSpell.words": [
+        "bunx",
+        "jimce",
+        "openapi",
+        "postgres",
+        "postgresql",
+        "rawlist",
+        "userid"
+    ],
     "sqltools.connections": [
         {
             "ssh": "Disabled",

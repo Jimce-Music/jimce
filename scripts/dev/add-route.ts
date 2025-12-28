@@ -144,10 +144,10 @@ async function main(): Promise<void> {
         '$OPTIONAL_BODY$',
         answers.method !== 'GET'
             ? `body: z.object({
-                dataField: z.string().meta({
+                /*dataField: z.string().meta({
                     description: 'Just some data field',
                     example: '32168'
-                })
+                })*/
             }),
 `
             : ''

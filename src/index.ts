@@ -57,3 +57,5 @@ try {
 } finally {
     logger.info(`Webserver listening on port ${config.server.port}`)
 }
+
+// TODO: Create admin user when no one exists

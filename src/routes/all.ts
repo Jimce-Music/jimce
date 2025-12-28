@@ -22,6 +22,7 @@ import './api/admin/users/deleteUser.ts' // DELETE /api/admin/users/user
 // Package: auth
 import './api/auth/getCheck-token.ts' // GET /api/auth/check-token
 import './api/auth/postLogin-basic.ts' // POST /api/auth/login-basic
+import './api/auth/putChange-password.ts' // PUT /api/auth/change-password
 // --api-auth--§NEW_HERE§--
 // END API
 

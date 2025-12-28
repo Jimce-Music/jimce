@@ -1,62 +1,67 @@
 name: Publish TypeScript API client
 
 on:
-    push:
-        branches:
-            - "**"
+  push:
+    branches:
+      - "**"
 
 jobs:
-    publish:
-        runs-on: ubuntu-latest
-        permissions:
-            contents: read
-            packages: write
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
 
-        steps:
-            - name: Checkout repository
-              uses: actions/checkout@v4
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-            - name: Setup Bun
-              uses: oven-sh/setup-bun@v1
-              with:
-                  bun-version: latest
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
 
-            - name: Install Bun dependencies
-              run: bun install --frozen-lockfile
-              working-directory: ${{ github.workspace }}
+      - name: Install Bun dependencies
+        run: bun install --frozen-lockfile
+        working-directory: ${{ github.workspace }}
 
-            - name: Generate OpenAPI JSON
-              run: bun run ci:gen-openapi-json
-              working-directory: ${{ github.workspace }}
+      - name: Generate OpenAPI JSON
+        run: bun run ci:gen-openapi-json
+        working-directory: ${{ github.workspace }}
 
-            - name: Generate TypeScript API client
-              run: bun run ci:gen-ts-api-client
-              working-directory: ${{ github.workspace }}
+      - name: Generate TypeScript API client
+        run: bun run ci:gen-ts-api-client
+        working-directory: ${{ github.workspace }}
 
-            - name: Setup Node for publishing
-              uses: actions/setup-node@v4
-              with:
-                  node-version: 20
-                  registry-url: https://npm.pkg.github.com
-                  scope: "@jimce-music"
+      - name: Setup Node for publishing
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://npm.pkg.github.com
+          scope: "@jimce-music"
 
-            - name: Install NPM dependencies for TS client
-              run: npm ci
-              working-directory: ${{ github.workspace }}/api-clients/typescript-api-client
+      - name: Install NPM dependencies for TS client
+        run: npm ci
+        working-directory: ${{ github.workspace }}/api-clients/typescript-api-client
 
-            - name: Build TS client
-              run: npm run build
-              working-directory: ${{ github.workspace }}/api-clients/typescript-api-client
+      - name: Build TS client
+        run: npm run build
+        working-directory: ${{ github.workspace }}/api-clients/typescript-api-client
 
-            - name: Set version
-              run: |
-                  BRANCH="${GITHUB_REF_NAME//\//-}"
-                  SHORT_SHA=$(git rev-parse --short HEAD)
-                  npm version 1.0.0-$BRANCH-$SHORT_SHA --no-git-tag-version
-              working-directory: ${{ github.workspace }}/api-clients/typescript-api-client
+      - name: Set version
+        run: |
+          BRANCH="${GITHUB_REF_NAME//\//-}"
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          npm version 1.0.0-$BRANCH-$SHORT_SHA --no-git-tag-version
+        working-directory: ${{ github.workspace }}/api-clients/typescript-api-client
 
-            - name: Publish TS client
-              run: npm publish
-              env:
-                  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              working-directory: ${{ github.workspace }}/api-clients/typescript-api-client
+      - name: Publish TS client
+        run: |
+          if [ "$GITHUB_REF_NAME" = "main" ]; then
+              npm publish --tag latest
+          else
+              npm publish --tag dev
+          fi
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        working-directory: ${{ github.workspace }}/api-clients/typescript-api-client

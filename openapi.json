@@ -655,6 +655,165 @@
           }
         }
       }
+    },
+    "/api/auth/change-password": {
+      "put": {
+        "summary": "Changes the password",
+        "description": "Changes the password for the currently logged in user",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "newPassword": {
+                    "description": "The new password as plain text for the user",
+                    "examples": [
+                      "123456789abc"
+                    ],
+                    "type": "string",
+                    "minLength": 12
+                  }
+                },
+                "required": [
+                  "newPassword"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/success-indicator-response"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/400-bad-request-response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/401-unauthorized-response"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/500-internal-server-error-response"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/me/userinfo": {
+      "get": {
+        "summary": "Returns info about the current user",
+        "description": "This route can be used to retrieve detailed information about the user associated with current JWT, like username, id, etc.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "The user info",
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "description": "The uuid of the user",
+                      "type": "string"
+                    },
+                    "username": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "isAdmin": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "username",
+                    "email",
+                    "isAdmin"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/400-bad-request-response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/401-unauthorized-response"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/500-internal-server-error-response"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 }

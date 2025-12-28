@@ -24,6 +24,10 @@ import './api/auth/getCheck-token.ts' // GET /api/auth/check-token
 import './api/auth/postLogin-basic.ts' // POST /api/auth/login-basic
 import './api/auth/putChange-password.ts' // PUT /api/auth/change-password
 // --api-auth--§NEW_HERE§--
+
+// Package: me
+import './api/me/getUserinfo.ts' // GET /api/me/userinfo
+// --api-me--§NEW_HERE§--
 // END API
 
 // START 404 / Catch-All

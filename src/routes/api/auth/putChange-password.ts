@@ -34,8 +34,8 @@ fastify.withTypeProvider<FastifyZodOpenApiTypeProvider>().put(
 
         schema: {
             hide: false,
-            summary: '', // TODO: Add summary and description
-            description: ``, // Expandable, more detailed description
+            summary: 'Changes the password',
+            description: `Changes the password for the currently logged in user`, // Expandable, more detailed description
             security: requireJWT,
             body: z.object({
                 newPassword: z

@@ -31,9 +31,16 @@ const query = 'Bella Napoli'
 const search = searchMusic(query)
 for (const [type, stream] of Object.entries(search)) {
     // Every type
+    if (type === 'artists') continue // DEBUG SKIP
 
     for await (const chunk of stream) {
-        console.log(`New ${type} entry:`)
-        console.log(chunk)
+        // console.log(`New ${type} entry:`)
+        // console.log(chunk)
+        console.log(
+            chunk.title,
+            chunk.src[0].provider,
+            chunk.src[0].link
+            // chunk.uuid
+        )
     }
 }

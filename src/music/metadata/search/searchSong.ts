@@ -112,6 +112,17 @@ export default function searchSong(
                                     }
                                 ]
                             }
+
+                            // Save it
+                            if (resultMap[resultId]) {
+                                // Need to merge, already existent
+                                // TODO: implement
+                            } else {
+                                resultMap[resultId] = result
+                            }
+
+                            // Stream it
+                            controller.enqueue(result)
                         }
 
                         // Close connection

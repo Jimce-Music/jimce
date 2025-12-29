@@ -1,4 +1,5 @@
 import { mb } from '../../musicbrainz'
+import type SearchResult from './SearchResultI'
 
 // Old function for testing, may be removed later
 // export default async function searchSong(query: string) {
@@ -9,17 +10,18 @@ import { mb } from '../../musicbrainz'
 //     return result.releases
 // }
 
-export interface SongSearchResult {}
+export interface SongSearchResult extends SearchResult {}
 
 export default function searchSong(
     query: string
 ): ReadableStream<SongSearchResult> {
     const stream: ReadableStream<SongSearchResult> =
         new ReadableStream<SongSearchResult>({
-            start(controller) {
-                controller.enqueue('hello')
-                controller.enqueue('world')
-                controller.close()
+            async start(controller) {
+                // controller.enqueue('hello')
+                // controller.enqueue('world')
+                // controller.close()
+                // Main function, search stuff here
             }
         })
 

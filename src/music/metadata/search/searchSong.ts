@@ -4,6 +4,7 @@ import config from '../../../config'
 import logger from '../../../logger'
 import { v4 as uuidv4 } from 'uuid'
 import yts from 'yt-search'
+import { SpotifyApi } from '@spotify/web-api-ts-sdk'
 
 // Old function for testing, may be removed later
 // export default async function searchSong(query: string) {
@@ -133,6 +134,69 @@ export default function searchSong(
                         logger.error('YouTube search for ${query} failed:') // TODO: make literal string
                         logger.error(err)
                     })
+                // Spotify
+                openConnections += 1
+                const spotifySdk = SpotifyApi.withClientCredentials(
+                    process.env.SP_CLID as string,
+                    process.env.SP_CLS as string
+                )
+
+                // TODO: query Spotify separate and unite artist & song query
+                spotifySdk.search(query, ['track']).then((spotifyResults) => {
+                    for (const spotifyResult of spotifyResults.tracks.items) {
+                        const resultId = uuidv4()
+                        const result: SongSearchResult = {
+                            uuid: resultId,
+                            title: spotifyResult.name,
+                            src: [
+                                {
+                                    provider: 'spotify',
+                                    link: spotifyResult.id
+                                }
+                            ],
+                            artist: {
+                                name: spotifyResult.artists
+                                    .map((a) => a.name)
+                                    .join('; '),
+                                src: [
+                                    {
+                                        provider: 'spotify',
+                                        link: spotifyResult.artists
+                                            .map((a) => a.id)
+                                            .join('; ')
+                                    }
+                                ]
+                            },
+                            relevancyScore: spotifyResult.popularity,
+                            matchScore: 5, // TODO: derive from result order
+                            sortScore: spotifyResult.popularity
+                        }
+                        // Save it
+                        if (resultMap[resultId]) {
+                            // Need to merge, already existent
+                            // TODO: implement
+                        } else {
+                            resultMap[resultId] = result
+                        }
+
+                        // Stream it
+                        controller.enqueue(result)
+                    }
+                    // Close connection
+                    closedConnections += 1
+                    closeIfDone(controller)
+                }).catch(err => {
+                    // TODO: log & close
+                })
+                // const items = await sdk.search('The Beatles', ['artist'])
+                //
+                // console.table(
+                // items.artists.items.map((item) => ({
+                // name: item.name,
+                // followers: item.followers.total,
+                // popularity: item.popularity
+                // }))
+                // )
             }
         })
 

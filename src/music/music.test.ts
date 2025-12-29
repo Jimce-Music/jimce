@@ -1,7 +1,7 @@
 import searchMusic from './metadata/search/searchMusic'
-import searchSong from './metadata/search/searchSong'
+import searchSong, { type SongSearchResult } from './metadata/search/searchSong'
 import { mb } from './musicbrainz'
-import yts from 'yt-search'
+import yts, { type SearchResult } from 'yt-search'
 
 // This is a temporary file to try out the metadata fetching functions
 // console.log(await searchSong('Bella Napoli')) // id: c6d49f0b-951f-407c-b803-c066e4ff3c6c
@@ -29,18 +29,27 @@ import yts from 'yt-search'
 // Lets' test our new functions
 const query = 'Bella Napoli'
 const search = searchMusic(query)
-for (const [type, stream] of Object.entries(search)) {
-    // Every type
-    if (type === 'artists') continue // DEBUG SKIP
-
-    for await (const chunk of stream) {
-        // console.log(`New ${type} entry:`)
-        // console.log(chunk)
-        console.log(
-            chunk.title,
-            chunk.src[0].provider,
-            chunk.src[0].link
-            // chunk.uuid
-        )
-    }
+const items = []
+for await (const item of search.songs) {
+    items.push({
+        uuid: item.uuid.substring(0, 8),
+        title: item.title.substring(0, 60),
+        source: item.src[0]?.provider,
+        score: item.sortScore
+    })
 }
+console.table(items)
+// for (const [type, stream] of Object.entries(search)) {
+//     // Every type
+//     if (type === 'artists') continue // DEBUG SKIP
+
+//     for await (const chunk of stream) {
+//         // console.log(`New ${type} entry:`)
+//         // console.log(chunk)
+//         console.table({
+//             uuid: chunk.uuid,
+//             title: chunk.title.substring(0, 20),
+//             src: chunk.src[0].provider
+//         })
+//     }
+// }

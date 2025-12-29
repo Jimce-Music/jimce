@@ -9,16 +9,16 @@ import { mb } from '../../musicbrainz'
 //     return result.releases
 // }
 
-export interface SongSearchResult {}
+export interface ArtistSearchResult {}
 
 export default function searchSong(
     query: string
-): ReadableStream<SongSearchResult> {
-    const stream: ReadableStream<SongSearchResult> =
-        new ReadableStream<SongSearchResult>({
+): ReadableStream<ArtistSearchResult> {
+    const stream: ReadableStream<ArtistSearchResult> =
+        new ReadableStream<ArtistSearchResult>({
             start(controller) {
-                controller.enqueue('hello')
-                controller.enqueue('world')
+                controller.enqueue('hello-artist')
+                controller.enqueue('world-artist')
                 controller.close()
             }
         })

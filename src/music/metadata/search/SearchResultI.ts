@@ -16,6 +16,13 @@ export default interface SearchResult {
         provider: 'musicbrainz' | 'youtube' | 'spotify' // maybe more later on
         link: string
     }[]
+    artist?: { // TODO: non optional
+        name: string
+        src: {
+            provider: 'musicbrainz' | 'youtube' | 'spotify' // maybe more later on
+            link: string
+        }[]
+    }
     /**
      * The title / name of the result
      */
@@ -40,7 +47,7 @@ export default interface SearchResult {
      */
     sortScore: number
 
-    coverImage:
+    coverImage?:
         | {
               type: 'data-url'
               url: string

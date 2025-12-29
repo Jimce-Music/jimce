@@ -1,5 +1,6 @@
 import { mb } from '../../musicbrainz'
 import type SearchResult from './SearchResultI'
+import config from '../../../config'
 
 // Old function for testing, may be removed later
 // export default async function searchSong(query: string) {
@@ -20,7 +21,8 @@ export default function searchSong(
             async start(controller) {
                 // controller.enqueue('hello')
                 // controller.enqueue('world')
-                // controller.close()
+                // console.log(config)
+                controller.close()
                 // Main function, search stuff here
             }
         })

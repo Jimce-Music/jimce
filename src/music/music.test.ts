@@ -31,6 +31,7 @@ const query = 'Bella Napoli'
 const search = searchMusic(query)
 for (const [type, stream] of Object.entries(search)) {
     // Every type
+
     for await (const chunk of stream) {
         console.log(`New ${type} entry:`)
         console.log(chunk)

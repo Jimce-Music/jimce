@@ -15,3 +15,13 @@ database:
 # Authentication
 auth:
   jwt_secret: dev-secret-CHANGE-IN-PROD!
+
+# Metadata providers
+metadataProviders:
+  spotify:
+    enable: false
+  youtube:
+    enable: true
+  theAudioDb:
+    enable: true
+    apiKey: '123'

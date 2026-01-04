@@ -29,14 +29,9 @@ beforeAll(async () => {
     await writeFile(META_PATH, yaml.stringify(meta))
 
     // 2. Start test db (no need to reset, as no volume is used)
-    const db_spawn_proc = Bun.spawn([
-        'docker',
-        'compose',
-        '-f',
-        'compose-test-db.yml',
-        'up',
-        '-d'
-    ])
+    const db_spawn_proc = Bun.spawn({
+        cmd: ['docker', 'compose', '-f', 'compose-test-db.yml', 'up', '-d']
+    })
     const db_spawn_exitCode = await db_spawn_proc.exited
     if (db_spawn_exitCode !== 0) {
         console.error(
@@ -53,6 +48,12 @@ beforeAll(async () => {
     // 4. Necessary background jobs
     // 4.1. Ensure admin user
     await ensureAdminUsers()
+
+    // 5. Run index.ts by importing it
+    await import('../../src/index')
+
+    // 6. Generate an admin JWT for the test run
+    // TODO:
 })
 
 afterAll(async () => {
@@ -74,3 +75,5 @@ afterAll(async () => {
     ])
     await db_kill_proc.exited
 })
+
+// TODO: also test api client (separately)

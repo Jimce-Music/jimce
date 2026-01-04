@@ -53,6 +53,7 @@ fs.writeFileSync(
     JSON.stringify(openapi, null, 2)
 )
 logger.info('Done writing openapi.json')
+// TODO: Generate openapi docs as static html, with pre-commit hook
 
 // Start webserver
 if (meta.execution.server_disable_listening) {

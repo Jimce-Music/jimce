@@ -24,6 +24,10 @@ export default z.object({
             disable_background_jobs: z.boolean().meta({
                 description:
                     'Mostly relevant when is_ci_run == true: Defines whether to disable background jobs like metadata fetching'
+            }),
+            server_disable_listening: z.boolean().meta({
+                description:
+                    "When set to true, the fastify server will just get initialized but won't listen for requests in the network. Can be useful for automated tests."
             })
         })
         .meta({ description: 'Defines the execution context of the server' })

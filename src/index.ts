@@ -28,7 +28,11 @@ if (meta.execution.disable_db) {
 
 // ################################################ //
 // Create admin users if none exist
-ensureAdminUsers()
+if (meta.execution.disable_background_jobs) {
+    logger.info("Won't ensure admin user, as background jobs are disabled")
+} else {
+    await ensureAdminUsers()
+}
 
 // ################################################ //
 // Setup auth
@@ -51,14 +55,20 @@ fs.writeFileSync(
 logger.info('Done writing openapi.json')
 
 // Start webserver
-try {
-    await fastify.listen({ port: config.server.port })
-} catch (err) {
-    fastify.log.error(err)
-    logger.fatal(
-        'Webserver was not able to start. See the jimce-server.log file for more information'
+if (meta.execution.server_disable_listening) {
+    logger.warn(
+        "Because server_disable_listening is set to true, the server won't answer HTTP requests"
     )
-    process.exit(1)
-} finally {
-    logger.info(`Webserver listening on port ${config.server.port}`)
+} else {
+    try {
+        await fastify.listen({ port: config.server.port })
+    } catch (err) {
+        fastify.log.error(err)
+        logger.fatal(
+            'Webserver was not able to start. See the jimce-server.log file for more information'
+        )
+        process.exit(1)
+    } finally {
+        logger.info(`Webserver listening on port ${config.server.port}`)
+    }
 }

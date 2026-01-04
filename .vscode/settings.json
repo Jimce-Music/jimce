@@ -9,6 +9,7 @@
         "postgresql",
         "rawlist",
         "spotify",
+        "tmpfs",
         "userid",
         "youtube"
     ],

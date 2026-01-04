@@ -9,7 +9,8 @@
         "postgresql",
         "rawlist",
         "spotify",
-        "userid"
+        "userid",
+        "youtube"
     ],
     "sqltools.connections": [
         {

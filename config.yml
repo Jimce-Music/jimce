@@ -19,9 +19,11 @@ auth:
 # Metadata providers
 metadataProviders:
   spotify:
-    enable: false
+    enable: true
+    clientId: ${SPOTIFY_CLIENT_ID} # ${VAR} will load the value from the .env file
+    clientSecret: ${SPOTIFY_CLIENT_SECRET}
   youtube:
     enable: true
   theAudioDb:
     enable: true
-    apiKey: '123'
+    apiKey: "123"

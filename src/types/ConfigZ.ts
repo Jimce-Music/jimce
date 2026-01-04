@@ -23,13 +23,15 @@ export default z.object({
         spotify: z
             .object({
                 enable: z.boolean(),
-                apiKey: z.string().min(2).optional()
+                clientId: z.string().min(2).optional(),
+                clientSecret: z.string().min(2).optional()
             })
             .superRefine((data, ctx) => {
-                if (data.enable && !data.apiKey) {
+                if (data.enable && (!data.clientId || !data.clientSecret)) {
                     ctx.addIssue({
-                        path: ['apiKey'],
-                        message: 'apiKey is required, if enable is set to true',
+                        path: ['clientId', 'clientSecret'],
+                        message:
+                            'clientId and clientSecret are required, if enable is set to true',
                         code: 'custom'
                     })
                 }

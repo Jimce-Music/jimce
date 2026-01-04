@@ -78,10 +78,10 @@ export default function searchSong(
                         closeIfDone(controller)
                     })
                     .catch((err) => {
-                        logger.error(
-                            `A musicbrainz search failed (for: ${query}):`
-                        )
+                        logger.error(`MusicBrainz search for ${query} failed:`)
                         logger.error(err)
+                        closedConnections += 1
+                        closeIfDone(controller)
                     })
                 // YouTube
                 openConnections += 1
@@ -131,72 +131,74 @@ export default function searchSong(
                         closeIfDone(controller)
                     })
                     .catch((err) => {
-                        logger.error('YouTube search for ${query} failed:') // TODO: make literal string
+                        logger.error(`YouTube search for ${query} failed:`)
                         logger.error(err)
+                        closedConnections += 1
+                        closeIfDone(controller)
                     })
                 // Spotify
-                openConnections += 1
-                const spotifySdk = SpotifyApi.withClientCredentials(
-                    process.env.SP_CLID as string,
-                    process.env.SP_CLS as string
-                )
+                if (config.metadataProviders.spotify.enable) {
+                    openConnections += 1
+                    const spotifySdk = SpotifyApi.withClientCredentials(
+                        `${config.metadataProviders.spotify.clientId}`,
+                        `${config.metadataProviders.spotify.clientSecret}`
+                    )
 
-                // TODO: query Spotify separate and unite artist & song query
-                spotifySdk.search(query, ['track']).then((spotifyResults) => {
-                    for (const spotifyResult of spotifyResults.tracks.items) {
-                        const resultId = uuidv4()
-                        const result: SongSearchResult = {
-                            uuid: resultId,
-                            title: spotifyResult.name,
-                            src: [
-                                {
-                                    provider: 'spotify',
-                                    link: spotifyResult.id
+                    // TODO: query Spotify separate and unite artist & song query
+                    spotifySdk
+                        .search(query, ['track'])
+                        .then((spotifyResults) => {
+                            for (const spotifyResult of spotifyResults.tracks
+                                .items) {
+                                const resultId = uuidv4()
+                                const result: SongSearchResult = {
+                                    uuid: resultId,
+                                    title: spotifyResult.name,
+                                    src: [
+                                        {
+                                            provider: 'spotify',
+                                            link: spotifyResult.id
+                                        }
+                                    ],
+                                    artist: {
+                                        name: spotifyResult.artists
+                                            .map((a) => a.name)
+                                            .join('; '),
+                                        src: [
+                                            {
+                                                provider: 'spotify',
+                                                link: spotifyResult.artists
+                                                    .map((a) => a.id)
+                                                    .join('; ')
+                                            }
+                                        ]
+                                    },
+                                    relevancyScore: spotifyResult.popularity,
+                                    matchScore: 5, // TODO: derive from result order
+                                    sortScore: spotifyResult.popularity
                                 }
-                            ],
-                            artist: {
-                                name: spotifyResult.artists
-                                    .map((a) => a.name)
-                                    .join('; '),
-                                src: [
-                                    {
-                                        provider: 'spotify',
-                                        link: spotifyResult.artists
-                                            .map((a) => a.id)
-                                            .join('; ')
-                                    }
-                                ]
-                            },
-                            relevancyScore: spotifyResult.popularity,
-                            matchScore: 5, // TODO: derive from result order
-                            sortScore: spotifyResult.popularity
-                        }
-                        // Save it
-                        if (resultMap[resultId]) {
-                            // Need to merge, already existent
-                            // TODO: implement
-                        } else {
-                            resultMap[resultId] = result
-                        }
+                                // Save it
+                                if (resultMap[resultId]) {
+                                    // Need to merge, already existent
+                                    // TODO: implement
+                                } else {
+                                    resultMap[resultId] = result
+                                }
 
-                        // Stream it
-                        controller.enqueue(result)
-                    }
-                    // Close connection
-                    closedConnections += 1
-                    closeIfDone(controller)
-                }).catch(err => {
-                    // TODO: log & close
-                })
-                // const items = await sdk.search('The Beatles', ['artist'])
-                //
-                // console.table(
-                // items.artists.items.map((item) => ({
-                // name: item.name,
-                // followers: item.followers.total,
-                // popularity: item.popularity
-                // }))
-                // )
+                                // Stream it
+                                controller.enqueue(result)
+                            }
+                            // Close connection
+                            closedConnections += 1
+                            closeIfDone(controller)
+                        })
+                        .catch((err) => {
+                            logger.error(`Spotify search for ${query} failed:`)
+                            logger.error(err)
+                            closedConnections += 1
+                            closeIfDone(controller)
+                        })
+                }
             }
         })
 

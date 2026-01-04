@@ -7,6 +7,7 @@ import { readFile, writeFile } from 'fs/promises'
 import { migrateDB } from '../../src/db'
 import ensureAdminUsers from '../../src/jobs/ensureAdminUser'
 import { sleep } from 'bun'
+import fastify from '../../src/fastify'
 
 const META_PATH = path.resolve(__dirname, '../../meta.yml')
 const CWD = path.resolve(__dirname, '../..')
@@ -60,7 +61,10 @@ afterAll(async () => {
     // 1. Reset meta.yml
     await writeFile(META_PATH, originalRaw)
 
-    // 2. Stop test db
+    // 2. Close fastify server
+    await fastify.close()
+
+    // 3. Stop test db
     const db_kill_proc = Bun.spawn([
         'docker',
         'compose',

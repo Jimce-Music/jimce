@@ -2,11 +2,15 @@
     "cSpell.words": [
         "bunx",
         "jimce",
+        "mbid",
+        "musicbrainz",
         "openapi",
         "postgres",
         "postgresql",
         "rawlist",
-        "userid"
+        "spotify",
+        "userid",
+        "youtube"
     ],
     "sqltools.connections": [
         {

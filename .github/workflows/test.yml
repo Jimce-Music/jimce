@@ -8,7 +8,7 @@ on:
     - cron: "15 4 * * 1"
 
 jobs:
-  build:
+  bun-test:
     runs-on: ubuntu-latest
 
     # PostgreSQL als Service bereitstellen

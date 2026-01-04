@@ -29,18 +29,22 @@ beforeAll(async () => {
     await writeFile(META_PATH, yaml.stringify(meta))
 
     // 2. Start test db (no need to reset, as no volume is used)
-    const db_spawn_proc = Bun.spawn({
-        cmd: ['docker', 'compose', '-f', 'compose-test-db.yml', 'up', '-d']
-    })
-    const db_spawn_exitCode = await db_spawn_proc.exited
-    if (db_spawn_exitCode !== 0) {
-        console.error(
-            'Database could not be spawned, please try to run the compose file manually. Exiting'
-        )
-        process.exit(1)
+    if (process.env.GITHUB_ACTIONS === 'true') {
+        // GitHub Actions starts db automatically
+    } else {
+        const db_spawn_proc = Bun.spawn({
+            cmd: ['docker', 'compose', '-f', 'compose-test-db.yml', 'up', '-d']
+        })
+        const db_spawn_exitCode = await db_spawn_proc.exited
+        if (db_spawn_exitCode !== 0) {
+            console.error(
+                'Database could not be spawned, please try to run the compose file manually. Exiting'
+            )
+            process.exit(1)
+        }
+        // Wait for db to load
+        await sleep(1_000)
     }
-    // Wait 2 seconds for db to load
-    await sleep(2_000)
 
     // 3. Run DB migrations
     await migrateDB()
@@ -66,14 +70,18 @@ afterAll(async () => {
     await fastify.close()
 
     // 3. Stop test db
-    const db_kill_proc = Bun.spawn([
-        'docker',
-        'compose',
-        '-f',
-        'compose-test-db.yml',
-        'down'
-    ])
-    await db_kill_proc.exited
+    if (process.env.GITHUB_ACTIONS === 'true') {
+        // GitHub Actions stops db automatically
+    } else {
+        const db_kill_proc = Bun.spawn([
+            'docker',
+            'compose',
+            '-f',
+            'compose-test-db.yml',
+            'down'
+        ])
+        await db_kill_proc.exited
+    }
 })
 
 // TODO: also test api client (separately)

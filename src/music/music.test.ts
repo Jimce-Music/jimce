@@ -39,6 +39,13 @@ for await (const item of search.songs) {
     })
 }
 console.table(items)
+// NOTE: Considerations so far:
+/*  - We need a uniform sort score, applicable to all providers
+    - YouTube and Spotify sort based on what the user wants, MusicBrainz just shows the best match for the query
+    - We should try to search via Spotify / YouTube first, and then try to match with MusicBrainz in order to have a unique mbid and proper metadata
+    - Later on we could use something like TheAudioDB for cover art and more
+*/
+
 // for (const [type, stream] of Object.entries(search)) {
 //     // Every type
 //     if (type === 'artists') continue // DEBUG SKIP

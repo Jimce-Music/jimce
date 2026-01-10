@@ -5,7 +5,6 @@ import getBurnerUser from '../../../getBurnerUser'
 import * as uuid from 'uuid'
 import db from '../../../../../src/db'
 import { usersTable } from '../../../../../src/db/schema'
-import { eq } from 'drizzle-orm'
 
 describe('GET /api/me/userinfo', async () => {
     //! Check for auth

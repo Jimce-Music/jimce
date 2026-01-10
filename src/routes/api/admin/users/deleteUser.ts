@@ -10,7 +10,6 @@ import {
 } from 'fastify-zod-openapi'
 import logger from '../../../../logger'
 import db from '../../../../db'
-import meta from '../../../../meta'
 import '../../../../meta'
 import config from '../../../../config'
 import BadRequestResponseZ from '../../../../types/BadRequestResponseZ'

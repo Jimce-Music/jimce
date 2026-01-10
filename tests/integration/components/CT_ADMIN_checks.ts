@@ -22,7 +22,7 @@ export type HTTPMethod =
 export default function CT_JWT_checks(
     method: HTTPMethod,
     url: string,
-    validBody: object
+    validBody?: object
 ) {
     // Will get run by the test(name, callback)
     return async function () {

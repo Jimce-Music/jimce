@@ -10,6 +10,7 @@ import { sleep } from 'bun'
 import fastify from '../../src/fastify'
 import type { $DefaultResponse } from '../../src/routes/api/auth/postLogin-basic'
 import * as z from 'zod'
+import logger from '../../src/logger'
 
 const META_PATH = path.resolve(__dirname, '../../meta.yml')
 const CWD = path.resolve(__dirname, '../..')
@@ -18,6 +19,7 @@ const originalRaw = await readFile(META_PATH, 'utf8')
 
 beforeAll(async () => {
     // Initialize the test run
+    logger.info('This is an automated test run')
 
     // 1. Change meta.yml to configure the environment for tests
     const meta = yaml.parse(originalRaw)

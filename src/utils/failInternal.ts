@@ -4,6 +4,7 @@ import logger from '../logger'
 export default function (res: FastifyReply, err: unknown, importerURL: string) {
     logger.error(`Error in route ${importerURL}`)
     logger.error(err)
+
     res.status(500).send({
         statusCode: 500,
         code: 'ERR_INTERNAL',

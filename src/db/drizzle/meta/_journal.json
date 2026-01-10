@@ -1,41 +1,41 @@
 {
-  "version": "7",
-  "dialect": "postgresql",
-  "entries": [
-    {
-      "idx": 0,
-      "version": "7",
-      "when": 1766519003034,
-      "tag": "0000_kind_jane_foster",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1766525717356,
-      "tag": "0001_naive_charles_xavier",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1766525847619,
-      "tag": "0002_milky_kat_farrell",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1766844195857,
-      "tag": "0003_furry_ozymandias",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1766960227624,
-      "tag": "0004_plain_forgotten_one",
-      "breakpoints": true
-    }
-  ]
+    "version": "7",
+    "dialect": "postgresql",
+    "entries": [
+        {
+            "idx": 0,
+            "version": "7",
+            "when": 1766519003034,
+            "tag": "0000_kind_jane_foster",
+            "breakpoints": true
+        },
+        {
+            "idx": 1,
+            "version": "7",
+            "when": 1766525717356,
+            "tag": "0001_naive_charles_xavier",
+            "breakpoints": true
+        },
+        {
+            "idx": 2,
+            "version": "7",
+            "when": 1766525847619,
+            "tag": "0002_milky_kat_farrell",
+            "breakpoints": true
+        },
+        {
+            "idx": 3,
+            "version": "7",
+            "when": 1766844195857,
+            "tag": "0003_furry_ozymandias",
+            "breakpoints": true
+        },
+        {
+            "idx": 4,
+            "version": "7",
+            "when": 1766960227624,
+            "tag": "0004_plain_forgotten_one",
+            "breakpoints": true
+        }
+    ]
 }

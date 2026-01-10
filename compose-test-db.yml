@@ -1,0 +1,13 @@
+services:
+  db:
+    image: postgres:18
+    container_name: jimce_test_db
+    environment:
+      POSTGRES_USER: jimce
+      POSTGRES_PASSWORD: jimce
+      POSTGRES_DB: jimce
+    ports:
+      - "5432:5432"
+    # No volume, because data shall not persist, instead tmpfs
+    tmpfs:
+      - /var/lib/postgresql

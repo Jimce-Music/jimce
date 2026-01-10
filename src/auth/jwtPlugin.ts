@@ -77,39 +77,44 @@ export default fp(async (fastify) => {
                 return res.status(401).send(client_err)
             }
         } catch (err) {
-            if (
-                typeof err === 'object' &&
-                err !== null &&
-                'message' in err &&
-                typeof err.message === 'string'
-            ) {
-                if (err.message.includes('token is malformed')) {
-                    // Just malformed token
-                    const client_err: z.infer<typeof UnauthorizedResponseZ> = {
-                        statusCode: 401,
-                        code: 'MALFORMED_JWT',
-                        error: 'Unauthorized',
-                        message: `The provided token is malformed.`
-                    }
-                    return res.status(401).send(client_err)
-                } else if (
-                    err.message.includes('No Authorization was found in') &&
-                    err.message.includes('header')
-                ) {
-                    // No token found
-                    const client_err: z.infer<typeof UnauthorizedResponseZ> = {
-                        statusCode: 401,
-                        code: 'NO_TOKEN_FOUND',
-                        error: 'Unauthorized',
-                        message: `No Authorization header was found`
-                    }
-                    return res.status(401).send(client_err)
-                } else {
-                    return failInternal(res, err, import.meta.url)
-                }
-            } else {
-                return failInternal(res, err, import.meta.url)
-            }
+            logger.error('Error during jwt auth')
+            logger.error(err)
+            return
+            // if (
+            //     typeof err === 'object' &&
+            //     err !== null &&
+            //     'message' in err &&
+            //     typeof err.message === 'string'
+            // ) {
+            //     if (err.message.includes('token is malformed')) {
+            //         // Just malformed token
+            //         const client_err: z.infer<typeof UnauthorizedResponseZ> = {
+            //             statusCode: 401,
+            //             code: 'MALFORMED_JWT',
+            //             error: 'Unauthorized',
+            //             message: `The provided token is malformed.`
+            //         }
+            //         return res.status(401).send(client_err)
+            //     } else if (
+            //         (err.message.includes('No Authorization was found in') &&
+            //             err.message.includes('header')) ||
+            //         (err.message.includes('[ERR_ASSERTION]') &&
+            //             err.message.includes('missing token'))
+            //     ) {
+            //         // No token found
+            //         const client_err: z.infer<typeof UnauthorizedResponseZ> = {
+            //             statusCode: 401,
+            //             code: 'NO_TOKEN_FOUND',
+            //             error: 'Unauthorized',
+            //             message: `No Authorization header was found`
+            //         }
+            //         return res.status(401).send(client_err)
+            //     } else {
+            //         return failInternal(res, err, import.meta.url)
+            //     }
+            // } else {
+            //     return failInternal(res, err, import.meta.url)
+            // }
         }
     })
 })

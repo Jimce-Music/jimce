@@ -29,6 +29,15 @@ function failInternal(res: FastifyReply, err: unknown) {
     return _failInternal(res, err, import.meta.url)
 }
 
+export const $DefaultResponse = z.object({
+    token: z.string().meta({
+        description: 'The Json Web Token (JWT) issued by the server',
+        examples: [
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30'
+        ]
+    })
+})
+
 fastify.withTypeProvider<FastifyZodOpenApiTypeProvider>().post(
     '/api/auth/login-basic',
     {
@@ -43,15 +52,7 @@ fastify.withTypeProvider<FastifyZodOpenApiTypeProvider>().post(
             }),
 
             response: {
-                200: z.object({
-                    token: z.string().meta({
-                        description:
-                            'The Json Web Token (JWT) issued by the server',
-                        examples: [
-                            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30'
-                        ]
-                    })
-                }),
+                200: $DefaultResponse,
                 400: BadRequestResponseZ,
                 401: UnauthorizedResponseZ,
                 500: InternalServerErrorResponseZ

@@ -20,7 +20,6 @@ function failInternal(res: FastifyReply, err: unknown) {
 }
 import requireJWT from '../../../types/requireJWT'
 import { JWTPayloadZ } from '../../../types/JWTPayload'
-import SuccessIndicatorResponseZ from '../../../types/SuccessIndicatorResponseZ'
 import { usersTable } from '../../../db/schema'
 import { eq } from 'drizzle-orm'
 

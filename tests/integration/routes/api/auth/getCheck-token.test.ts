@@ -3,7 +3,6 @@ import fastify from '../../../../../src/fastify'
 import CT_JWT_checks from '../../../components/CT_JWT_checks'
 import getBurnerUser from '../../../getBurnerUser'
 import db from '../../../../../src/db'
-import { eq } from 'drizzle-orm'
 
 describe('GET /api/auth/check-token', async () => {
     //! Check for auth

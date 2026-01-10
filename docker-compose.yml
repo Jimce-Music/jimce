@@ -1,0 +1,39 @@
+services:
+  db:
+    image: postgres:18
+    environment:
+      POSTGRES_USER: jimce
+      POSTGRES_PASSWORD: jimce
+      POSTGRES_DB: jimce
+    volumes:
+      - jimce_prod_db_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U jimce -d jimce"]
+      interval: 1s
+      timeout: 1s
+      retries: 50
+      start_period: 0s
+
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - 8080:8080
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/ >/dev/null"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  jimce_prod_db_data:
+
+# TODO: Make sure only necessary stuff is copied
+# TODO: Production config and meta.yml + examples

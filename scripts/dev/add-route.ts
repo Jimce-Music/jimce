@@ -6,6 +6,13 @@ import path from 'path'
 
 const SRC_PATH = path.join(__dirname, '..', '..', 'src')
 const ROUTES_PATH = path.join(SRC_PATH, 'routes')
+const ROUTES_TEST_PATH = path.join(
+    SRC_PATH,
+    '..',
+    'tests',
+    'integration',
+    'routes'
+)
 const ALL_ROUTES_PATH = path.join(ROUTES_PATH, 'all.ts')
 
 console.log(
@@ -97,6 +104,11 @@ async function main(): Promise<void> {
         answers.isAPI ? 'api' : '',
         answers.package
     )
+    const PACKAGE_TEST_PATH = path.join(
+        ROUTES_TEST_PATH,
+        answers.isAPI ? 'api' : '',
+        answers.package
+    )
 
     let ROUTE_NAME = answers.path // Example input: example/:userid-:token/Sol/some-bs(^&/%\\:)/*        OR        users/:id/add
         .replace(/:([\w]*?)([^\w]|$)/g, '[$1]$2') // /:id --> /[id]
@@ -114,6 +126,10 @@ async function main(): Promise<void> {
     const ROUTE_FILE_PATH = path.join(
         PACKAGE_PATH,
         `${answers.method.toLowerCase()}${ROUTE_NAME}.ts`
+    )
+    const TEST_FILE_PATH = path.join(
+        PACKAGE_TEST_PATH,
+        `${answers.method.toLowerCase()}${ROUTE_NAME}.test.ts`
     )
 
     // Create route file
@@ -243,6 +259,14 @@ ${end_block}`
         )
         await fs.writeFile(ALL_ROUTES_PATH, IMPORTER_FILE, 'utf-8')
     }
+
+    //! Create test file
+    const FULL_API_URL = `/${answers.isAPI ? 'api/' : ''}${answers.package ? answers.package + '/' : ''}${answers.path}`
+    await fs.writeFile(
+        TEST_FILE_PATH,
+        `// Integration test for ${answers.method.toUpperCase()} ${FULL_API_URL}`,
+        'utf-8'
+    )
 }
 
 // Execution and error handling

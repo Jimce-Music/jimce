@@ -3,6 +3,7 @@ import fastify from '../../../../../src/fastify'
 import * as z from 'zod'
 import CT_JWT_checks from '../../../components/CT_JWT_checks'
 import getBurnerUser from '../../../getBurnerUser'
+import * as uuid from 'uuid'
 
 describe('PUT /api/auth/change-password', async () => {
     // Get burner user
@@ -11,7 +12,9 @@ describe('PUT /api/auth/change-password', async () => {
     //! Check for auth
     test(
         'Authentication works fine',
-        CT_JWT_checks('PUT', '/api/auth/change-password')
+        CT_JWT_checks('PUT', '/api/auth/change-password', {
+            newPassword: uuid.v7()
+        })
     )
 
     //! Check main functionality

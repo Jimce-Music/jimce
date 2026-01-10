@@ -13,7 +13,12 @@ describe('PUT /api/admin/users/create-or-change', async () => {
     //! Check for auth
     test(
         'Authentication works fine',
-        CT_JWT_checks('PUT', '/api/admin/users/create-or-change')
+        CT_JWT_checks('PUT', '/api/admin/users/create-or-change', {
+            username: uuid.v4(),
+            password: uuid.v4(),
+            email: null,
+            isAdmin: false
+        })
     )
 
     //! Check admin permissions
@@ -21,6 +26,7 @@ describe('PUT /api/admin/users/create-or-change', async () => {
         'Admin permissions required',
         CT_ADMIN_checks('PUT', '/api/admin/users/create-or-change', {
             username: uuid.v4(),
+            password: uuid.v4(),
             email: null,
             isAdmin: false
         })

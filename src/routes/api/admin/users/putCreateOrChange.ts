@@ -77,8 +77,21 @@ fastify.withTypeProvider<FastifyZodOpenApiTypeProvider>().put(
         } satisfies FastifyZodOpenApiSchema
     },
     async (req, res) => {
-        // Check privileges
-        const user = JWTPayloadZ.parse(req.user)
+        // Get JWT payload / user-info
+        let user: z.infer<typeof JWTPayloadZ> // FIXME: UPDATE EVERY USER PARSE, even in codegen to this
+        try {
+            user = JWTPayloadZ.parse(req.user)
+        } catch (err) {
+            logger.error('Error during JWT payload parsing via zod:')
+            logger.error(err)
+            return res.status(401).send({
+                statusCode: 401,
+                error: 'Unauthorized',
+                message: 'Failed to parse token payload',
+                code: 'TOKEN_PAYLOAD_INVALID'
+            })
+        }
+
         if (!req.isAdmin) {
             return res.status(403).send({
                 statusCode: 403,

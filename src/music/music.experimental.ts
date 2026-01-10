@@ -1,5 +1,4 @@
 import searchMusic from './metadata/search/searchMusic'
-import { mb } from './musicbrainz'
 import type { SearchResult } from 'yt-search'
 
 // This is a temporary file to try out the metadata fetching functions

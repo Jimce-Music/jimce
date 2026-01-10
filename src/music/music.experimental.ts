@@ -1,5 +1,4 @@
 import searchMusic from './metadata/search/searchMusic'
-import searchSong, { type SongSearchResult } from './metadata/search/searchSong'
 import { mb } from './musicbrainz'
 import yts, { type SearchResult } from 'yt-search'
 

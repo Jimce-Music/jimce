@@ -17,7 +17,6 @@ import InternalServerErrorResponseZ from '../../../types/InternalServerErrorResp
 import UnauthorizedResponseZ from '../../../types/UnauthorizedResponseZ'
 import {
     encodeJWTPayload,
-    JWTPayloadZ,
     type JWTPayloadT
 } from '../../../types/JWTPayload'
 

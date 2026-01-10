@@ -4,6 +4,7 @@ import CT_JWT_checks from '../../../components/CT_JWT_checks'
 import getBurnerUser from '../../../getBurnerUser'
 import * as uuid from 'uuid'
 import { eq } from 'drizzle-orm'
+import db from '../../../../../src/db'
 
 describe('GET /api/auth/check-token', async () => {
     //! Check for auth

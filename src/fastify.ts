@@ -14,7 +14,6 @@ import {
 } from 'fastify-zod-openapi'
 import fastifySwagger from '@fastify/swagger'
 import fastifySwaggerUI from '@fastify/swagger-ui'
-import { version } from 'os'
 
 // Define app / server / fastify 'instance'
 const fastify = Fastify({

@@ -70,6 +70,6 @@ if (meta.execution.server_disable_listening) {
         )
         process.exit(1)
     } finally {
-        logger.info(`Webserver listening on port ${config.server.port}`)
+        logger.info('Webserver is listening for HTTP requests')
     }
 }

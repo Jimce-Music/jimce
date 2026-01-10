@@ -8,6 +8,8 @@ import { migrateDB } from '../../src/db'
 import ensureAdminUsers from '../../src/jobs/ensureAdminUser'
 import { sleep } from 'bun'
 import fastify from '../../src/fastify'
+import type { $DefaultResponse } from '../../src/routes/api/auth/postLogin-basic'
+import * as z from 'zod'
 
 const META_PATH = path.resolve(__dirname, '../../meta.yml')
 const CWD = path.resolve(__dirname, '../..')
@@ -57,7 +59,18 @@ beforeAll(async () => {
     await import('../../src/index')
 
     // 6. Generate an admin JWT for the test run
-    // TODO:
+    const admin_login_res = await fastify.inject({
+        method: 'post',
+        url: '/api/auth/login-basic',
+        body: {
+            username: 'admin',
+            password: '123456789abc'
+        }
+    })
+    const admin_login_data =
+        admin_login_res.json<z.infer<typeof $DefaultResponse>>()
+    const admin_jwt = admin_login_data.token
+    process.env.ADMIN_JWT = admin_jwt
 })
 
 afterAll(async () => {

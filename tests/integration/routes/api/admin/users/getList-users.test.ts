@@ -4,7 +4,6 @@ import * as z from 'zod'
 import CT_JWT_checks from '../../../../components/CT_JWT_checks'
 import getBurnerUser from '../../../../getBurnerUser'
 import CT_ADMIN_checks from '../../../../components/CT_ADMIN_checks'
-import * as uuid from 'uuid'
 import db from '../../../../../../src/db'
 import { usersTable } from '../../../../../../src/db/schema'
 

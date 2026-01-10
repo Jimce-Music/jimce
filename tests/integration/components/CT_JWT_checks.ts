@@ -1,5 +1,4 @@
 import { expect, test, describe } from 'bun:test'
-import * as z from 'zod'
 import fastify from '../../../src/fastify'
 import getBurnerUser from '../getBurnerUser'
 

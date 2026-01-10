@@ -1,12 +1,9 @@
 import { timestamp } from 'drizzle-orm/gel-core'
 import {
-    integer,
     pgTable,
     uniqueIndex,
     uuid,
-    varchar,
     text,
-    serial,
     boolean
 } from 'drizzle-orm/pg-core'
 

@@ -65,9 +65,9 @@ fastify.withTypeProvider<FastifyZodOpenApiTypeProvider>().get(
         } satisfies FastifyZodOpenApiSchema
     },
     async (req, res) => {
-        let user: z.infer<typeof JWTPayloadZ>
         try {
-            user = JWTPayloadZ.parse(req.user)
+            JWTPayloadZ.parse(req.user)
+            // user = JWTPayloadZ.parse(req.user)
         } catch (err) {
             logger.error('Error during JWT payload parsing via zod:')
             logger.error(err)

@@ -1,5 +1,5 @@
-// ROUTE: /api/admin/users/create
-// METHOD: POST
+// ROUTE: /api/admin/users/create-or-change
+// METHOD: PUT
 // NAME: Create
 
 import fastify from '../../../../fastify'

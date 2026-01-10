@@ -93,8 +93,10 @@ export default fp(async (fastify) => {
                     }
                     return res.status(401).send(client_err)
                 } else if (
-                    err.message.includes('No Authorization was found in') &&
-                    err.message.includes('header')
+                    (err.message.includes('No Authorization was found in') &&
+                        err.message.includes('header')) ||
+                    (err.message.includes('[ERR_ASSERTION]') &&
+                        err.message.includes('missing token'))
                 ) {
                     // No token found
                     const client_err: z.infer<typeof UnauthorizedResponseZ> = {

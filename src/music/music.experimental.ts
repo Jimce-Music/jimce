@@ -1,6 +1,6 @@
 import searchMusic from './metadata/search/searchMusic'
 import { mb } from './musicbrainz'
-import yts, { type SearchResult } from 'yt-search'
+import type { SearchResult } from 'yt-search'
 
 // This is a temporary file to try out the metadata fetching functions
 // console.log(await searchSong('Bella Napoli')) // id: c6d49f0b-951f-407c-b803-c066e4ff3c6c

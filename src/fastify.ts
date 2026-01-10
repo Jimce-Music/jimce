@@ -2,7 +2,6 @@
 import Fastify from 'fastify'
 import path from 'path'
 import meta_raw from '../meta.yml'
-import * as z from 'zod'
 import MetaZ from './types/meta.yml.ts'
 const meta = MetaZ.parse(meta_raw)
 
@@ -14,7 +13,6 @@ import {
 } from 'fastify-zod-openapi'
 import fastifySwagger from '@fastify/swagger'
 import fastifySwaggerUI from '@fastify/swagger-ui'
-import { version } from 'os'
 
 // Define app / server / fastify 'instance'
 const fastify = Fastify({

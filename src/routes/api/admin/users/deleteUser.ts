@@ -62,7 +62,19 @@ fastify.withTypeProvider<FastifyZodOpenApiTypeProvider>().delete(
                     message: 'You need admin rights to access this route'
                 })
             }
-            const user = JWTPayloadZ.parse(req.user)
+            let user: z.infer<typeof JWTPayloadZ>
+            try {
+                user = JWTPayloadZ.parse(req.user)
+            } catch (err) {
+                logger.error('Error during JWT payload parsing via zod:')
+                logger.error(err)
+                return res.status(401).send({
+                    statusCode: 401,
+                    error: 'Unauthorized',
+                    message: 'Failed to parse token payload',
+                    code: 'TOKEN_PAYLOAD_INVALID'
+                })
+            }
 
             // Delete users
             const deletedUsers = await db

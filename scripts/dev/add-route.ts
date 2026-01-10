@@ -161,7 +161,19 @@ async function main(): Promise<void> {
         template = template.replaceAll('$AUTH_2$', 'security: requireJWT,')
         template = template.replaceAll(
             '$AUTH_3$',
-            `const user = JWTPayloadZ.parse(req.user)`
+            `let user: z.infer<typeof JWTPayloadZ>
+                    try {
+                        user = JWTPayloadZ.parse(req.user)
+                    } catch (err) {
+                        logger.error('Error during JWT payload parsing via zod:')
+                        logger.error(err)
+                        return res.status(401).send({
+                            statusCode: 401,
+                            error: 'Unauthorized',
+                            message: 'Failed to parse token payload',
+                            code: 'TOKEN_PAYLOAD_INVALID'
+                        })
+                    }`
         )
     } else {
         template = template.replace(/\$(AUTH)_[0-9]\$/g, '')

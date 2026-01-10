@@ -78,7 +78,7 @@ fastify.withTypeProvider<FastifyZodOpenApiTypeProvider>().put(
     },
     async (req, res) => {
         // Get JWT payload / user-info
-        let user: z.infer<typeof JWTPayloadZ> // FIXME: UPDATE EVERY USER PARSE, even in codegen to this
+        let user: z.infer<typeof JWTPayloadZ>
         try {
             user = JWTPayloadZ.parse(req.user)
         } catch (err) {

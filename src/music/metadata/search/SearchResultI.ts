@@ -16,7 +16,8 @@ export default interface SearchResult {
         provider: 'musicbrainz' | 'youtube' | 'spotify' // maybe more later on
         link: string
     }[]
-    artist?: { // TODO: non optional
+    artist?: {
+        // TODO: non optional
         name: string
         src: {
             provider: 'musicbrainz' | 'youtube' | 'spotify' // maybe more later on

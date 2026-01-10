@@ -11,7 +11,6 @@ import {
 import logger from '../../../../logger'
 import db from '../../../../db'
 import meta from '../../../../meta'
-import config from '../../../../config'
 import { usersTable } from '../../../../db/schema'
 import BadRequestResponseZ from '../../../../types/BadRequestResponseZ'
 import InternalServerErrorResponseZ from '../../../../types/InternalServerErrorResponseZ'

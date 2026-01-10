@@ -2,7 +2,7 @@
 // Imports
 import logger from './logger'
 import fastify from './fastify'
-import db, { migrateDB } from './db'
+import { migrateDB } from './db'
 import fs from 'fs'
 import path from 'path'
 import { setupJWT } from './auth/jwt-routes'

@@ -2,7 +2,6 @@
 import Fastify from 'fastify'
 import path from 'path'
 import meta_raw from '../meta.yml'
-import * as z from 'zod'
 import MetaZ from './types/meta.yml.ts'
 const meta = MetaZ.parse(meta_raw)
 

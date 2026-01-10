@@ -2,7 +2,6 @@ import { expect, test, describe } from 'bun:test'
 import fastify from '../../../../../src/fastify'
 import CT_JWT_checks from '../../../components/CT_JWT_checks'
 import getBurnerUser from '../../../getBurnerUser'
-import * as uuid from 'uuid'
 import { eq } from 'drizzle-orm'
 import db from '../../../../../src/db'
 

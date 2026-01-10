@@ -7,7 +7,7 @@ import CT_ADMIN_checks from '../../../../components/CT_ADMIN_checks'
 import * as uuid from 'uuid'
 import db from '../../../../../../src/db'
 import { usersTable } from '../../../../../../src/db/schema'
-import { eq } from 'drizzle-orm'
+
 
 describe('GET /api/admin/users/list-users', async () => {
     //! Check for auth

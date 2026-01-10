@@ -37,7 +37,7 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 *.log
 
 # Database migrations
-src/db/drizzle
+# src/db/drizzle
 
 # API clients
 api-clients/typescript-api-client/src/client/

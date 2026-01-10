@@ -1,0 +1,3 @@
+[test]
+preload = ["./tests/integration/setup.ts"]
+coverageSkipTestFiles = true  # Exclude test files from coverage reports

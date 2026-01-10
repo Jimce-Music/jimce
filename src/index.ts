@@ -12,6 +12,7 @@ import { setupJWT } from './auth/jwt-routes'
 import config from './config'
 // Load meta.yml
 import meta from './meta'
+import ensureAdminUsers from './jobs/ensureAdminUser'
 
 // ################################################ //
 // Initialization
@@ -23,6 +24,14 @@ if (meta.execution.disable_db) {
     logger.info('Detected CI run, skipping database migrations')
 } else {
     await migrateDB()
+}
+
+// ################################################ //
+// Create admin users if none exist
+if (meta.execution.disable_background_jobs) {
+    logger.info("Won't ensure admin user, as background jobs are disabled")
+} else {
+    await ensureAdminUsers()
 }
 
 // ################################################ //
@@ -44,16 +53,23 @@ fs.writeFileSync(
     JSON.stringify(openapi, null, 2)
 )
 logger.info('Done writing openapi.json')
+// TODO: Generate openapi docs as static html, with pre-commit hook
 
 // Start webserver
-try {
-    await fastify.listen({ port: config.server.port })
-} catch (err) {
-    fastify.log.error(err)
-    logger.fatal(
-        'Webserver was not able to start. See the jimce-server.log file for more information'
+if (meta.execution.server_disable_listening) {
+    logger.warn(
+        "Because server_disable_listening is set to true, the server won't answer HTTP requests"
     )
-    process.exit(1)
-} finally {
-    logger.info(`Webserver listening on port ${config.server.port}`)
+} else {
+    try {
+        await fastify.listen({ port: config.server.port })
+    } catch (err) {
+        fastify.log.error(err)
+        logger.fatal(
+            'Webserver was not able to start. See the jimce-server.log file for more information'
+        )
+        process.exit(1)
+    } finally {
+        logger.info('Webserver is listening for HTTP requests')
+    }
 }

@@ -15,3 +15,15 @@ database:
 # Authentication
 auth:
   jwt_secret: dev-secret-CHANGE-IN-PROD!
+
+# Metadata providers
+metadataProviders:
+  spotify:
+    enable: true
+    clientId: ${SPOTIFY_CLIENT_ID} # ${VAR} will load the value from the .env file
+    clientSecret: ${SPOTIFY_CLIENT_SECRET}
+  youtube:
+    enable: true
+  theAudioDb:
+    enable: true
+    apiKey: "123"

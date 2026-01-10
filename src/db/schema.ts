@@ -10,12 +10,7 @@ import {
     boolean
 } from 'drizzle-orm/pg-core'
 
-export const testTable = pgTable('test', {
-    id: integer().primaryKey().generatedAlwaysAsIdentity(),
-    name: varchar({ length: 255 }).notNull(),
-    age: integer().notNull()
-})
-
+// Internal stuff + auth related
 export const usersTable = pgTable(
     'users',
     {
@@ -27,3 +22,8 @@ export const usersTable = pgTable(
     },
     (table) => [uniqueIndex('username_idx').on(table.username)] // username as secondary index
 )
+
+// Music related
+export const songsTable = pgTable('songs', {
+    id: uuid().notNull().primaryKey().defaultRandom()
+})

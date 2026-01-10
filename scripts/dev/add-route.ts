@@ -6,6 +6,13 @@ import path from 'path'
 
 const SRC_PATH = path.join(__dirname, '..', '..', 'src')
 const ROUTES_PATH = path.join(SRC_PATH, 'routes')
+const ROUTES_TEST_PATH = path.join(
+    SRC_PATH,
+    '..',
+    'tests',
+    'integration',
+    'routes'
+)
 const ALL_ROUTES_PATH = path.join(ROUTES_PATH, 'all.ts')
 
 console.log(
@@ -97,6 +104,11 @@ async function main(): Promise<void> {
         answers.isAPI ? 'api' : '',
         answers.package
     )
+    const PACKAGE_TEST_PATH = path.join(
+        ROUTES_TEST_PATH,
+        answers.isAPI ? 'api' : '',
+        answers.package
+    )
 
     let ROUTE_NAME = answers.path // Example input: example/:userid-:token/Sol/some-bs(^&/%\\:)/*        OR        users/:id/add
         .replace(/:([\w]*?)([^\w]|$)/g, '[$1]$2') // /:id --> /[id]
@@ -115,6 +127,10 @@ async function main(): Promise<void> {
         PACKAGE_PATH,
         `${answers.method.toLowerCase()}${ROUTE_NAME}.ts`
     )
+    const TEST_FILE_PATH = path.join(
+        PACKAGE_TEST_PATH,
+        `${answers.method.toLowerCase()}${ROUTE_NAME}.test.ts`
+    )
 
     // Create route file
     let dotDotCountUntilSrcDir = 1
@@ -123,6 +139,7 @@ async function main(): Promise<void> {
         dotDotCountUntilSrcDir += answers.package.split('/').length
     }
     const srcDirRelativePath = `${'../'.repeat(dotDotCountUntilSrcDir) === '' ? './' : '../'.repeat(dotDotCountUntilSrcDir)}`
+    const rootDirRelativePathToTests = srcDirRelativePath + '../../'
 
     let template = await fs.readFile(
         path.join(__dirname, 'route.ts.template'),
@@ -144,10 +161,10 @@ async function main(): Promise<void> {
         '$OPTIONAL_BODY$',
         answers.method !== 'GET'
             ? `body: z.object({
-                dataField: z.string().meta({
+                /*dataField: z.string().meta({
                     description: 'Just some data field',
                     example: '32168'
-                })
+                })*/
             }),
 `
             : ''
@@ -161,7 +178,19 @@ async function main(): Promise<void> {
         template = template.replaceAll('$AUTH_2$', 'security: requireJWT,')
         template = template.replaceAll(
             '$AUTH_3$',
-            `const user = JWTPayloadZ.parse(req.user)`
+            `let user: z.infer<typeof JWTPayloadZ>
+                    try {
+                        user = JWTPayloadZ.parse(req.user)
+                    } catch (err) {
+                        logger.error('Error during JWT payload parsing via zod:')
+                        logger.error(err)
+                        return res.status(401).send({
+                            statusCode: 401,
+                            error: 'Unauthorized',
+                            message: 'Failed to parse token payload',
+                            code: 'TOKEN_PAYLOAD_INVALID'
+                        })
+                    }`
         )
     } else {
         template = template.replace(/\$(AUTH)_[0-9]\$/g, '')
@@ -231,6 +260,64 @@ ${end_block}`
         )
         await fs.writeFile(ALL_ROUTES_PATH, IMPORTER_FILE, 'utf-8')
     }
+
+    //! Create test file
+    const FULL_API_URL = `/${answers.isAPI ? 'api/' : ''}${answers.package ? answers.package + '/' : ''}${answers.path}`
+    await fs.writeFile(
+        TEST_FILE_PATH,
+        `// Integration test for ${answers.method.toUpperCase()} ${FULL_API_URL}
+
+import { expect, test, describe } from 'bun:test'
+import fastify from '${rootDirRelativePathToTests}src/fastify'
+import * as z from 'zod'
+import CT_JWT_checks from '${rootDirRelativePathToTests}tests/integration/components/CT_JWT_checks'
+import getBurnerUser from '${rootDirRelativePathToTests}tests/integration/getBurnerUser'
+import CT_ADMIN_checks from '${rootDirRelativePathToTests}tests/integration/components/CT_ADMIN_checks'
+import * as uuid from 'uuid'
+import db from '${rootDirRelativePathToTests}src/db'
+import { usersTable } from '${rootDirRelativePathToTests}src/db/schema'
+import { eq } from 'drizzle-orm'
+
+describe('${answers.method.toUpperCase()} ${FULL_API_URL}', async () => {
+    ${
+        answers.requiresAuth
+            ? `//! Check for auth
+    test(
+        'Authentication works fine',
+        CT_JWT_checks('GET', '/api/admin/users/list-users') // TODO: Add valid body if required by the endpoint
+    )`
+            : ''
+    }
+
+    ${
+        adminExclusive
+            ? `//! Check admin permissions
+    test(
+        'Admin permissions required',
+        CT_ADMIN_checks('GET', '/api/admin/users/list-users') // TODO: Add valid body if required by the endpoint
+    )`
+            : ''
+    }
+
+    //! Check main functionality
+    test('Main functionality', async () => { // TODO: Add a descriptive title
+        const user = await getBurnerUser(false)
+
+        // TODO: Test core functionality
+        
+        const res = await fastify.inject({
+            method: '${answers.method.toUpperCase()}',
+            url: '${FULL_API_URL}',
+            headers: {
+                authorization: \`Bearer \${user.jwt}\` // or: process.env.ADMIN_JWT
+            }
+        })
+        expect(res.statusCode).toBe(200)
+    })
+})
+`,
+        'utf-8'
+    )
 }
 
 // Execution and error handling

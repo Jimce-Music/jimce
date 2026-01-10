@@ -1,0 +1,1 @@
+This `tests/integration/components` folder contains reusable test components, which may be used in other test files to test things like correct auth & permission handling and more. This drastically simplifies testing, as these component tests will be auto-applied when generating a new route.

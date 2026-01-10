@@ -9,7 +9,6 @@ import {
     type FastifyZodOpenApiTypeProvider
 } from 'fastify-zod-openapi'
 import logger from '../../../logger'
-import meta from '../../../meta'
 import BadRequestResponseZ from '../../../types/BadRequestResponseZ'
 import InternalServerErrorResponseZ from '../../../types/InternalServerErrorResponseZ'
 import UnauthorizedResponseZ from '../../../types/UnauthorizedResponseZ'

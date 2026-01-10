@@ -11,7 +11,6 @@ import {
 import logger from '../../../../logger'
 import db from '../../../../db'
 import '../../../../meta'
-import config from '../../../../config'
 import BadRequestResponseZ from '../../../../types/BadRequestResponseZ'
 import InternalServerErrorResponseZ from '../../../../types/InternalServerErrorResponseZ'
 import UnauthorizedResponseZ from '../../../../types/UnauthorizedResponseZ'

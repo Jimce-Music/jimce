@@ -19,6 +19,7 @@ export type HTTPMethod =
     | 'OPTIONS'
     | 'options'
 
+// TODO: Check if a valid body might be required
 export default function CT_JWT_checks(method: HTTPMethod, url: string) {
     // Will get run by the test(name, callback)
     return async function () {

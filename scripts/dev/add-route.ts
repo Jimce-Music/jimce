@@ -139,6 +139,7 @@ async function main(): Promise<void> {
         dotDotCountUntilSrcDir += answers.package.split('/').length
     }
     const srcDirRelativePath = `${'../'.repeat(dotDotCountUntilSrcDir) === '' ? './' : '../'.repeat(dotDotCountUntilSrcDir)}`
+    const rootDirRelativePathToTests = srcDirRelativePath + '../../'
 
     let template = await fs.readFile(
         path.join(__dirname, 'route.ts.template'),
@@ -264,7 +265,57 @@ ${end_block}`
     const FULL_API_URL = `/${answers.isAPI ? 'api/' : ''}${answers.package ? answers.package + '/' : ''}${answers.path}`
     await fs.writeFile(
         TEST_FILE_PATH,
-        `// Integration test for ${answers.method.toUpperCase()} ${FULL_API_URL}`,
+        `// Integration test for ${answers.method.toUpperCase()} ${FULL_API_URL}
+
+import { expect, test, describe } from 'bun:test'
+import fastify from '${rootDirRelativePathToTests}src/fastify'
+import * as z from 'zod'
+import CT_JWT_checks from '${rootDirRelativePathToTests}tests/integration/components/CT_JWT_checks'
+import getBurnerUser from ${rootDirRelativePathToTests}tests/integration/getBurnerUser'
+import CT_ADMIN_checks from '${rootDirRelativePathToTests}tests/integration/components/CT_ADMIN_checks'
+import * as uuid from 'uuid'
+import db from '${rootDirRelativePathToTests}src/db'
+import { usersTable } from '${rootDirRelativePathToTests}src/db/schema'
+import { eq } from 'drizzle-orm'
+
+describe('${answers.method.toUpperCase()} ${FULL_API_URL}', async () => {
+    ${
+        answers.requiresAuth
+            ? `//! Check for auth
+    test(
+        'Authentication works fine',
+        CT_JWT_checks('GET', '/api/admin/users/list-users') // TODO: Add valid body if required by the endpoint
+    )`
+            : ''
+    }
+
+    ${
+        adminExclusive
+            ? `//! Check admin permissions
+    test(
+        'Admin permissions required',
+        CT_ADMIN_checks('GET', '/api/admin/users/list-users') // TODO: Add valid body if required by the endpoint
+    )`
+            : ''
+    }
+
+    //! Check main functionality
+    test('Main functionality', async () => { // TODO: Add a descriptive title
+        const user = await getBurnerUser(false)
+
+        // TODO: Test core functionality
+        
+        const res = await fastify.inject({
+            method: '${answers.method.toUpperCase()}',
+            url: '${FULL_API_URL}',
+            headers: {
+                authorization: \`Bearer \${user.jwt}\` // or: process.env.ADMIN_JWT
+            }
+        })
+        expect(res.statusCode).toBe(200)
+    })
+})
+`,
         'utf-8'
     )
 }

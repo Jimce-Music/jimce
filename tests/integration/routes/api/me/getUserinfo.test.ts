@@ -3,6 +3,7 @@ import fastify from '../../../../../src/fastify'
 import CT_JWT_checks from '../../../components/CT_JWT_checks'
 import getBurnerUser from '../../../getBurnerUser'
 import { usersTable } from '../../../../../src/db/schema'
+import db from '../../../../../src/db'
 
 describe('GET /api/me/userinfo', async () => {
     //! Check for auth

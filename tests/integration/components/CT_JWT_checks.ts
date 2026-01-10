@@ -1,4 +1,4 @@
-import { expect, test, describe } from 'bun:test'
+import { expect } from 'bun:test'
 import fastify from '../../../src/fastify'
 import getBurnerUser from '../getBurnerUser'
 

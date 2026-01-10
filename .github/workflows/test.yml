@@ -10,6 +10,8 @@ on:
 jobs:
   bun-test:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     # PostgreSQL as a docker service
     services:

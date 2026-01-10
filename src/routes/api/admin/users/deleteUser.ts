@@ -11,7 +11,6 @@ import {
 import logger from '../../../../logger'
 import db from '../../../../db'
 import meta from '../../../../meta'
-import InternalServerErrorResponseZ from '../../../../types/InternalServerErrorResponseZ'
 import UnauthorizedResponseZ from '../../../../types/UnauthorizedResponseZ'
 import type { FastifyReply } from 'fastify'
 import _failInternal from '../../../../utils/failInternal'

@@ -67,6 +67,7 @@ fastify.withTypeProvider<FastifyZodOpenApiTypeProvider>().get(
     async (req, res) => {
         try {
             JWTPayloadZ.parse(req.user)
+            // user = JWTPayloadZ.parse(req.user)
         } catch (err) {
             logger.error('Error during JWT payload parsing via zod:')
             logger.error(err)

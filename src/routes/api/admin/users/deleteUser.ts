@@ -54,14 +54,6 @@ fastify.withTypeProvider<FastifyZodOpenApiTypeProvider>().delete(
     },
     async (req, res) => {
         try {
-            if (!req.isAdmin) {
-                return res.status(403).send({
-                    statusCode: 403,
-                    code: 'NOT_AN_ADMIN',
-                    error: 'Forbidden',
-                    message: 'You need admin rights to access this route'
-                })
-            }
             let user: z.infer<typeof JWTPayloadZ>
             try {
                 user = JWTPayloadZ.parse(req.user)
@@ -73,6 +65,15 @@ fastify.withTypeProvider<FastifyZodOpenApiTypeProvider>().delete(
                     error: 'Unauthorized',
                     message: 'Failed to parse token payload',
                     code: 'TOKEN_PAYLOAD_INVALID'
+                })
+            }
+
+            if (!req.isAdmin) {
+                return res.status(403).send({
+                    statusCode: 403,
+                    code: 'NOT_AN_ADMIN',
+                    error: 'Forbidden',
+                    message: 'You need admin rights to access this route'
                 })
             }
 

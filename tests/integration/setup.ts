@@ -13,7 +13,6 @@ import * as z from 'zod'
 import logger from '../../src/logger'
 
 const META_PATH = path.resolve(__dirname, '../../meta.yml')
-
 const originalRaw = await readFile(META_PATH, 'utf8')
 
 beforeAll(async () => {

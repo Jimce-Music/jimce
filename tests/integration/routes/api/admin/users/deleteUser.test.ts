@@ -1,6 +1,5 @@
 import { expect, test, describe } from 'bun:test'
 import fastify from '../../../../../../src/fastify'
-import * as z from 'zod'
 import CT_JWT_checks from '../../../../components/CT_JWT_checks'
 import getBurnerUser from '../../../../getBurnerUser'
 import CT_ADMIN_checks from '../../../../components/CT_ADMIN_checks'

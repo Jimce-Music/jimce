@@ -13,12 +13,20 @@ import {
 } from 'fastify-zod-openapi'
 import fastifySwagger from '@fastify/swagger'
 import fastifySwaggerUI from '@fastify/swagger-ui'
+import RateLimiter from '@fastify/rate-limit'
 
 // Define app / server / fastify 'instance'
 const fastify = Fastify({
     logger: {
         file: path.join(process.cwd(), 'jimce-server.log')
     }
+})
+
+// Set up rate-limiting
+await fastify.register(RateLimiter, {
+    allowList: [],
+    max: 150,
+    timeWindow: 1000 * 70 // 1 minute + 10 seconds
 })
 
 // Set up app for OpenAPI

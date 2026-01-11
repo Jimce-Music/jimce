@@ -13,10 +13,7 @@ import db from '../../../db'
 import BadRequestResponseZ from '../../../types/BadRequestResponseZ'
 import InternalServerErrorResponseZ from '../../../types/InternalServerErrorResponseZ'
 import UnauthorizedResponseZ from '../../../types/UnauthorizedResponseZ'
-import {
-    encodeJWTPayload,
-    type JWTPayloadT
-} from '../../../types/JWTPayload'
+import { encodeJWTPayload, type JWTPayloadT } from '../../../types/JWTPayload'
 
 import type { FastifyReply } from 'fastify'
 import _failInternal from '../../../utils/failInternal'

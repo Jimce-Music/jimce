@@ -11,6 +11,7 @@ import './main'
 // --api--§NEW_HERE§--
 
 // Package:
+import './api/getPing.ts' // GET /api/ping
 // --api---§NEW_HERE§--
 
 // Package: admin/users

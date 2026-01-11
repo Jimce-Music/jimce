@@ -1,10 +1,4 @@
-import {
-    pgTable,
-    uniqueIndex,
-    uuid,
-    text,
-    boolean
-} from 'drizzle-orm/pg-core'
+import { pgTable, uniqueIndex, uuid, text, boolean } from 'drizzle-orm/pg-core'
 
 // Internal stuff + auth related
 export const usersTable = pgTable(

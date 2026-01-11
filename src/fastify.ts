@@ -14,6 +14,7 @@ import {
 import fastifySwagger from '@fastify/swagger'
 import fastifySwaggerUI from '@fastify/swagger-ui'
 import RateLimiter from '@fastify/rate-limit'
+import fastifyCors from '@fastify/cors'
 
 // Define app / server / fastify 'instance'
 const fastify = Fastify({
@@ -28,6 +29,13 @@ await fastify.register(RateLimiter, {
     max: 150,
     timeWindow: 1000 * 70 // 1 minute + 10 seconds
 })
+
+// Set up CORS in dev mode
+if (meta.is_dev) {
+    await fastify.register(fastifyCors, {
+        origin: '*'
+    })
+}
 
 // Set up app for OpenAPI
 fastify.setValidatorCompiler(validatorCompiler)

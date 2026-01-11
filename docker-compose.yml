@@ -6,7 +6,7 @@ services:
       POSTGRES_PASSWORD: jimce
       POSTGRES_DB: jimce
     volumes:
-      - jimce_prod_db_data:/var/lib/postgresql/data
+      - jimce_prod_db_data:/var/lib/postgresql
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U jimce -d jimce"]
@@ -31,9 +31,11 @@ services:
       timeout: 3s
       retries: 3
       start_period: 10s
+    volumes:
+      - ./config-docker.yml:/app/config.yml # config.yml
+      - ./.env:/app/.env # .env
 
 volumes:
   jimce_prod_db_data:
-
 # TODO: Make sure only necessary stuff is copied
 # TODO: Production config and meta.yml + examples

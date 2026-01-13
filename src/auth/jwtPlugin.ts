@@ -76,8 +76,8 @@ export default fp(async (fastify) => {
                 return res.status(401).send(client_err)
             }
         } catch (err) {
-            logger.error('Error during jwt auth')
-            logger.error(err)
+            logger.warn('Error during jwt auth')
+            logger.warn(err)
             return
             // if (
             //     typeof err === 'object' &&

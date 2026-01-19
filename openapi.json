@@ -15,6 +15,7 @@
     },
     "schemas": {
       "400-bad-request-response": {
+        "description": "A response sent by the server when your request is malformed (Code 400)",
         "type": "object",
         "properties": {
           "statusCode": {
@@ -22,19 +23,19 @@
             "const": 400
           },
           "code": {
-            "type": "string",
             "description": "Internal code describing the error",
             "examples": [
               "FST_ERR_VALIDATION"
-            ]
+            ],
+            "type": "string"
           },
           "error": {
             "type": "string",
             "const": "Bad Request"
           },
           "message": {
-            "type": "string",
-            "description": "Error message describing what went wrong"
+            "description": "Error message describing what went wrong",
+            "type": "string"
           }
         },
         "required": [
@@ -43,10 +44,10 @@
           "error",
           "message"
         ],
-        "additionalProperties": false,
-        "description": "A response sent by the server when your request is malformed (Code 400)"
+        "additionalProperties": false
       },
       "401-unauthorized-response": {
+        "description": "A response sent by the server when your request is not authorized",
         "type": "object",
         "properties": {
           "statusCode": {
@@ -54,19 +55,19 @@
             "const": 401
           },
           "code": {
-            "type": "string",
             "description": "Internal code describing the error",
             "examples": [
               "FST_JWT_NO_AUTHORIZATION_IN_HEADER"
-            ]
+            ],
+            "type": "string"
           },
           "error": {
             "type": "string",
             "const": "Unauthorized"
           },
           "message": {
-            "type": "string",
-            "description": "Error message describing what went wrong"
+            "description": "Error message describing what went wrong",
+            "type": "string"
           }
         },
         "required": [
@@ -75,10 +76,10 @@
           "error",
           "message"
         ],
-        "additionalProperties": false,
-        "description": "A response sent by the server when your request is not authorized"
+        "additionalProperties": false
       },
       "403-forbidden-response": {
+        "description": "A response sent by the server when lack the required permissions (HTTP 403)",
         "type": "object",
         "properties": {
           "statusCode": {
@@ -86,19 +87,19 @@
             "const": 403
           },
           "code": {
-            "type": "string",
             "description": "Internal code describing the error",
             "examples": [
               "NOT_AN_ADMIN"
-            ]
+            ],
+            "type": "string"
           },
           "error": {
             "type": "string",
             "const": "Forbidden"
           },
           "message": {
-            "type": "string",
-            "description": "Error message describing what went wrong"
+            "description": "Error message describing what went wrong",
+            "type": "string"
           }
         },
         "required": [
@@ -107,10 +108,10 @@
           "error",
           "message"
         ],
-        "additionalProperties": false,
-        "description": "A response sent by the server when lack the required permissions (HTTP 403)"
+        "additionalProperties": false
       },
       "500-internal-server-error-response": {
+        "description": "A response sent by the server when the server failed to process your request",
         "type": "object",
         "properties": {
           "statusCode": {
@@ -118,22 +119,22 @@
             "const": 500
           },
           "code": {
-            "type": "string",
             "description": "Internal code describing the error",
             "examples": [
               "FST_ERR_RESPONSE_SERIALIZATION"
-            ]
+            ],
+            "type": "string"
           },
           "error": {
             "type": "string",
             "const": "Internal Server Error"
           },
           "message": {
-            "type": "string",
             "description": "Error message describing what went wrong",
             "examples": [
               "Response does not match the schema"
-            ]
+            ],
+            "type": "string"
           }
         },
         "required": [
@@ -142,15 +143,15 @@
           "error",
           "message"
         ],
-        "additionalProperties": false,
-        "description": "A response sent by the server when the server failed to process your request"
+        "additionalProperties": false
       },
       "success-indicator-response": {
+        "description": "A response sent by the server when your request is valid to indicate whether it was successful or not",
         "type": "object",
         "properties": {
           "success": {
-            "type": "boolean",
-            "description": "States whether the requested action was successful"
+            "description": "States whether the requested action was successful",
+            "type": "boolean"
           },
           "reason": {
             "description": "An optional reason for the success or fail of your requested action",
@@ -163,8 +164,7 @@
         "required": [
           "success"
         ],
-        "additionalProperties": false,
-        "description": "A response sent by the server when your request is valid to indicate whether it was successful or not"
+        "additionalProperties": false
       }
     }
   },
@@ -189,16 +189,21 @@
                     "type": "object",
                     "properties": {
                       "id": {
-                        "type": "string",
                         "description": "The uuid of the user",
                         "examples": [
                           "5b9e340c-38ba-4495-b895-c3aee230134e"
-                        ]
+                        ],
+                        "type": "string"
                       },
                       "username": {
                         "type": "string"
                       },
                       "email": {
+                        "description": "If existent, the email of the user",
+                        "examples": [
+                          null,
+                          "user@example.com"
+                        ],
                         "anyOf": [
                           {
                             "type": "string"
@@ -206,19 +211,14 @@
                           {
                             "type": "null"
                           }
-                        ],
-                        "description": "If existent, the email of the user",
-                        "examples": [
-                          null,
-                          "user@example.com"
                         ]
                       },
                       "isAdmin": {
-                        "type": "boolean",
                         "description": "Defines whether the user has admin privileges",
                         "examples": [
                           false
-                        ]
+                        ],
+                        "type": "boolean"
                       }
                     },
                     "required": [
@@ -287,12 +287,12 @@
                 "type": "object",
                 "properties": {
                   "username": {
-                    "type": "string",
-                    "minLength": 3,
                     "description": "The username which will be assigned to the user (if already in use, user will be updated)",
                     "examples": [
                       "test.user"
-                    ]
+                    ],
+                    "type": "string",
+                    "minLength": 3
                   },
                   "password": {
                     "description": "The new password in plain text for the user. Optional when user already exists, necessary when creating from scratch. Must be at least 12 characters long",
@@ -300,6 +300,10 @@
                     "minLength": 12
                   },
                   "email": {
+                    "description": "If provided, the new email of the user, if set to null, it will still be updated to null.",
+                    "examples": [
+                      "user@example.com"
+                    ],
                     "anyOf": [
                       {
                         "type": "string",
@@ -309,19 +313,15 @@
                       {
                         "type": "null"
                       }
-                    ],
-                    "description": "If provided, the new email of the user, if set to null, it will still be updated to null.",
-                    "examples": [
-                      "user@example.com"
                     ]
                   },
                   "isAdmin": {
-                    "type": "boolean",
                     "description": "Declares whether the user shall have admin rights",
                     "examples": [
                       false,
                       true
-                    ]
+                    ],
+                    "type": "boolean"
                   }
                 },
                 "required": [
@@ -402,9 +402,9 @@
                 "type": "object",
                 "properties": {
                   "id": {
+                    "description": "The uuid of the user to delete",
                     "type": "string",
-                    "minLength": 4,
-                    "description": "The uuid of the user to delete"
+                    "minLength": 4
                   }
                 },
                 "required": [
@@ -492,21 +492,23 @@
                   "type": "object",
                   "properties": {
                     "payload": {
+                      "title": "JWT Payload",
+                      "description": "The Zod type for a JWT payload which can be accessed via req.user",
                       "type": "object",
                       "properties": {
                         "id": {
-                          "type": "string",
                           "examples": [
                             "5b9e340c-38ba-4495-b895-c3aee230134e"
                           ],
-                          "description": "The uuid of the user"
+                          "description": "The uuid of the user",
+                          "type": "string"
                         },
                         "username": {
-                          "type": "string",
                           "examples": [
                             "test.user"
                           ],
-                          "description": "The username of the user"
+                          "description": "The username of the user",
+                          "type": "string"
                         },
                         "validUntil": {
                           "description": "The timestamp describing when the token will become invalidated",
@@ -521,9 +523,7 @@
                         "username",
                         "validUntil"
                       ],
-                      "additionalProperties": false,
-                      "title": "JWT Payload",
-                      "description": "The Zod type for a JWT payload which can be accessed via req.user"
+                      "additionalProperties": false
                     },
                     "isAdmin": {
                       "type": "boolean"
@@ -608,11 +608,11 @@
                   "type": "object",
                   "properties": {
                     "token": {
-                      "type": "string",
                       "description": "The Json Web Token (JWT) issued by the server",
                       "examples": [
                         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30"
-                      ]
+                      ],
+                      "type": "string"
                     }
                   },
                   "required": [
@@ -667,12 +667,12 @@
                 "type": "object",
                 "properties": {
                   "newPassword": {
-                    "type": "string",
-                    "minLength": 12,
                     "description": "The new password as plain text for the user",
                     "examples": [
                       "123456789abc"
-                    ]
+                    ],
+                    "type": "string",
+                    "minLength": 12
                   }
                 },
                 "required": [
@@ -747,11 +747,12 @@
             "content": {
               "application/json": {
                 "schema": {
+                  "description": "The user info",
                   "type": "object",
                   "properties": {
                     "id": {
-                      "type": "string",
-                      "description": "The uuid of the user"
+                      "description": "The uuid of the user",
+                      "type": "string"
                     },
                     "username": {
                       "type": "string"
@@ -776,8 +777,7 @@
                     "email",
                     "isAdmin"
                   ],
-                  "additionalProperties": false,
-                  "description": "The user info"
+                  "additionalProperties": false
                 }
               }
             }

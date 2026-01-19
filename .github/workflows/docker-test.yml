@@ -1,0 +1,3 @@
+# This workflow runs the docker-compose.test.yml with a fresh build step to test if the app still works in docker.
+# The test is accepted as passed when all containers become healthy (and fails on a 40s timeout)
+# TODO: Implement the workflow as described above

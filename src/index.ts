@@ -1,6 +1,6 @@
 // ################################################ //
 // Imports
-import logger from './logger'
+import logger from './logger' //! Should be on top to ensure ./logs dir
 import fastify from './fastify'
 import { migrateDB } from './db'
 import fs from 'fs'

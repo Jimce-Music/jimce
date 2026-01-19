@@ -37,9 +37,7 @@ jobs:
           BRANCH="${GITHUB_REF_NAME//\//-}"
           SHORT_SHA=$(git rev-parse --short HEAD)
           VERSION="1.0.0-$BRANCH-$SHORT_SHA"
-          # Convert repository owner to lowercase for Docker compatibility
-          OWNER_LC=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
-          IMAGE_NAME="ghcr.io/$OWNER_LC/jimce-dev"
+          IMAGE_NAME="ghcr.io/${{ github.repository_owner }}/jimce-dev"
 
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "image_name=$IMAGE_NAME" >> $GITHUB_OUTPUT

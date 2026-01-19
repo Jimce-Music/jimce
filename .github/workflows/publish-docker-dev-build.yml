@@ -1,0 +1,62 @@
+# This workflow publishes a docker image to the GHCR as jimce-dev with the version being 1.0.0-$BRANCH-$SHORT_SHA (e.g. 1.0.0-dev-docker-b7012c6).
+# The workflow is executed for every push to any branch. Only the images for branch main should be tagged as latest, otherwise just publish.
+# The workflow includes permissions necessary for the token.
+# The image is built based on the Dockerfile
+
+name: Publish Docker Dev Build
+
+on:
+  push:
+    branches:
+      - "**"
+
+jobs:
+  publish-docker:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Extract metadata for Docker
+        id: meta
+        run: |
+          BRANCH="${GITHUB_REF_NAME//\//-}"
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          VERSION="1.0.0-$BRANCH-$SHORT_SHA"
+          # Convert repository owner to lowercase for Docker compatibility
+          OWNER_LC=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          IMAGE_NAME="ghcr.io/$OWNER_LC/jimce-dev"
+
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "image_name=$IMAGE_NAME" >> $GITHUB_OUTPUT
+
+          # Determine tags
+          TAGS="$IMAGE_NAME:$VERSION"
+          if [ "$GITHUB_REF_NAME" = "main" ]; then
+            TAGS="$TAGS,$IMAGE_NAME:latest"
+          fi
+          echo "tags=$TAGS" >> $GITHUB_OUTPUT
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

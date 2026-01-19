@@ -1,14 +1,15 @@
-name: Publish Dev OpenAPI docs
+name: Publish OpenAPI dev docs
 
 on:
     push:
         branches:
-            - main
-            - dev
             - "**"
+    pull_request:
+        types: [opened, synchronize, reopened, closed]
 
 permissions:
     contents: write
+    pull-requests: write
 
 jobs:
     docs:
@@ -27,7 +28,7 @@ jobs:
 
             - name: Build Swagger UI
               run: |
-                  bunx swagger-ui-dist
+                  bun add -d swagger-ui-dist
                   mkdir swagger
                   cp -r node_modules/swagger-ui-dist/* swagger/
                   cp openapi.json swagger/openapi.json
@@ -36,6 +37,7 @@ jobs:
                     swagger/swagger-initializer.js
 
             - name: Publish to gh-pages
+              if: github.event.action != 'closed'
               run: |
                   COMMIT_SHA=$(git rev-parse --short HEAD)
                   BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
@@ -62,11 +64,32 @@ jobs:
                     cp -r swagger/* latest-dev/
                   fi
 
-                  git add commit/$COMMIT_SHA latest latest-dev || true
-                  git commit -m "docs: swagger for $COMMIT_SHA ($BRANCH_NAME)" || exit 0
+                  if [ "${{ github.event_name }}" = "pull_request" ]; then
+                    PR=${{ github.event.pull_request.number }}
+                    rm -rf pr/$PR
+                    mkdir -p pr/$PR
+                    cp -r swagger/* pr/$PR/
+                  fi
+
+                  git add commit latest latest-dev pr || true
+                  git commit -m "docs: swagger update" || exit 0
                   git push origin gh-pages
 
-            - name: Cleanup old commits (keep last 30)
+            - name: Cleanup PR preview on close
+              if: github.event.action == 'closed'
+              run: |
+                  git fetch origin gh-pages
+                  git checkout gh-pages
+
+                  PR=${{ github.event.pull_request.number }}
+                  rm -rf pr/$PR
+
+                  git add pr || true
+                  git commit -m "docs: remove pr/$PR" || exit 0
+                  git push origin gh-pages
+
+            - name: Cleanup old commit docs (keep 30)
+              if: github.event_name == 'push'
               run: |
                   git checkout gh-pages
                   cd commit || exit 0
@@ -74,5 +97,5 @@ jobs:
                   ls -1dt */ | tail -n +31 | xargs -r rm -rf
 
                   git add .
-                  git commit -m "chore: cleanup old docs" || exit 0
+                  git commit -m "chore: cleanup old commit docs" || exit 0
                   git push origin gh-pages

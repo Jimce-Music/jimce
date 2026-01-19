@@ -50,6 +50,9 @@ jobs:
 
                   cd gh-pages
 
+                  git config user.name "github-actions"
+                  git config user.email "github-actions@github.com"
+
                   mkdir -p commit/$COMMIT_SHA
                   rm -rf commit/$COMMIT_SHA/*
                   cp -r ../swagger/* commit/$COMMIT_SHA/
@@ -81,8 +84,13 @@ jobs:
               if: github.event.action == 'closed'
               run: |
                   cd gh-pages
+
+                  git config user.name "github-actions"
+                  git config user.email "github-actions@github.com"
+
                   PR=${{ github.event.pull_request.number }}
                   rm -rf pr/$PR
+
                   git add .
                   git commit -m "docs: remove pr/$PR" || exit 0
                   git push origin gh-pages
@@ -91,7 +99,12 @@ jobs:
               if: github.event_name == 'push'
               run: |
                   cd gh-pages/commit || exit 0
+
+                  git config user.name "github-actions"
+                  git config user.email "github-actions@github.com"
+
                   ls -1dt */ | tail -n +31 | xargs -r rm -rf
+
                   git add .
                   git commit -m "chore: cleanup old commits" || exit 0
                   git push origin gh-pages

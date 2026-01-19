@@ -69,8 +69,8 @@ fastify.withTypeProvider<FastifyZodOpenApiTypeProvider>().get(
             JWTPayloadZ.parse(req.user)
             // user = JWTPayloadZ.parse(req.user)
         } catch (err) {
-            logger.error('Error during JWT payload parsing via zod:')
-            logger.error(err)
+            logger.warn('Error during JWT payload parsing via zod:')
+            logger.warn(err)
             return res.status(401).send({
                 statusCode: 401,
                 error: 'Unauthorized',

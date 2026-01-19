@@ -1,4 +1,4 @@
-# This workflow publishes a docker image to the GHCR as jimce-dev with the version being 1.0.0-$BRANCH-$SHORT_SHA (e.g. 1.0.0-dev/docker-b7012c6).
+# This workflow publishes a docker image to the GHCR as jimce-dev with the version being 1.0.0-$BRANCH-$SHORT_SHA (e.g. 1.0.0-dev-docker-b7012c6).
 # The workflow is executed for every push to any branch. Only the images for branch main should be tagged as latest, otherwise just publish.
 # The workflow includes permissions necessary for the token.
 # The image is built based on the Dockerfile

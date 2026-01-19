@@ -62,7 +62,7 @@ if (meta.execution.server_disable_listening) {
     )
 } else {
     try {
-        await fastify.listen({ port: config.server.port })
+        await fastify.listen({ port: config.server.port, host: '0.0.0.0' })
     } catch (err) {
         fastify.log.error(err)
         logger.fatal(

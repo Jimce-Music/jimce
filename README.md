@@ -17,3 +17,17 @@ To start contributing to Jimce, make sure you are in the right repository. This 
 5. Install the dependencies: `bun i`
 6. Run the server via `bun run dev`
 7. Start writing code in your favorite IDE
+
+### Additional development tools
+
+Here are some useful tools for developing on jimce:
+
+#### 1. Online API docs
+
+Visit <https://jimce-music.github.io/jimce/latest-dev/> for the latest API docs for the dev-branch.
+Additional URLS include:
+
+1. Latest commit on main <https://jimce-music.github.io/jimce/latest/>
+2. For a specific commit short hash (like: 8a6893a) <https://jimce-music.github.io/jimce/commit/8a6893a/>
+
+TODO: Add info regarding jimce-dev docker image and jimce api client packages

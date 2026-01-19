@@ -17,7 +17,7 @@ import fastifySwaggerUI from '@fastify/swagger-ui'
 // Define app / server / fastify 'instance'
 const fastify = Fastify({
     logger: {
-        file: path.join(process.cwd(), 'jimce-server.log')
+        file: path.join(process.cwd(), 'logs', 'jimce-server.log')
     }
 })
 

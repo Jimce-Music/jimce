@@ -72,22 +72,33 @@ jobs:
           OWNER_LC=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
           PACKAGE_NAME="jimce-dev"
           
+          # Detect if owner is an organization or user
+          ORG_CHECK=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/users/$OWNER_LC" | jq -r '.type')
+          
+          if [ "$ORG_CHECK" = "Organization" ]; then
+            API_BASE="orgs"
+          else
+            API_BASE="users"
+          fi
+          
           # Update package visibility to public
           curl -L \
             -X PATCH \
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
-            "https://api.github.com/orgs/$OWNER_LC/packages/container/$PACKAGE_NAME" \
-            -d '{"visibility":"public"}' || echo "Note: Package visibility update may require organization permissions"
+            "https://api.github.com/$API_BASE/$OWNER_LC/packages/container/$PACKAGE_NAME" \
+            -d '{"visibility":"public"}' || echo "Note: Package visibility update may require additional permissions"
           
-          # Update package README from the markdown file
-          README_CONTENT=$(cat package-docs/Docker-Devbuild-Readme.md | jq -Rs .)
+          # Update package README from the markdown file using proper JSON encoding
+          jq -Rs '{"readme": .}' package-docs/Docker-Devbuild-Readme.md | \
           curl -L \
             -X PUT \
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
-            "https://api.github.com/orgs/$OWNER_LC/packages/container/$PACKAGE_NAME/readme" \
-            -d "{\"readme\":$README_CONTENT}" || echo "README update may require additional permissions"
+            -H "Content-Type: application/json" \
+            "https://api.github.com/$API_BASE/$OWNER_LC/packages/container/$PACKAGE_NAME/readme" \
+            -d @- || echo "README update may require additional permissions"
 

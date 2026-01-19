@@ -8,15 +8,16 @@ import * as z from 'zod'
 import db from '../db'
 import { usersTable } from '../db/schema'
 import { eq, and } from 'drizzle-orm'
+import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify'
 
-export default fp(async (fastify) => {
+export default fp(async (fastify: FastifyInstance) => {
     await fastify.register(fastifyJwt, {
         secret: config.auth.jwt_secret
     })
 
     await fastify.decorateRequest('isAdmin', false) // Makes permissions field available and false by default
 
-    await fastify.decorate('authenticate', async (req, res) => {
+    await fastify.decorate('authenticate', async (req: FastifyRequest, res: FastifyReply) => {
         try {
             await req.jwtVerify() // Check if token is valid
 

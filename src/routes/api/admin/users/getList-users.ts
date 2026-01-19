@@ -64,7 +64,7 @@ fastify.withTypeProvider<FastifyZodOpenApiTypeProvider>().get(
             }
         } satisfies FastifyZodOpenApiSchema
     },
-    async (req, res) => {
+    async (req: FastifyRequest, res: FastifyReply) => {
         try {
             JWTPayloadZ.parse(req.user)
             // user = JWTPayloadZ.parse(req.user)

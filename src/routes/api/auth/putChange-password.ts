@@ -56,7 +56,7 @@ fastify.withTypeProvider<FastifyZodOpenApiTypeProvider>().put(
             }
         } satisfies FastifyZodOpenApiSchema
     },
-    async (req, res) => {
+    async (req: FastifyRequest, res: FastifyReply) => {
         try {
             // Get JWT payload / user-info
             let user: z.infer<typeof JWTPayloadZ>

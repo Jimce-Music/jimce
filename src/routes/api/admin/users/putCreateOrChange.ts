@@ -19,6 +19,7 @@ import { eq } from 'drizzle-orm'
 import requireJWT from '../../../../types/requireJWT'
 import { JWTPayloadZ } from '../../../../types/JWTPayload'
 import ForbiddenResponseZ from '../../../../types/ForbiddenResponseZ'
+import type { FastifyRequest, FastifyReply } from 'fastify'
 
 fastify.withTypeProvider<FastifyZodOpenApiTypeProvider>().put(
     '/api/admin/users/create-or-change',
@@ -74,7 +75,7 @@ fastify.withTypeProvider<FastifyZodOpenApiTypeProvider>().put(
             }
         } satisfies FastifyZodOpenApiSchema
     },
-    async (req, res) => {
+    async (req: FastifyRequest, res: FastifyReply) => {
         // Get JWT payload / user-info
         try {
             JWTPayloadZ.parse(req.user)

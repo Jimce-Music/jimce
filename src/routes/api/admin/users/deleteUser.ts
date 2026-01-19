@@ -14,7 +14,7 @@ import '../../../../meta'
 import BadRequestResponseZ from '../../../../types/BadRequestResponseZ'
 import InternalServerErrorResponseZ from '../../../../types/InternalServerErrorResponseZ'
 import UnauthorizedResponseZ from '../../../../types/UnauthorizedResponseZ'
-import type { FastifyReply } from 'fastify'
+import type { FastifyReply, FastifyRequest } from 'fastify'
 import _failInternal from '../../../../utils/failInternal'
 function failInternal(res: FastifyReply, err: unknown) {
     return _failInternal(res, err, import.meta.url)
@@ -51,7 +51,7 @@ fastify.withTypeProvider<FastifyZodOpenApiTypeProvider>().delete(
             }
         } satisfies FastifyZodOpenApiSchema
     },
-    async (req, res) => {
+    async (req: FastifyRequest, res: FastifyReply) => {
         try {
             try {
                 JWTPayloadZ.parse(req.user)

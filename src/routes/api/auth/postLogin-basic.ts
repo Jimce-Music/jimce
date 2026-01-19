@@ -53,7 +53,7 @@ fastify.withTypeProvider<FastifyZodOpenApiTypeProvider>().post(
             }
         } satisfies FastifyZodOpenApiSchema
     },
-    async (req, res) => {
+    async (req: FastifyRequest, res: FastifyReply) => {
         // TODO: Fail automatically if basic auth is disabled
         try {
             // Check if login data is correct

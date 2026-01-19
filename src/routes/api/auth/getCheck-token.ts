@@ -14,6 +14,7 @@ import InternalServerErrorResponseZ from '../../../types/InternalServerErrorResp
 import UnauthorizedResponseZ from '../../../types/UnauthorizedResponseZ'
 import requireJWT from '../../../types/requireJWT'
 import { encodeJWTPayload, JWTPayloadZ } from '../../../types/JWTPayload'
+import type { FastifyRequest, FastifyReply } from 'fastify'
 
 fastify.withTypeProvider<FastifyZodOpenApiTypeProvider>().get(
     '/api/auth/check-token',
@@ -39,7 +40,7 @@ fastify.withTypeProvider<FastifyZodOpenApiTypeProvider>().get(
             }
         } satisfies FastifyZodOpenApiSchema
     },
-    async (req, res) => {
+    async (req: FastifyRequest, res: FastifyReply) => {
         let user: z.infer<typeof JWTPayloadZ>
         try {
             user = JWTPayloadZ.parse(req.user)

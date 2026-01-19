@@ -1,5 +1,6 @@
 import fastify from '../fastify'
 import * as z from 'zod'
+import type { FastifyRequest, FastifyReply } from 'fastify'
 
 fastify.get(
     '*',
@@ -13,7 +14,7 @@ fastify.get(
             hide: true // -> Hides it in the OpenAPI.json spec
         }
     },
-    (req, res) => {
+    (req: FastifyRequest, res: FastifyReply) => {
         res.status(404)
         res.send('Sorry, but this page does not exist.')
     }

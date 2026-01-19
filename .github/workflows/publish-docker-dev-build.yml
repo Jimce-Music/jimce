@@ -60,34 +60,3 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          labels: |
-            org.opencontainers.image.description=Jimce Dev Build - A local-first music server (Development Build)
-            org.opencontainers.image.source=https://github.com/${{ github.repository }}
-            org.opencontainers.image.revision=${{ github.sha }}
-            org.opencontainers.image.version=${{ steps.meta.outputs.version }}
-
-      - name: Update package visibility and README
-        run: |
-          # Make the package public and add README
-          OWNER_LC=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
-          PACKAGE_NAME="jimce-dev"
-          
-          # Update package visibility to public
-          curl -L \
-            -X PATCH \
-            -H "Accept: application/vnd.github+json" \
-            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            "https://api.github.com/orgs/$OWNER_LC/packages/container/$PACKAGE_NAME" \
-            -d '{"visibility":"public"}' || echo "Note: Package visibility update may require organization permissions"
-          
-          # Update package README from the markdown file
-          README_CONTENT=$(cat package-docs/Docker-Devbuild-Readme.md | jq -Rs .)
-          curl -L \
-            -X PUT \
-            -H "Accept: application/vnd.github+json" \
-            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            "https://api.github.com/orgs/$OWNER_LC/packages/container/$PACKAGE_NAME/readme" \
-            -d "{\"readme\":$README_CONTENT}" || echo "README update may require additional permissions"
-

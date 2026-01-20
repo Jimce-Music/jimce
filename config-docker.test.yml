@@ -14,7 +14,7 @@ database:
 
 # Authentication
 auth:
-  jwt_secret: dev-secret-CHANGE-IN-PROD!
+  jwt_secret: test-secret-do-not-use-in-production
 
 # Metadata providers
 metadataProviders:

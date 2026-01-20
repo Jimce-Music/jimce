@@ -6,7 +6,7 @@ services:
       POSTGRES_PASSWORD: jimce
       POSTGRES_DB: jimce
     volumes:
-      - jimce_prod_db_data:/var/lib/postgresql
+      - jimce_docker_test_db_data:/var/lib/postgresql
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U jimce -d jimce"]
@@ -32,9 +32,9 @@ services:
       retries: 3
       start_period: 10s
     volumes:
-      - ./config-docker.yml:/app/config.yml # config.yml
+      - ./config-docker.test.yml:/app/config.yml # config.yml
       - ./.env:/app/.env # .env
       - ./logs:/app/logs # Logs
 
 volumes:
-  jimce_prod_db_data:
+  jimce_docker_test_db_data:

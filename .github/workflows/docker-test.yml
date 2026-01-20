@@ -1,0 +1,74 @@
+# This workflow runs the docker-compose.test.yml with a fresh build step to test if the app still works in docker.
+# The test is accepted as passed when all containers become healthy (and fails on a 40s timeout)
+
+name: Docker Test
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  schedule:
+    # Run weekly on Monday at 4:15 AM UTC
+    - cron: "15 4 * * 1"
+
+jobs:
+  docker-test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create .env file
+        run: |
+          cat > .env << EOF
+          SPOTIFY_CLIENT_ID=test
+          SPOTIFY_CLIENT_SECRET=test
+          EOF
+
+      - name: Build and start containers
+        run: docker compose -f docker-compose.test.yml up -d --build
+
+      - name: Wait for containers to be healthy
+        run: |
+          echo "Waiting for all containers to become healthy (timeout: 40s)..."
+          timeout 40 bash -c '
+            while true; do
+              # Get all container IDs
+              CONTAINERS=$(docker compose -f docker-compose.test.yml ps -q)
+              
+              if [ -z "$CONTAINERS" ]; then
+                echo "No containers found"
+                exit 1
+              fi
+              
+              # Check health status of all containers
+              ALL_HEALTHY=true
+              for container in $CONTAINERS; do
+                HEALTH=$(docker inspect --format="{{.State.Health.Status}}" $container 2>/dev/null || echo "none")
+                if [ "$HEALTH" != "healthy" ]; then
+                  ALL_HEALTHY=false
+                  break
+                fi
+              done
+              
+              if [ "$ALL_HEALTHY" = true ]; then
+                echo "All containers are healthy!"
+                exit 0
+              fi
+              
+              echo "Containers status:"
+              docker compose -f docker-compose.test.yml ps
+              sleep 2
+            done
+          '
+
+      - name: Show container logs on failure
+        if: failure()
+        run: docker compose -f docker-compose.test.yml logs
+
+      - name: Cleanup
+        if: always()
+        run: docker compose -f docker-compose.test.yml down -v

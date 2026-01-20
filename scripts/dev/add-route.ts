@@ -3,6 +3,7 @@ import chalk from 'chalk'
 import fs from 'fs/promises'
 import fse from 'fs-extra'
 import path from 'path'
+import fsExtra from 'fs-extra/esm'
 
 const SRC_PATH = path.join(__dirname, '..', '..', 'src')
 const ROUTES_PATH = path.join(SRC_PATH, 'routes')
@@ -131,6 +132,7 @@ async function main(): Promise<void> {
         PACKAGE_TEST_PATH,
         `${answers.method.toLowerCase()}${ROUTE_NAME}.test.ts`
     )
+    await fsExtra.ensureDir(PACKAGE_TEST_PATH)
 
     // Create route file
     let dotDotCountUntilSrcDir = 1

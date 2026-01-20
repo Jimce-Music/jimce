@@ -29,6 +29,10 @@ import './api/auth/putChange-password.ts' // PUT /api/auth/change-password
 // Package: me
 import './api/me/getUserinfo.ts' // GET /api/me/userinfo
 // --api-me--§NEW_HERE§--
+
+// Package: search
+import './api/search/getStreamed-search.ts' // GET /api/search/streamed-search
+// --api-search--§NEW_HERE§--
 // END API
 
 // START 404 / Catch-All

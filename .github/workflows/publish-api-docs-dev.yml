@@ -1,0 +1,110 @@
+name: Publish OpenAPI dev docs
+
+on:
+    push:
+        branches:
+            - "**"
+    pull_request:
+        types: [opened, synchronize, reopened, closed]
+
+permissions:
+    contents: write
+    pull-requests: write
+
+jobs:
+    docs:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - uses: oven-sh/setup-bun@v1
+
+            - name: Install deps
+              run: bun install --frozen-lockfile
+
+            - name: Generate openapi.json
+              run: bun run ci:gen-openapi-json
+
+            - name: Build Swagger UI
+              run: |
+                  bun add -d swagger-ui-dist
+                  mkdir swagger
+                  cp -r node_modules/swagger-ui-dist/* swagger/
+                  cp openapi.json swagger/openapi.json
+
+                  sed -i 's|https://petstore.swagger.io/v2/swagger.json|./openapi.json|' \
+                    swagger/swagger-initializer.js
+
+            - name: Prepare gh-pages worktree
+              run: |
+                  git fetch origin gh-pages || true
+                  git worktree add gh-pages gh-pages || \
+                    git worktree add gh-pages --orphan gh-pages
+
+            - name: Publish docs
+              if: github.event.action != 'closed'
+              run: |
+                  COMMIT_SHA=$(git rev-parse --short HEAD)
+                  BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
+
+                  cd gh-pages
+
+                  git config user.name "github-actions"
+                  git config user.email "github-actions@github.com"
+
+                  mkdir -p commit/$COMMIT_SHA
+                  rm -rf commit/$COMMIT_SHA/*
+                  cp -r ../swagger/* commit/$COMMIT_SHA/
+
+                  if [ "$BRANCH_NAME" = "main" ]; then
+                    rm -rf latest
+                    mkdir latest
+                    cp -r ../swagger/* latest/
+                  fi
+
+                  if [ "$BRANCH_NAME" = "dev" ]; then
+                    rm -rf latest-dev
+                    mkdir latest-dev
+                    cp -r ../swagger/* latest-dev/
+                  fi
+
+                  if [ "${{ github.event_name }}" = "pull_request" ]; then
+                    PR=${{ github.event.pull_request.number }}
+                    rm -rf pr/$PR
+                    mkdir -p pr/$PR
+                    cp -r ../swagger/* pr/$PR/
+                  fi
+
+                  git add .
+                  git commit -m "docs: update swagger" || exit 0
+                  git push origin gh-pages
+
+            - name: Cleanup PR preview on close
+              if: github.event.action == 'closed'
+              run: |
+                  cd gh-pages
+
+                  git config user.name "github-actions"
+                  git config user.email "github-actions@github.com"
+
+                  PR=${{ github.event.pull_request.number }}
+                  rm -rf pr/$PR
+
+                  git add .
+                  git commit -m "docs: remove pr/$PR" || exit 0
+                  git push origin gh-pages
+
+            - name: Cleanup old commit docs (keep 30)
+              if: github.event_name == 'push'
+              run: |
+                  cd gh-pages/commit || exit 0
+
+                  git config user.name "github-actions"
+                  git config user.email "github-actions@github.com"
+
+                  ls -1dt */ | tail -n +31 | xargs -r rm -rf
+
+                  git add .
+                  git commit -m "chore: cleanup old commits" || exit 0
+                  git push origin gh-pages

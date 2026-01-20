@@ -1,6 +1,6 @@
 // ################################################ //
 // Imports
-import logger from './logger'
+import logger from './logger' //! Should be on top to ensure ./logs dir
 import fastify from './fastify'
 import { migrateDB } from './db'
 import fs from 'fs'
@@ -62,7 +62,7 @@ if (meta.execution.server_disable_listening) {
     )
 } else {
     try {
-        await fastify.listen({ port: config.server.port })
+        await fastify.listen({ port: config.server.port, host: '0.0.0.0' })
     } catch (err) {
         fastify.log.error(err)
         logger.fatal(

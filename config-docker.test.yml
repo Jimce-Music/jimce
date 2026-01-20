@@ -1,0 +1,29 @@
+# This is the main config file for Jimce, updated to be used to test the Docker image
+
+# All options regarding the webserver
+server:
+  port: 8080
+
+# All options regarding the PostgreSQL database (must be compliant with the db setup)
+database:
+  user: jimce
+  password: jimce
+  db: jimce
+  port: 5432
+  host: db
+
+# Authentication
+auth:
+  jwt_secret: test-secret-do-not-use-in-production
+
+# Metadata providers
+metadataProviders:
+  spotify:
+    enable: true
+    clientId: ${SPOTIFY_CLIENT_ID} # ${VAR} will load the value from the .env file
+    clientSecret: ${SPOTIFY_CLIENT_SECRET}
+  youtube:
+    enable: true
+  theAudioDb:
+    enable: true
+    apiKey: "123"

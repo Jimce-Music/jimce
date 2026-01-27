@@ -33,7 +33,7 @@ However, you need to download / create the config files manually. The second met
 ```bash
 mkdir jimce && cd jimce
 curl https://raw.githubusercontent.com/Jimce-Music/jimce/refs/heads/dev/docker-compose.prebuilt-dev.yml -o docker-compose.yml
-curl https://raw.githubusercontent.com/Jimce-Music/jimce/refs/heads/dev/config.yml -o config.yml
+curl https://raw.githubusercontent.com/Jimce-Music/jimce/refs/heads/dev/config-docker.yml -o config.yml
 curl https://raw.githubusercontent.com/Jimce-Music/jimce/refs/heads/dev/meta.yml -o meta.yml
 curl https://raw.githubusercontent.com/Jimce-Music/jimce/refs/heads/dev/.env.example -o .env
 

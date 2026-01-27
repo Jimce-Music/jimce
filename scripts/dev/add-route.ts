@@ -3,6 +3,7 @@ import chalk from 'chalk'
 import fs from 'fs/promises'
 import fse from 'fs-extra'
 import path from 'path'
+import fsExtra from 'fs-extra/esm'
 
 const SRC_PATH = path.join(__dirname, '..', '..', 'src')
 const ROUTES_PATH = path.join(SRC_PATH, 'routes')
@@ -263,6 +264,7 @@ ${end_block}`
 
     //! Create test file
     const FULL_API_URL = `/${answers.isAPI ? 'api/' : ''}${answers.package ? answers.package + '/' : ''}${answers.path}`
+    await fsExtra.ensureFile(TEST_FILE_PATH)
     await fs.writeFile(
         TEST_FILE_PATH,
         `// Integration test for ${answers.method.toUpperCase()} ${FULL_API_URL}

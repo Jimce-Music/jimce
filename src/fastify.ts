@@ -33,7 +33,17 @@ await fastify.register(RateLimiter, {
 // Set up CORS in dev mode
 if (meta.is_dev) {
     await fastify.register(fastifyCors, {
-        origin: '*'
+        origin: '*',
+        methods: [
+            'GET',
+            'POST',
+            'PUT',
+            'OPTIONS',
+            'HEAD',
+            'PATCH',
+            'DELETE',
+            'TRACE'
+        ]
     })
 }
 

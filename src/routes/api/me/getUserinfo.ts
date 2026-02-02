@@ -78,12 +78,11 @@ fastify.withTypeProvider<FastifyZodOpenApiTypeProvider>().get(
                 .from(usersTable)
                 .where(eq(usersTable.id, user.id))
 
-            if (matchingUsers.length <= 0) {
-                failInternal(res, 'No matching user found')
-            } else {
-                // Send data
-                return res.status(200).send(matchingUsers[0])
-            }
+            // Send data
+            const matchingUser = matchingUsers[0]
+            if (typeof matchingUser === 'undefined')
+                return failInternal(res, 'No matching user found')
+            return res.status(200).send(matchingUser)
         } catch (err) {
             return failInternal(res, err)
         }

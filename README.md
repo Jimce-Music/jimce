@@ -14,9 +14,44 @@ To start contributing to Jimce, make sure you are in the right repository. This 
 2. Make sure [Bun](https://bun.sh/) is installed
 3. Clone this repository: `git clone https://github.com/Jimce-Music/jimce.git`
 4. Open the repo directory `cd jimce`
-5. Install the dependencies: `bun i`
+5. Install the dependencies: `bun i --frozen-lockfile`
 6. Run the server via `bun run dev`
 7. Start writing code in your favorite IDE
+
+### Alternative dev build via docker
+
+To run the jimce dev build in docker, choose one of these methods:
+
+#### 1. Prebuilt image
+
+This method is recommended to anyone who does not plan on making changes to the repo and just wants to try a specific server dev version, maybe even on a PR.
+However, you need to download / create the config files manually. The second method requires fewer commands and configuration to get started.
+
+1. Make sure you installed [Docker](https://www.docker.com/) and `docker compose` is working
+2. Run these commands:
+
+```bash
+mkdir jimce && cd jimce
+curl https://raw.githubusercontent.com/Jimce-Music/jimce/refs/heads/dev/docker-compose.prebuilt-dev.yml -o docker-compose.yml
+curl https://raw.githubusercontent.com/Jimce-Music/jimce/refs/heads/dev/config-docker.yml -o config.yml
+curl https://raw.githubusercontent.com/Jimce-Music/jimce/refs/heads/dev/meta.yml -o meta.yml
+curl https://raw.githubusercontent.com/Jimce-Music/jimce/refs/heads/dev/.env.example -o .env
+
+docker compose up
+```
+
+#### 2. Via the git repo
+
+This is recommended if you plan on making changes to the code:
+
+1. Make sure you installed [Docker](https://www.docker.com/) and `docker compose` is working
+2. Run these commands:
+
+```bash
+git clone https://github.com/Jimce-Music/jimce.git
+cd jimce
+docker compose -f docker-compose.dev.yml up --build
+```
 
 ### Additional development tools
 

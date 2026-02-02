@@ -265,6 +265,7 @@ ${end_block}`
 
     //! Create test file
     const FULL_API_URL = `/${answers.isAPI ? 'api/' : ''}${answers.package ? answers.package + '/' : ''}${answers.path}`
+    await fsExtra.ensureFile(TEST_FILE_PATH)
     await fs.writeFile(
         TEST_FILE_PATH,
         `// Integration test for ${answers.method.toUpperCase()} ${FULL_API_URL}

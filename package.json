@@ -9,7 +9,7 @@
         "delay-cli": "^3.0.0",
         "drizzle-kit": "^0.31.8",
         "inquirer": "^13.2.2",
-        "pg": "^8.17.2",
+        "pg": "^8.18.0",
         "prettier": "3.8.1"
     },
     "peerDependencies": {

@@ -49,7 +49,7 @@
         "fastify-plugin": "^5.1.0",
         "fastify-zod-openapi": "^5.5.0",
         "fs-extra": "^11.3.3",
-        "musicbrainz-api": "^1.0.0",
+        "musicbrainz-api": "^1.1.0",
         "pino": "^10.3.1",
         "uuid": "^13.0.0",
         "yaml": "^2.8.2",

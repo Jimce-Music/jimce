@@ -23,7 +23,14 @@ export default async function findByQuery(
             providedBy: 'spotify',
 
             title: result.name,
-            lengthInSeconds: Math.floor(result.duration_ms / 1000)
+            lengthInSeconds: Math.floor(result.duration_ms / 1000),
+
+            // Hints make it easier for metadata / sound matchers to determine a match based on ids or urls
+            hints: {
+                spotify: {
+                    id: result.id
+                }
+            }
         })
     }
 

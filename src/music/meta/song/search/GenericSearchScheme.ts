@@ -5,7 +5,13 @@ import { ProviderIdentifierZ } from '../../ProviderIdentifierT'
 export const GenericSearchSchemeZ = z.object({
     title: z.string(),
     lengthInSeconds: z.number().positive(),
-    providedBy: ProviderIdentifierZ
+    providedBy: ProviderIdentifierZ,
+
+    hints: z.object({
+        spotify: z.object({
+            id: z.string()
+        })
+    })
 })
 
 // TS Type

@@ -1,4 +1,4 @@
-import searchMusic from './metadata/search/searchMusic'
+import searchMusic from './meta/search.old/searchMusic'
 import type { SearchResult } from 'yt-search'
 
 // This is a temporary file to try out the metadata fetching functions

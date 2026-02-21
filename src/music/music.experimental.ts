@@ -1,5 +1,13 @@
-import searchMusic from './meta/search.old/searchMusic'
-import type { SearchResult } from 'yt-search'
+// ! New experiments
+
+import spotifySearch from './meta/song/search/providers/spotify'
+
+// Search for a song
+console.log(await spotifySearch('Bella Napoli'))
+
+// ! Old stuff from search.old
+// import searchMusic from './meta.song/search.old/searchMusic'
+// import type { SearchResult } from 'yt-search'
 
 // This is a temporary file to try out the metadata fetching functions
 // console.log(await searchSong('Bella Napoli')) // id: c6d49f0b-951f-407c-b803-c066e4ff3c6c
@@ -25,18 +33,18 @@ import type { SearchResult } from 'yt-search'
 // console.log(await mb.lookup('release', 'c6d49f0b-951f-407c-b803-c066e4ff3c6c'))
 
 // Lets' test our new functions
-const query = 'Bella Napoli'
-const search = searchMusic(query)
-const items = []
-for await (const item of search.songs) {
-    items.push({
-        uuid: item.uuid.substring(0, 8),
-        title: item.title.substring(0, 60),
-        source: item.src[0]?.provider,
-        score: item.sortScore
-    })
-}
-console.table(items)
+// const query = 'Bella Napoli'
+// const search = searchMusic(query)
+// const items = []
+// for await (const item of search.songs) {
+//     items.push({
+//         uuid: item.uuid.substring(0, 8),
+//         title: item.title.substring(0, 60),
+//         source: item.src[0]?.provider,
+//         score: item.sortScore
+//     })
+// }
+// console.table(items)
 // NOTE: Considerations so far:
 /*  - We need a uniform sort score, applicable to all providers
     - YouTube and Spotify sort based on what the user wants, MusicBrainz just shows the best match for the query

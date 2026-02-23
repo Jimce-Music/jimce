@@ -1,9 +1,14 @@
 // ! New experiments
 
+import { matchSpotifySearchToSpotifyMetadata } from './meta/song/metadata/matchers/spotify-to-spotify'
 import spotifySearch from './meta/song/search/providers/spotify'
 
 // Search for a song
-console.log(await spotifySearch('Bella Napoli'))
+const search = await spotifySearch('Bella Napoli')
+// console.log(search)
+for (const sRes of search) {
+    console.log(await matchSpotifySearchToSpotifyMetadata(sRes))
+}
 
 // ! Old stuff from search.old
 // import searchMusic from './meta.song/search.old/searchMusic'

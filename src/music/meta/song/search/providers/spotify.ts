@@ -2,6 +2,7 @@ import * as z from 'zod'
 import type { GenericSearchSchemeT } from '../GenericSearchScheme'
 import { SpotifyApi } from '@spotify/web-api-ts-sdk'
 import config from '../../../../../config'
+import { extractSpotifyMetadataFromResult } from '../../metadata/matchers/spotify-to-spotify'
 
 const spotifySdk = SpotifyApi.withClientCredentials(
     `${config.metadataProviders.spotify.clientId}`,
@@ -28,7 +29,8 @@ export default async function findByQuery(
             // Hints make it easier for metadata / sound matchers to determine a match based on ids or urls
             hints: {
                 spotify: {
-                    id: result.id
+                    id: result.id,
+                    fullMetadata: extractSpotifyMetadataFromResult(result)
                 }
             }
         })

@@ -2,13 +2,22 @@
 
 import { matchSpotifySearchToSpotifyMetadata } from './meta/song/metadata/matchers/spotify-to-spotify'
 import spotifySearch from './meta/song/search/providers/spotify'
+import { matchSpotifyMetadataToYoutubeSound } from './meta/song/sound/matchers/spotify-to-youtube'
 
 // Search for a song
 const search = await spotifySearch('Bella Napoli')
 // console.log(search)
 for (const sRes of search) {
-    console.log(await matchSpotifySearchToSpotifyMetadata(sRes))
+    const meta = await matchSpotifySearchToSpotifyMetadata(sRes)
+    console.log(
+        '----------------------------------------------------------------------------------------------'
+    )
+    console.log(meta)
+    console.log('------>')
+    const sound = await matchSpotifyMetadataToYoutubeSound(meta)
+    console.log(sound)
 }
+// TODO: De-duplify results, Handle no results errors for every matching process
 
 // ! Old stuff from search.old
 // import searchMusic from './meta.song/search.old/searchMusic'

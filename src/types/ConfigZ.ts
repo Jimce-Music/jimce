@@ -38,7 +38,9 @@ export default z.object({
             }),
         // YouTube
         youtube: z.object({
-            enable: z.boolean()
+            enable: z.boolean(),
+            searchSuffix: z.string().optional(),
+            allowedDurationToleranceInSeconds: z.number().default(2)
         }),
         // The Audio DB
         theAudioDb: z.object({

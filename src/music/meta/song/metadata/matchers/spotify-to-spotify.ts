@@ -26,7 +26,12 @@ export function extractSpotifyMetadataFromResult(
         artistQualifiedName: naturalLangEnumerate(
             result.artists,
             (artist) => artist.name
-        )
+        ),
+        hints: {
+            spotify: {
+                id: result.id
+            }
+        }
     }
 }
 

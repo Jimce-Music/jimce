@@ -1,3 +1,4 @@
+import type MatchingError from '../../../MatchingError'
 import type { GenericMetadataSchemeT } from '../../metadata/GenericMetadataScheme'
 import type { GenericSoundSchemeT } from '../GenericSoundScheme'
 import matchByYtSearch from './utility/matchByYtSearch'
@@ -7,7 +8,7 @@ import matchByYtSearch from './utility/matchByYtSearch'
  */
 export async function matchSpotifyMetadataToYoutubeSound(
     result: GenericMetadataSchemeT
-): Promise<GenericSoundSchemeT> {
+): Promise<GenericSoundSchemeT | MatchingError> {
     // Try to match based on the following cases
     // 1. Match only based on Generic Metadata, no hints
     return await matchByYtSearch({

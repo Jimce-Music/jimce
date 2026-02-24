@@ -1,5 +1,6 @@
 // Sub script of all yt matchers to match when no hints were provided
 
+import { sleep } from 'bun'
 import config from '../../../../../../config'
 import MatchingError from '../../../../MatchingError'
 import type { GenericSoundSchemeT } from '../../GenericSoundScheme'
@@ -21,7 +22,22 @@ export default async function matchByYtSearch(
     const query = `${knownInfo.title} ${knownInfo.artistName}${suffix ? ' ' + suffix : ''}`
 
     // 2. Fetch videos based on query
-    const ytResult = await yts(query) // TODO: Handle 302 and other errors
+    // TODO: also support other yt libs for search, like yt-dlp
+    let ytResult: yts.SearchResult
+    try {
+        ytResult = await yts(query) // TODO: Handle 302 and other errors
+    } catch (err) {
+        if (typeof err !== 'string') throw err
+
+        if (err.includes('302') && err.includes('http')) {
+            // recall self, but with a delay to avoid rate-limiting
+            await sleep(8_000)
+            return matchByYtSearch(knownInfo)
+        } else {
+            throw err
+        }
+    }
+
     const videos = ytResult.videos
 
     // Iterate over the videos

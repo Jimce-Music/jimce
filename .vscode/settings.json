@@ -10,9 +10,11 @@
         "postgresql",
         "rawlist",
         "spotify",
+        "theaudiodb",
         "tmpfs",
         "userid",
-        "youtube"
+        "youtube",
+        "ytmusic"
     ],
     "sqltools.connections": [
         {

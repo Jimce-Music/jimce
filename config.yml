@@ -17,6 +17,8 @@ auth:
   jwt_secret: dev-secret-CHANGE-IN-PROD!
 
 # Metadata providers
+# ! Legacy config options
+# TODO: Replace by option below
 metadataProviders:
   spotify:
     enable: true
@@ -27,3 +29,38 @@ metadataProviders:
   theAudioDb:
     enable: true
     apiKey: "123"
+# NOTE: this is how it will look in the future
+metadata:
+  providers:
+    spotify:
+      # no mor enable
+      clientId: ${SPOTIFY_CLIENT_ID} # ${VAR} will load the value from the .env file
+      clientSecret: ${SPOTIFY_CLIENT_SECRET}
+    # commenting out the option is like enable: false in legacy style
+    # theAudioDb:
+    # apiKey: "123"
+  flow:
+    # This defines the flow for the search process and defines which metadata and sound providers to use
+    search:
+      preferred:
+        # Preferred options will all be queried at the same time
+        - spotify
+        - ytmusic
+      fallback:
+        # Fallback options will only be used when all preferred options fail, and will be executed one after another,
+        # so the first provider is the first fallback, and the second one the second fallback, etc.
+        - youtube
+        - musicbrainz
+    metadata:
+      preferred:
+        - spotify
+        - theaudiodb
+        - ytmusic
+      fallback:
+        - musicbrainz
+        - youtube
+    sound:
+      preferred:
+        - ytmusic
+      fallback:
+        - youtube

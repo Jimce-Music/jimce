@@ -19,6 +19,6 @@ describe('GET /api/ping', async () => {
             url: '/api/ping'
         })
         expect(res.statusCode).toBe(200)
-        expect(res.body).toBe('pong')
+        expect(res.body).toBe('pong by jimce backend')
     })
 })

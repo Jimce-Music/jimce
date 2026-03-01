@@ -8,7 +8,7 @@
         "@types/bun": "latest",
         "delay-cli": "^3.0.0",
         "drizzle-kit": "^0.31.9",
-        "inquirer": "^13.2.2",
+        "inquirer": "^13.3.0",
         "pg": "^8.18.0",
         "prettier": "3.8.1"
     },

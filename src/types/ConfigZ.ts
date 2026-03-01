@@ -36,6 +36,23 @@ export default z.object({
                     })
                 }
             }),
+        // LastFM
+        lastfm: z
+            .object({
+                enable: z.boolean(),
+                clientId: z.string().min(2).optional(),
+                clientSecret: z.string().min(2).optional()
+            })
+            .superRefine((data, ctx) => {
+                if (data.enable && (!data.clientId || !data.clientSecret)) {
+                    ctx.addIssue({
+                        path: ['clientId', 'clientSecret'],
+                        message:
+                            'clientId and clientSecret are required, if enable is set to true',
+                        code: 'custom'
+                    })
+                }
+            }),
         // YouTube
         youtube: z.object({
             enable: z.boolean(),

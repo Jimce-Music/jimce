@@ -19,6 +19,7 @@
         "fastify-plugin": "^5.1.0",
         "fastify-zod-openapi": "^5.5.0",
         "fs-extra": "^11.3.3",
+        "lastfm-ts-api": "^2.6.0",
         "musicbrainz-api": "^1.0.0",
         "pino": "^10.3.0",
         "pino-pretty": "^13.1.3",
@@ -463,6 +464,8 @@
     "jsontoxml": ["jsontoxml@1.0.1", "", {}, "sha512-dtKGq0K8EWQBRqcAaePSgKR4Hyjfsz/LkurHSV3Cxk4H+h2fWDeaN2jzABz+ZmOJylgXS7FGeWmbZ6jgYUMdJQ=="],
 
     "keypress": ["keypress@0.2.1", "", {}, "sha512-HjorDJFNhnM4SicvaUXac0X77NiskggxJdesG72+O5zBKpSqKFCrqmndKVqpu3pFqkla0St6uGk8Ju0sCurrmg=="],
+
+    "lastfm-ts-api": ["lastfm-ts-api@2.6.0", "", {}, "sha512-Kr4B4/LlEHumvmnzLawXGRQAzn2ApsQ/n+locPyDpGIQgJg/oK9OSAVTS1d47D00NLnZCNoa/+9YB/bkeXL46Q=="],
 
     "light-my-request": ["light-my-request@6.6.0", "", { "dependencies": { "cookie": "^1.0.1", "process-warning": "^4.0.0", "set-cookie-parser": "^2.6.0" } }, "sha512-CHYbu8RtboSIoVsHZ6Ye4cj4Aw/yg2oAFimlF7mNvfDV192LR7nDiKtSIfCuLT7KokPSTn/9kfVLm5OGN0A28A=="],
 

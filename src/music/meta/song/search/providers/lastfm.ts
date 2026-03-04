@@ -36,9 +36,14 @@ export default async function findByQuery(
             // Hints make it easier for metadata / sound matchers to determine a match based on ids or urls
             hints: {
                 lastfm: {
-                    mbid: result.mbid.length === 36 ? result.mbid : undefined,
-                    artistString: result.artist,
-                }
+                    artistString: result.artist
+                },
+                musicbrainz:
+                    result.mbid.length === 36
+                        ? {
+                              mbid: result.mbid
+                          }
+                        : undefined
             }
         })
     }

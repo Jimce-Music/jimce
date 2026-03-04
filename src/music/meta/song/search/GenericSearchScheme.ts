@@ -39,7 +39,12 @@ export const GenericSearchSchemeZ = z.discriminatedUnion('providedBy', [
             lastfm: z.object({
                 mbid: z.string().length(36).optional(),
                 artistString: z.string()
-            })
+            }),
+            musicbrainz: z
+                .object({
+                    mbid: z.string()
+                })
+                .optional()
         })
     })
 ])

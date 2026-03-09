@@ -46,6 +46,13 @@ export const GenericSearchSchemeZ = z.discriminatedUnion('providedBy', [
                 })
                 .optional()
         })
+    }),
+
+    // Deezer
+    BaseZ.extend({
+        providedBy: z.literal('deezer'),
+        hints: z.object({}),
+        lengthInSeconds: z.number().positive()
     })
 ])
 

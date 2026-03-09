@@ -63,6 +63,10 @@ export default z.object({
         theAudioDb: z.object({
             enable: z.boolean(),
             apiKey: z.string().min(2).default('123')
+        }),
+        // Deezer
+        deezer: z.object({
+            enable: z.boolean()
         })
         // MusicBrainz does not need an key and is always used
     })

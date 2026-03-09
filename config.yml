@@ -29,6 +29,8 @@ metadataProviders:
   theAudioDb:
     enable: true
     apiKey: "123"
+  deezer:
+    enable: true
   lastfm:
     enable: true
     clientId: ${LASTFM_CLIENT_ID}

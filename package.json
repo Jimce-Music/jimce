@@ -48,6 +48,7 @@
         "fastify-plugin": "^5.1.0",
         "fastify-zod-openapi": "^5.5.0",
         "fs-extra": "^11.3.3",
+        "jimce-deezer-api-ts": "^0.0.2",
         "lastfm-ts-api": "^2.6.0",
         "musicbrainz-api": "^1.0.0",
         "pino": "^10.3.0",

@@ -11,20 +11,21 @@ import { matchDeezerMetadataToYoutubeSound } from './meta/song/sound/matchers/de
 
 // Search for a song
 // const search = await spotifySearch('Bella Napoli')
-// const search = await lastfmSearch('Bella Napoli')
-const search = await deezerSearch('Bella Napoli')
+const search = await lastfmSearch('Bella Napoli')
+// const search = await deezerSearch('Bella Napoli')
 // console.log(search)
 for (const sRes of search) {
     // console.log(sRes)
-    // const meta = await matchLastfmSearchToLastfmMetadata(sRes)
-    const meta = await matchDeezerSearchToDeezerMetadata(sRes)
+    const meta = await matchLastfmSearchToLastfmMetadata(sRes)
+    // const meta = await matchDeezerSearchToDeezerMetadata(sRes)
     console.log(
         '----------------------------------------------------------------------------------------------'
     )
     console.log(meta)
     console.log('------>')
-    const sound = await matchDeezerMetadataToYoutubeSound(meta)
-    console.log(sound)
+    // const sound = await
+    // const sound = await matchDeezerMetadataToYoutubeSound(meta)
+    // console.log(sound)
 }
 // TODO: De-duplify results, Handle no results errors for every matching process
 // TODO: Make search use (custom) streams anywhere, so that if metadata arrives, results are already streamed and invalidated later in stream when sound matching runs

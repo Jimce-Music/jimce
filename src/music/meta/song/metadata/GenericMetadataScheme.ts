@@ -11,6 +11,10 @@ const BaseZ = z.object({
     artistQualifiedName: z.string().meta({
         description:
             'The artist name in a standard, qualified form. => Likely to not be a Lyrics Video Channel name but the actual artist'
+    }),
+    image: z.string().meta({
+        description:
+            'Fully qualified URL to an downloadable image that can be used as cover for the track'
     })
 })
 
@@ -38,6 +42,12 @@ export const GenericMetadataSchemeZ = z.discriminatedUnion('providedBy', [
     // Deezer
     BaseZ.extend({
         providedBy: z.literal('deezer'),
+        hints: z.object({})
+    }),
+
+    // last.fm
+    BaseZ.extend({
+        providedBy: z.literal('lastfm'),
         hints: z.object({})
     })
 ])

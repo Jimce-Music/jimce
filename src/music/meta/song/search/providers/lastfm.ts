@@ -19,19 +19,10 @@ export default async function findByQuery(
     const adaptedResults: GenericSearchSchemeT[] = []
 
     for (const result of results.results.trackmatches.track) {
-        // const trackInfo = await trackApi.getInfo({
-        //     track: result.name,
-        //     artist: result.artist
-        // })
-        // const duration = parseInt(trackInfo.track.duration)
-        // console.log(trackInfo.track.duration)
-
         adaptedResults.push({
             providedBy: 'lastfm',
 
             title: result.name,
-
-            // length: duration !== 0 ? duration : undefined,
 
             // Hints make it easier for metadata / sound matchers to determine a match based on ids or urls
             hints: {

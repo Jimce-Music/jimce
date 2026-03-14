@@ -6,6 +6,7 @@ import lastfmSearch from './meta/song/search/providers/lastfm'
 import deezerSearch from './meta/song/search/providers/deezer'
 import { matchSpotifyMetadataToYoutubeSound } from './meta/song/sound/matchers/spotify-to-youtube'
 import { matchLastfmSearchToLastfmMetadata } from './meta/song/metadata/matchers/lastfm-to-lastfm'
+import { matchDeezerSearchToDeezerMetadata } from './meta/song/metadata/matchers/deezer-to-deezer'
 
 // Search for a song
 // const search = await spotifySearch('Bella Napoli')
@@ -14,7 +15,8 @@ const search = await deezerSearch('Bella Napoli')
 // console.log(search)
 for (const sRes of search) {
     // console.log(sRes)
-    const meta = await matchLastfmSearchToLastfmMetadata(sRes)
+    // const meta = await matchLastfmSearchToLastfmMetadata(sRes)
+    const meta = await matchDeezerSearchToDeezerMetadata(sRes)
     console.log(
         '----------------------------------------------------------------------------------------------'
     )

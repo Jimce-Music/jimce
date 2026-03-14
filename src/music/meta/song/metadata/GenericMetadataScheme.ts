@@ -33,6 +33,12 @@ export const GenericMetadataSchemeZ = z.discriminatedUnion('providedBy', [
         hints: z.object({
             youtube: z.object({})
         })
+    }),
+
+    // Deezer
+    BaseZ.extend({
+        providedBy: z.literal('deezer'),
+        hints: z.object({})
     })
 ])
 

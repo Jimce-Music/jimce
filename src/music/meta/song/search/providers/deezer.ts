@@ -24,7 +24,12 @@ export default async function findByQuery(
             lengthInSeconds: result.duration,
 
             // Hints make it easier for metadata / sound matchers to determine a match based on ids or urls
-            hints: {}
+            hints: {
+                deezer: {
+                    id: result.id,
+                    fullFetchedData: result
+                }
+            }
         })
     }
 

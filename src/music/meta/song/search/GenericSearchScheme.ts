@@ -1,6 +1,7 @@
 import * as z from 'zod'
 import { ProviderIdentifierZ } from '../../ProviderIdentifierT'
 import { GenericMetadataSchemeZ } from '../metadata/GenericMetadataScheme'
+import type { Track } from 'jimce-deezer-api-ts'
 
 // Zod / actual type declaration
 
@@ -51,7 +52,12 @@ export const GenericSearchSchemeZ = z.discriminatedUnion('providedBy', [
     // Deezer
     BaseZ.extend({
         providedBy: z.literal('deezer'),
-        hints: z.object({}),
+        hints: z.object({
+            deezer: z.object({
+                id: z.number(),
+                fullFetchedData: z.custom<Track>()
+            })
+        }),
         lengthInSeconds: z.number().positive()
     })
 ])

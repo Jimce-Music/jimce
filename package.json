@@ -7,7 +7,7 @@
         "@hey-api/openapi-ts": "^0.94.3",
         "@types/bun": "latest",
         "delay-cli": "^3.0.0",
-        "drizzle-kit": "^0.31.9",
+        "drizzle-kit": "^0.31.10",
         "inquirer": "^13.3.2",
         "pg": "^8.20.0",
         "prettier": "3.8.1"

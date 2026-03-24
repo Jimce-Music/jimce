@@ -1,0 +1,75 @@
+name: Publish Flutter API client
+
+on:
+  push:
+    branches:
+      - "**"
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Install Bun dependencies
+        run: bun install --frozen-lockfile
+        working-directory: ${{ github.workspace }}
+
+      - name: Generate OpenAPI JSON
+        run: bun run ci:gen-openapi-json
+        working-directory: ${{ github.workspace }}
+
+      - name: Setup Java for OpenAPI generator
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Generate Flutter API client
+        run: bun run ci:gen-flutter-api-client
+        working-directory: ${{ github.workspace }}
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Install Flutter package dependencies
+        run: flutter pub get
+        working-directory: ${{ github.workspace }}/api-clients/jimce_api_flutter
+
+      - name: Generate Dart model part files
+        run: dart run build_runner build --delete-conflicting-outputs
+        working-directory: ${{ github.workspace }}/api-clients/jimce_api_flutter
+
+      - name: Set package version
+        run: |
+          BRANCH=$(echo "$GITHUB_REF_NAME" | tr '/' '-' | tr '[:upper:]' '[:lower:]' | tr -cd 'a-z0-9-.')
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          VERSION="1.0.0-${BRANCH}.${SHORT_SHA}"
+          sed -i "s/^version: .*/version: ${VERSION}/" pubspec.yaml
+        working-directory: ${{ github.workspace }}/api-clients/jimce_api_flutter
+
+      - name: Check publishability
+        run: dart pub publish --dry-run
+        working-directory: ${{ github.workspace }}/api-clients/jimce_api_flutter
+
+      - name: Publish Flutter client
+        run: |
+          if [ -z "${PUB_DEV_PUBLISH_ACCESS_TOKEN:-}" ]; then
+            echo "PUB_DEV_PUBLISH_ACCESS_TOKEN is not set, skipping publish."
+            exit 0
+          fi
+
+          dart pub token add https://pub.dev --env-var PUB_DEV_PUBLISH_ACCESS_TOKEN
+          dart pub publish --force
+        working-directory: ${{ github.workspace }}/api-clients/jimce_api_flutter

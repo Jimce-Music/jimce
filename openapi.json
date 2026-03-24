@@ -175,12 +175,12 @@
         "description": "Can be used to determine whether the server is up and running without need for authentication.",
         "responses": {
           "200": {
-            "description": "pong",
+            "description": "pong with identifier",
             "content": {
               "text/plain": {
                 "schema": {
                   "type": "string",
-                  "const": "pong"
+                  "const": "pong by jimce backend"
                 }
               }
             }
@@ -330,6 +330,7 @@
         "summary": "Creates or changes a new user",
         "description": "Based on provided username, password, email and isAdmin bool, this route will create or update a new user.\n                When the user with the provided username already exists, the user will be updated instead of re-created.\n            \n                **Requires authentication**\n                **Requires admin privileges** \n            ",
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
@@ -380,8 +381,7 @@
                 ]
               }
             }
-          },
-          "required": true
+          }
         },
         "security": [
           {
@@ -445,6 +445,7 @@
     "/api/admin/users/user": {
       "delete": {
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
@@ -461,8 +462,7 @@
                 ]
               }
             }
-          },
-          "required": true
+          }
         },
         "security": [
           {
@@ -625,6 +625,7 @@
         "summary": "Login via basic auth",
         "description": "Ask server to issue a JWT based on user & password credentials",
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
@@ -645,8 +646,7 @@
                 ]
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "200": {
@@ -710,6 +710,7 @@
         "summary": "Changes the password",
         "description": "Changes the password for the currently logged in user",
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
@@ -729,8 +730,7 @@
                 ]
               }
             }
-          },
-          "required": true
+          }
         },
         "security": [
           {

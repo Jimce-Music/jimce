@@ -5,11 +5,7 @@ import config from '../../../../../config'
 import type { GenericMetadataSchemeT } from '../GenericMetadataScheme'
 import type { GenericSearchSchemeT } from '../../search/GenericSearchScheme'
 import naturalLangEnumerate from '../../../../../utils/naturalLangEnumerate'
-
-const spotifySdk = SpotifyApi.withClientCredentials(
-    `${config.metadataProviders.spotify.clientId}`,
-    `${config.metadataProviders.spotify.clientSecret}`
-)
+import MatchingError from '../../../MatchingError'
 
 /**
  * Extracts metadata according to the GenericMetadataScheme from an already fetched spotify result. This avoids unnecessary doubled API calls.
@@ -40,7 +36,17 @@ export function extractSpotifyMetadataFromResult(
  */
 export async function matchSpotifySearchToSpotifyMetadata(
     searchResult: GenericSearchSchemeT
-): Promise<GenericMetadataSchemeT> {
+): Promise<GenericMetadataSchemeT | MatchingError> {
+    // Check if spotify is enabled
+    if (!config.metadata.providers.spotify) {
+        return new MatchingError('spotify provider not enabled')
+    }
+
+    const spotifySdk = SpotifyApi.withClientCredentials(
+        `${config.metadata.providers.spotify?.clientId}`,
+        `${config.metadata.providers.spotify?.clientSecret}`
+    )
+
     // Try to match based on the following cases
 
     // Not providedBy 'spotify'

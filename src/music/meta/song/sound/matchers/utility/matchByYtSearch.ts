@@ -15,10 +15,14 @@ export type KnownInfoT = {
 export default async function matchByYtSearch(
     knownInfo: KnownInfoT
 ): Promise<GenericSoundSchemeT | MatchingError> {
+    if (!config.metadata.providers.youtube) {
+        return new MatchingError('youtube provider must be enabled')
+    }
+
     // 1. Generate query based on known info and yt search suffix
     const durationTolerance =
-        config.metadataProviders.youtube.allowedDurationToleranceInSeconds
-    const suffix: string = config.metadataProviders.youtube.searchSuffix ?? ''
+        config.metadata.providers.youtube.allowedDurationToleranceInSeconds
+    const suffix: string = config.metadata.providers.youtube.searchSuffix ?? ''
     const query = `${knownInfo.title} ${knownInfo.artistName}${suffix ? ' ' + suffix : ''}`
 
     // 2. Fetch videos based on query

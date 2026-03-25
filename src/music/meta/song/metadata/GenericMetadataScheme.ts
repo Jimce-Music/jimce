@@ -12,10 +12,13 @@ const BaseZ = z.object({
         description:
             'The artist name in a standard, qualified form. => Likely to not be a Lyrics Video Channel name but the actual artist'
     }),
-    image: z.string().meta({
-        description:
-            'Fully qualified URL to an downloadable image that can be used as cover for the track'
-    })
+    image: z
+        .string()
+        .meta({
+            description:
+                'Fully qualified URL to an downloadable image that can be used as cover for the track'
+        })
+        .optional() // TODO: make this mandatory
 })
 
 // Actual Zod type

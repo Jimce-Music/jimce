@@ -3,17 +3,18 @@ import type { GenericSearchSchemeT } from '../GenericSearchScheme'
 import { SpotifyApi } from '@spotify/web-api-ts-sdk'
 import config from '../../../../../config'
 import { extractSpotifyMetadataFromResult } from '../../metadata/matchers/spotify-to-spotify'
-
-const spotifySdk = SpotifyApi.withClientCredentials(
-    `${config.metadataProviders.spotify.clientId}`,
-    `${config.metadataProviders.spotify.clientSecret}`
-)
+import MatchingError from '../../../MatchingError'
 
 export default async function findByQuery(
     query: string
-): Promise<GenericSearchSchemeT[]> {
-    if (!config.metadataProviders.spotify.enable)
-        throw Error('Spotify provider not enabled')
+): Promise<GenericSearchSchemeT[] | MatchingError> {
+    if (!config.metadata.providers.spotify)
+        return new MatchingError('Spotify provider not enabled')
+
+    const spotifySdk = SpotifyApi.withClientCredentials(
+        `${config.metadata.providers.spotify?.clientId}`,
+        `${config.metadata.providers.spotify?.clientSecret}`
+    )
 
     const results = await spotifySdk.search(query, ['track'])
 

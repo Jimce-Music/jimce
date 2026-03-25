@@ -18,17 +18,17 @@ export async function matchLastfmSearchToLastfmMetadata(
 
     // Not providedBy 'lastfm'
     if (searchResult.providedBy !== 'lastfm')
-        throw new Error(
+        return new MatchingError(
             'Search result must be provided by lastfm to use lastfm-to-lastfm matcher!'
         )
 
     // Check if lastfm API enabled
-    if (!config.metadataProviders.lastfm.enable)
-        throw Error('LastFM provider not enabled')
+    if (!config.metadata.providers.lastfm)
+        return new MatchingError('LastFM provider not enabled')
 
     const trackApi = new LastFMTrack(
-        config.metadataProviders.lastfm.clientId ?? '',
-        config.metadataProviders.lastfm.clientSecret
+        config.metadata.providers.lastfm?.apiKey ?? '',
+        config.metadata.providers.lastfm?.secret
     )
 
     const trackInfo = await trackApi.getInfo({

@@ -8,12 +8,17 @@ import { matchSpotifyMetadataToYoutubeSound } from './meta/song/sound/matchers/s
 import { matchLastfmSearchToLastfmMetadata } from './meta/song/metadata/matchers/lastfm-to-lastfm'
 import { matchDeezerSearchToDeezerMetadata } from './meta/song/metadata/matchers/deezer-to-deezer'
 import { matchDeezerMetadataToYoutubeSound } from './meta/song/sound/matchers/deezer-to-youtube'
+import MatchingError from './meta/MatchingError'
 
 // Search for a song
 // const search = await spotifySearch('Bella Napoli')
 // const search = await lastfmSearch('Bella Napoli')
 const search = await deezerSearch('Bella Napoli')
 // console.log(search)
+if (search instanceof MatchingError) {
+    console.error(search)
+    process.exit(1)
+}
 for (const sRes of search) {
     // console.log(sRes)
     // const meta = await matchLastfmSearchToLastfmMetadata(sRes)

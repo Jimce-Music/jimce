@@ -2,16 +2,17 @@ import * as z from 'zod'
 import type { GenericSearchSchemeT } from '../GenericSearchScheme'
 import config from '../../../../../config'
 import { LastFMTrack } from 'lastfm-ts-api'
+import MatchingError from '../../../MatchingError'
 
 export default async function findByQuery(
     query: string
-): Promise<GenericSearchSchemeT[]> {
-    if (!config.metadataProviders.lastfm.enable)
-        throw Error('LastFM provider not enabled')
+): Promise<GenericSearchSchemeT[] | MatchingError> {
+    if (!config.metadata.providers.lastfm)
+        return new MatchingError('LastFM provider not enabled')
 
     const trackApi = new LastFMTrack(
-        config.metadataProviders.lastfm.clientId ?? '',
-        config.metadataProviders.lastfm.clientSecret
+        config.metadata.providers.lastfm.apiKey ?? '',
+        config.metadata.providers.lastfm.secret
     )
 
     const results = await trackApi.search({ track: query })

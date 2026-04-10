@@ -68,12 +68,14 @@ fastify.withTypeProvider<FastifyZodOpenApiTypeProvider>().get(
 
             // Start search
             const searchResults = searchSongs(req.query.q)
-            // Return results once closed
-            searchResults.onClose(() => {
-                logger.info(searchResults.asArray())
-                // FIXME: logged correctly, but somehow on http://localhost:8080/api/search/simple/search-songs?q=Bella%20Napoli no data is returned when i fetch
-                res.status(200).send([...searchResults.asArray()])
+            // Wait for search to complete, then return results
+            await new Promise<void>((resolve) => {
+                searchResults.onClose(() => {
+                    resolve()
+                })
             })
+            logger.info(searchResults.asArray())
+            return res.status(200).send([...searchResults.asArray()])
         } catch (err) {
             return failInternal(res, err)
         }

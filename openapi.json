@@ -330,6 +330,7 @@
         "summary": "Creates or changes a new user",
         "description": "Based on provided username, password, email and isAdmin bool, this route will create or update a new user.\n                When the user with the provided username already exists, the user will be updated instead of re-created.\n            \n                **Requires authentication**\n                **Requires admin privileges** \n            ",
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
@@ -380,8 +381,7 @@
                 ]
               }
             }
-          },
-          "required": true
+          }
         },
         "security": [
           {
@@ -445,6 +445,7 @@
     "/api/admin/users/user": {
       "delete": {
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
@@ -461,8 +462,7 @@
                 ]
               }
             }
-          },
-          "required": true
+          }
         },
         "security": [
           {
@@ -625,6 +625,7 @@
         "summary": "Login via basic auth",
         "description": "Ask server to issue a JWT based on user & password credentials",
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
@@ -645,8 +646,7 @@
                 ]
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "200": {
@@ -710,6 +710,7 @@
         "summary": "Changes the password",
         "description": "Changes the password for the currently logged in user",
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
@@ -729,8 +730,7 @@
                 ]
               }
             }
-          },
-          "required": true
+          }
         },
         "security": [
           {
@@ -878,6 +878,82 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/success-indicator-response"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/400-bad-request-response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/401-unauthorized-response"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/500-internal-server-error-response"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/search/simple/search-songs": {
+      "get": {
+        "summary": "Search for songs (NOT STREAMED)",
+        "description": "This allows to search for songs by a specified query and returns the results once all are available. This is more of a fallback route as streamed search is preferred.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            },
+            "in": "query",
+            "name": "q",
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "artistName": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": false
+                  }
                 }
               }
             }

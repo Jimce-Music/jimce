@@ -103,7 +103,8 @@ function r1ToRes(r1: GenericSearchSchemeT): Partial<JimceSongSearchResult> {
 
 function r2ToRes(r2: GenericMetadataSchemeT): Partial<JimceSongSearchResult> {
     return {
-        name: r2.title
+        name: r2.title,
+        artistName: r2.artistQualifiedName
     }
 }
 

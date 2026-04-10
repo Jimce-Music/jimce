@@ -33,6 +33,10 @@ import './api/me/getUserinfo.ts' // GET /api/me/userinfo
 // Package: search
 import './api/search/getStreamed-search.ts' // GET /api/search/streamed-search
 // --api-search--§NEW_HERE§--
+
+// Package: search/simple
+import './api/search/simple/getSearch-songs.ts' // GET /api/search/simple/search-songs
+// --api-search/simple--§NEW_HERE§--
 // END API
 
 // START 404 / Catch-All

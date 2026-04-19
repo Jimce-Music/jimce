@@ -80,6 +80,7 @@ async function executeFlow(
         const r1all = await deezerSearch(query)
         if (r1all instanceof MatchingError) {
             // FIXME: Handle matching error correctly
+            // ! In this case we would need to run fallback flows eventually
             throw 'MatchingError'
         }
         const promises: Promise<void>[] = []
@@ -92,6 +93,7 @@ async function executeFlow(
                     const r2 = await matchDeezerSearchToDeezerMetadata(r1)
                     if (r2 instanceof MatchingError) {
                         // FIXME: Handle matching error correctly
+                        // ! Errors here must be counted. just a few are fine -> skip. but multiple result in a fallback flow needed
                         reject()
                         throw 'MatchingError'
                     }
@@ -101,6 +103,7 @@ async function executeFlow(
                     const r3 = await matchDeezerMetadataToYoutubeSound(r2)
                     if (r3 instanceof MatchingError) {
                         // FIXME: Handle matching error correctly
+                        // ! Errors here must be counted. just a few are fine -> skip. but multiple result in a fallback flow needed
                         reject()
                         throw 'MatchingError'
                     }

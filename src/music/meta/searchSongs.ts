@@ -82,25 +82,33 @@ async function executeFlow(
             // FIXME: Handle matching error correctly
             throw 'MatchingError'
         }
+        const pendingFlowStages: Promise<void>[] = []
         for (const r1 of r1all) {
             const result = searchResults.publish(r1ToRes(r1))
 
             // TODO: only continue if flow says 'deezer'
-            const r2 = await matchDeezerSearchToDeezerMetadata(r1)
-            if (r2 instanceof MatchingError) {
-                // FIXME: Handle matching error correctly
-                throw 'MatchingError'
-            }
-            result.extend(r2ToRes(r2))
+            const flowStagePromise = matchDeezerSearchToDeezerMetadata(r1)
+                .then((r2) => {
+                    if (r2 instanceof MatchingError) {
+                        // FIXME: Handle matching error correctly
+                        throw 'MatchingError'
+                    }
+                    result.extend(r2ToRes(r2))
 
-            // Match to sound
-            const r3 = await matchDeezerMetadataToYoutubeSound(r2)
-            if (r3 instanceof MatchingError) {
-                // FIXME: Handle matching error correctly
-                throw 'MatchingError'
-            }
-            result.extend(r3ToRes(r3))
+                    // Match to sound
+                    return matchDeezerMetadataToYoutubeSound(r2)
+                })
+                .then((r3) => {
+                    if (r3 instanceof MatchingError) {
+                        // FIXME: Handle matching error correctly
+                        throw 'MatchingError'
+                    }
+                    result.extend(r3ToRes(r3))
+                })
+
+            pendingFlowStages.push(flowStagePromise)
         }
+        await Promise.all(pendingFlowStages)
     }
     // TODO: Add all other providers
 }

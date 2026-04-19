@@ -80,7 +80,7 @@ async function executeFlow(
         const r1all = await deezerSearch(query)
         if (r1all instanceof MatchingError) {
             // FIXME: Handle matching error correctly
-            throw 'MatchingError'
+            throw r1all
         }
         const pendingFlowStages: Promise<void>[] = []
         for (const r1 of r1all) {
@@ -91,7 +91,7 @@ async function executeFlow(
                 .then((r2) => {
                     if (r2 instanceof MatchingError) {
                         // FIXME: Handle matching error correctly
-                        throw 'MatchingError'
+                        throw r2
                     }
                     result.extend(r2ToRes(r2))
 
@@ -101,14 +101,35 @@ async function executeFlow(
                 .then((r3) => {
                     if (r3 instanceof MatchingError) {
                         // FIXME: Handle matching error correctly
-                        throw 'MatchingError'
+                        throw r3
                     }
                     result.extend(r3ToRes(r3))
                 })
 
             pendingFlowStages.push(flowStagePromise)
         }
-        await Promise.all(pendingFlowStages)
+        const flowStageResults = await Promise.allSettled(pendingFlowStages)
+        const rejectedFlowStages = flowStageResults.filter(
+            (
+                flowStageResult
+            ): flowStageResult is PromiseRejectedResult =>
+                flowStageResult.status === 'rejected'
+        )
+        if (rejectedFlowStages.length > 0) {
+            logger.error(
+                `Flow stage failed in searchSongs.ts for query "${query}" (${rejectedFlowStages.length} failure(s))`
+            )
+            for (const [i, rejectedFlowStage] of rejectedFlowStages.entries()) {
+                logger.error(`Flow stage failure #${i + 1}:`)
+                logger.error(rejectedFlowStage.reason)
+            }
+            throw new AggregateError(
+                rejectedFlowStages.map(
+                    (rejectedFlowStage) => rejectedFlowStage.reason
+                ),
+                `Flow stage failed in searchSongs.ts for query "${query}"`
+            )
+        }
     }
     // TODO: Add all other providers
 }

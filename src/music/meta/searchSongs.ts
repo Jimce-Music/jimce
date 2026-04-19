@@ -86,6 +86,7 @@ async function executeFlow(
             const result = searchResults.publish(r1ToRes(r1))
 
             // TODO: only continue if flow says 'deezer'
+            // TODO: do not use await directly. make sure multiple  r2 and r3s run parallel but still kinda promisify it so the executeflow fucn only exist once all are done
             const r2 = await matchDeezerSearchToDeezerMetadata(r1)
             if (r2 instanceof MatchingError) {
                 // FIXME: Handle matching error correctly

@@ -950,6 +950,19 @@
                       },
                       "artistName": {
                         "type": "string"
+                      },
+                      "image": {
+                        "type": "string",
+                        "description": "Url to the album cover"
+                      },
+                      "sound": {
+                        "type": "object",
+                        "properties": {
+                          "yt:id": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": false
                       }
                     },
                     "additionalProperties": false

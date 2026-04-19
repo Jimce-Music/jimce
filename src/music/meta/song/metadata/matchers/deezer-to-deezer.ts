@@ -6,8 +6,8 @@ import naturalLangEnumerate from '../../../../../utils/naturalLangEnumerate'
 import type { Track } from 'jimce-deezer-api-ts'
 
 /**
- * Extracts metadata according to the GenericMetadataScheme from an already fetched spotify result. This avoids unnecessary doubled API calls.
- * @param result Fetched spotify result (track)
+ * Extracts metadata according to the GenericMetadataScheme from an already fetched result. This avoids unnecessary doubled API calls.
+ * @param result Fetched result (track)
  */
 export function extractDeezerMetadataFromResult(
     result: Track
@@ -18,6 +18,7 @@ export function extractDeezerMetadataFromResult(
         title: result.title,
         lengthInSeconds: result.duration,
         artistQualifiedName: result.artist.name,
+        image: result.album.cover_big,
         hints: {}
     }
 }

@@ -11,6 +11,8 @@ import type { GenericSearchSchemeT } from './song/search/GenericSearchScheme'
 import MatchingError from './MatchingError'
 import { matchDeezerSearchToDeezerMetadata } from './song/metadata/matchers/deezer-to-deezer'
 import type { GenericMetadataSchemeT } from './song/metadata/GenericMetadataScheme'
+import { matchDeezerMetadataToYoutubeSound } from './song/sound/matchers/deezer-to-youtube'
+import type { GenericSoundSchemeT } from './song/sound/GenericSoundScheme'
 
 export default function searchSongs(
     query: string
@@ -90,6 +92,14 @@ async function executeFlow(
                 throw 'MatchingError'
             }
             result.extend(r2ToRes(r2))
+
+            // Match to sound
+            const r3 = await matchDeezerMetadataToYoutubeSound(r2)
+            if (r3 instanceof MatchingError) {
+                // FIXME: Handle matching error correctly
+                throw 'MatchingError'
+            }
+            result.extend(r3ToRes(r3))
         }
     }
     // TODO: Add all other providers
@@ -104,7 +114,16 @@ function r1ToRes(r1: GenericSearchSchemeT): Partial<JimceSongSearchResult> {
 function r2ToRes(r2: GenericMetadataSchemeT): Partial<JimceSongSearchResult> {
     return {
         name: r2.title,
-        artistName: r2.artistQualifiedName
+        artistName: r2.artistQualifiedName,
+        image: r2.image
+    }
+}
+
+function r3ToRes(r3: GenericSoundSchemeT): Partial<JimceSongSearchResult> {
+    return {
+        sound: {
+            'yt:id': r3.identifierFields['yt:id']
+        }
     }
 }
 

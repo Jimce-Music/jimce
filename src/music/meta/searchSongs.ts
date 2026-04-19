@@ -82,25 +82,35 @@ async function executeFlow(
             // FIXME: Handle matching error correctly
             throw 'MatchingError'
         }
+        const promises: Promise<void>[] = []
         for (const r1 of r1all) {
-            const result = searchResults.publish(r1ToRes(r1))
+            promises.push(
+                new Promise(async (resolve, reject) => {
+                    const result = searchResults.publish(r1ToRes(r1))
 
-            // TODO: only continue if flow says 'deezer'
-            const r2 = await matchDeezerSearchToDeezerMetadata(r1)
-            if (r2 instanceof MatchingError) {
-                // FIXME: Handle matching error correctly
-                throw 'MatchingError'
-            }
-            result.extend(r2ToRes(r2))
+                    // TODO: only continue if flow says 'deezer'
+                    const r2 = await matchDeezerSearchToDeezerMetadata(r1)
+                    if (r2 instanceof MatchingError) {
+                        // FIXME: Handle matching error correctly
+                        reject()
+                        throw 'MatchingError'
+                    }
+                    result.extend(r2ToRes(r2))
 
-            // Match to sound
-            const r3 = await matchDeezerMetadataToYoutubeSound(r2)
-            if (r3 instanceof MatchingError) {
-                // FIXME: Handle matching error correctly
-                throw 'MatchingError'
-            }
-            result.extend(r3ToRes(r3))
+                    // Match to sound
+                    const r3 = await matchDeezerMetadataToYoutubeSound(r2)
+                    if (r3 instanceof MatchingError) {
+                        // FIXME: Handle matching error correctly
+                        reject()
+                        throw 'MatchingError'
+                    }
+                    result.extend(r3ToRes(r3))
+
+                    resolve()
+                })
+            )
         }
+        await Promise.allSettled(promises) // wait until all done
     }
     // TODO: Add all other providers
 }

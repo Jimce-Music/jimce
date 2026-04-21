@@ -1,20 +1,24 @@
-# Jimce Music API client (Flutter version)
+# Jimce Music API Client (Flutter)
 
-This package contains the generated Flutter API client for the Jimce server.
+Generated Flutter client for the Jimce backend API.
 
-## Versioning strategy
+## Quick start
 
-This package follows the same commit-aware strategy as the TypeScript client.
-The publish workflow sets a unique version for every commit:
+```dart
+import 'package:jimce_api_flutter/jimce_api_flutter.dart';
 
-`1.0.0-{branch}.{short_sha}`
+final apiClient = JimceApiFlutter(
+  basePathOverride: 'http://localhost:8080',
+);
 
-This lets app developers pin exactly the API client that matches a backend
-commit or branch state.
+final api = apiClient.getDefaultApi();
+```
 
-## Regenerating the client in this repository
+Use `api` to call generated endpoint methods.
 
-From the repository root:
+## Regenerate in this repository
+
+Run from repository root:
 
 ```bash
 bun run ci:gen-openapi-json
@@ -23,23 +27,12 @@ cd api-clients/jimce_api_flutter
 dart run build_runner build --delete-conflicting-outputs
 ```
 
-Generated sources are written to `lib/src` and exported through
-`lib/jimce_api_flutter.dart`, matching package import
-paths used by the generated code.
+Generated code is placed in `lib/src` and exported via `lib/jimce_api_flutter.dart`.
 
-## Package usage
+## Versioning
 
-```dart
-import 'package:jimce_api_flutter/jimce_api_flutter.dart';
+Published versions are commit-aware:
 
-final apiClient = ApiClient(
-	basePath: 'https://localhost:8080',
-);
+`1.0.0-{branch}.{short_sha}`
 
-final authApi = AuthApi(apiClient);
-```
-
-Depending on OpenAPI generator output, API class names can vary slightly.
-
-For CI publishing, set `PUB_DEV_PUBLISH_ACCESS_TOKEN` in your workflow
-environment.
+This allows pinning a client version to a specific backend state.

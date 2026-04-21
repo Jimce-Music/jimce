@@ -1,6 +1,6 @@
 name: jimce_api_flutter
 description: "Generated Flutter API client for the Jimce Music server."
-version: 0.0.1
+version: 0.0.2
 homepage: https://github.com/Jimce-Music/jimce
 repository: https://github.com/Jimce-Music/jimce
 issue_tracker: https://github.com/Jimce-Music/jimce/issues

@@ -31,7 +31,6 @@ import './api/me/getUserinfo.ts' // GET /api/me/userinfo
 // --api-me--§NEW_HERE§--
 
 // Package: search
-import './api/search/getStreamed-search.ts' // GET /api/search/streamed-search
 // --api-search--§NEW_HERE§--
 
 // Package: search/simple

@@ -74,7 +74,7 @@ fastify.withTypeProvider<FastifyZodOpenApiTypeProvider>().get(
                     resolve()
                 })
             })
-            logger.info(searchResults.asArray())
+            // logger.info(searchResults.asArray())
             return res.status(200).send([...searchResults.asArray()])
         } catch (err) {
             return failInternal(res, err)

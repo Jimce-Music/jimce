@@ -123,6 +123,9 @@ async function executeFlow(
     query: string,
     searchResults: StreamableResultList<JimceSongSearchResult>
 ): Promise<true | string> {
+    let stage2or3Errors = 0
+    const STAGE_2_OR_3_ERROR_TRESHOLD = 8
+
     return new Promise(async (resolveFlow, rejectFlow) => {
         if (flow.length !== 3) throw 'Config flow has incorrect length'
 
@@ -157,18 +160,40 @@ async function executeFlow(
                         // TODO: only continue if flow says 'deezer'
                         const r2 = await matchDeezerSearchToDeezerMetadata(r1)
                         if (r2 instanceof MatchingError) {
-                            // FIXME: Handle matching error correctly
                             // ! Errors here must be counted. just a few are fine -> skip. but multiple result in a fallback flow needed
-                            return reject('MatchingError')
+                            stage2or3Errors += 1
+                            if (stage2or3Errors > STAGE_2_OR_3_ERROR_TRESHOLD) {
+                                // Fallback flow necessary
+                                return resolveFlow(
+                                    `Flow failed in stage 2: ${r2.name} ${r2.message} ${r2.cause} ${r2.stack}`
+                                )
+                            } else {
+                                // Just log it
+                                logger.warn(
+                                    `Search flow ${flow.join(', ')} resulted in a stage 2 error. Still continuing...`
+                                )
+                                return reject('MatchingError') // just exits this result, not whole flow
+                            }
                         }
                         result.extend(r2ToRes(r2))
 
                         // Match to sound
                         const r3 = await matchDeezerMetadataToYoutubeSound(r2)
                         if (r3 instanceof MatchingError) {
-                            // FIXME: Handle matching error correctly
                             // ! Errors here must be counted. just a few are fine -> skip. but multiple result in a fallback flow needed
-                            return reject('MatchingError')
+                            stage2or3Errors += 1
+                            if (stage2or3Errors > STAGE_2_OR_3_ERROR_TRESHOLD) {
+                                // Fallback flow necessary
+                                return resolveFlow(
+                                    `Flow failed in stage 3: ${r3.name} ${r3.message} ${r3.cause} ${r3.stack}`
+                                )
+                            } else {
+                                // Just log it
+                                logger.warn(
+                                    `Search flow ${flow.join(', ')} resulted in a stage 3 error. Still continuing...`
+                                )
+                                return reject('MatchingError') // just exits this result, not whole flow
+                            }
                         }
                         result.extend(r3ToRes(r3))
 

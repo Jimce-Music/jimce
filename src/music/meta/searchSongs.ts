@@ -157,47 +157,66 @@ async function executeFlow(
                     new Promise(async (resolve, reject) => {
                         const result = searchResults.publish(r1ToRes(r1))
 
-                        // TODO: only continue if flow says 'deezer'
-                        const r2 = await matchDeezerSearchToDeezerMetadata(r1)
-                        if (r2 instanceof MatchingError) {
-                            // ! Errors here must be counted. just a few are fine -> skip. but multiple result in a fallback flow needed
-                            stage2or3Errors += 1
-                            if (stage2or3Errors > STAGE_2_OR_3_ERROR_TRESHOLD) {
-                                // Fallback flow necessary
-                                return resolveFlow(
-                                    `Flow failed in stage 2: ${r2.name} ${r2.message} ${r2.cause} ${r2.stack}`
-                                )
-                            } else {
-                                // Just log it
-                                logger.warn(
-                                    `Search flow ${flow.join(', ')} resulted in a stage 2 error. Still continuing...`
-                                )
-                                return reject('MatchingError') // just exits this result, not whole flow
+                        if (metadataProvider === 'auto') {
+                            metadataProvider = 'deezer'
+                        }
+
+                        if (metadataProvider === 'deezer') {
+                            const r2 =
+                                await matchDeezerSearchToDeezerMetadata(r1)
+                            if (r2 instanceof MatchingError) {
+                                // ! Errors here must be counted. just a few are fine -> skip. but multiple result in a fallback flow needed
+                                stage2or3Errors += 1
+                                if (
+                                    stage2or3Errors >
+                                    STAGE_2_OR_3_ERROR_TRESHOLD
+                                ) {
+                                    // Fallback flow necessary
+                                    return resolveFlow(
+                                        `Flow failed in stage 2: ${r2.name} ${r2.message} ${r2.cause} ${r2.stack}`
+                                    )
+                                } else {
+                                    // Just log it
+                                    logger.warn(
+                                        `Search flow ${flow.join(', ')} resulted in a stage 2 error. Still continuing...`
+                                    )
+                                    return reject('MatchingError') // just exits this result, not whole flow
+                                }
+                            }
+                            result.extend(r2ToRes(r2))
+
+                            // Match to sound
+                            if (soundProvider === 'auto') {
+                                soundProvider = 'youtube'
+                            }
+
+                            if (soundProvider === 'youtube') {
+                                const r3 =
+                                    await matchDeezerMetadataToYoutubeSound(r2)
+                                if (r3 instanceof MatchingError) {
+                                    // ! Errors here must be counted. just a few are fine -> skip. but multiple result in a fallback flow needed
+                                    stage2or3Errors += 1
+                                    if (
+                                        stage2or3Errors >
+                                        STAGE_2_OR_3_ERROR_TRESHOLD
+                                    ) {
+                                        // Fallback flow necessary
+                                        return resolveFlow(
+                                            `Flow failed in stage 3: ${r3.name} ${r3.message} ${r3.cause} ${r3.stack}`
+                                        )
+                                    } else {
+                                        // Just log it
+                                        logger.warn(
+                                            `Search flow ${flow.join(', ')} resulted in a stage 3 error. Still continuing...`
+                                        )
+                                        return reject('MatchingError') // just exits this result, not whole flow
+                                    }
+                                }
+                                result.extend(r3ToRes(r3))
+
+                                resolve()
                             }
                         }
-                        result.extend(r2ToRes(r2))
-
-                        // Match to sound
-                        const r3 = await matchDeezerMetadataToYoutubeSound(r2)
-                        if (r3 instanceof MatchingError) {
-                            // ! Errors here must be counted. just a few are fine -> skip. but multiple result in a fallback flow needed
-                            stage2or3Errors += 1
-                            if (stage2or3Errors > STAGE_2_OR_3_ERROR_TRESHOLD) {
-                                // Fallback flow necessary
-                                return resolveFlow(
-                                    `Flow failed in stage 3: ${r3.name} ${r3.message} ${r3.cause} ${r3.stack}`
-                                )
-                            } else {
-                                // Just log it
-                                logger.warn(
-                                    `Search flow ${flow.join(', ')} resulted in a stage 3 error. Still continuing...`
-                                )
-                                return reject('MatchingError') // just exits this result, not whole flow
-                            }
-                        }
-                        result.extend(r3ToRes(r3))
-
-                        resolve()
                     })
                 )
             }

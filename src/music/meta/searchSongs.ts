@@ -145,7 +145,7 @@ async function executeFlow(
     searchResults: StreamableResultList<JimceSongSearchResult>
 ): Promise<true | string> {
     let stage2or3Errors = ministate(0)
-    const STAGE_2_OR_3_ERROR_TRESHOLD = 8
+    const STAGE_2_OR_3_ERROR_THRESHOLD = 8
 
     return new Promise(async (resolveFlow, rejectFlow) => {
         if (flow.length !== 3) throw 'Config flow has incorrect length'
@@ -179,7 +179,7 @@ async function executeFlow(
 
                 searchResults,
 
-                STAGE_2_OR_3_ERROR_TRESHOLD,
+                STAGE_2_OR_3_ERROR_THRESHOLD,
                 stage2or3Errors
             })
         }
@@ -218,14 +218,14 @@ async function handleStage1(
 
         searchResults: StreamableResultList<JimceSongSearchResult>
 
-        STAGE_2_OR_3_ERROR_TRESHOLD: number
+        STAGE_2_OR_3_ERROR_THRESHOLD: number
         stage2or3Errors: MinimalState<number>
     }
 ): Promise<void> {
     const {
         resolveFlow,
         rejectFlow,
-        STAGE_2_OR_3_ERROR_TRESHOLD,
+        STAGE_2_OR_3_ERROR_THRESHOLD,
         stage2or3Errors,
         flow,
         searchResults
@@ -256,7 +256,7 @@ async function handleStage1(
                         // ! Errors here must be counted. just a few are fine -> skip. but multiple result in a fallback flow needed
                         stage2or3Errors.set(stage2or3Errors.get() + 1)
                         if (
-                            stage2or3Errors.get() > STAGE_2_OR_3_ERROR_TRESHOLD
+                            stage2or3Errors.get() > STAGE_2_OR_3_ERROR_THRESHOLD
                         ) {
                             // Fallback flow necessary
                             return resolveFlow(
@@ -284,7 +284,7 @@ async function handleStage1(
                             stage2or3Errors.set(stage2or3Errors.get() + 1)
                             if (
                                 stage2or3Errors.get() >
-                                STAGE_2_OR_3_ERROR_TRESHOLD
+                                STAGE_2_OR_3_ERROR_THRESHOLD
                             ) {
                                 // Fallback flow necessary
                                 return resolveFlow(

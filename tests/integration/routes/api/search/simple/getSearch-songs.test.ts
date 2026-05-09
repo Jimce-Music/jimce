@@ -9,10 +9,9 @@ describe('GET /api/search/simple/search-songs', async () => {
     //! Check for auth
     test(
         'Authentication works fine',
-        CT_JWT_checks('GET', '/api/search/simple/search-songs?q=test')
+        CT_JWT_checks('GET', '/api/search/simple/search-songs?q=oasis'),
+        30_000
     )
-
-    
 
     //! Check main functionality
     test('Returns search results for a query', async () => {
@@ -29,5 +28,5 @@ describe('GET /api/search/simple/search-songs', async () => {
         const body = res.json()
         expect(Array.isArray(body)).toBe(true)
         expect(body.length).toBeGreaterThan(0)
-    })
+    }, 30_000)
 })

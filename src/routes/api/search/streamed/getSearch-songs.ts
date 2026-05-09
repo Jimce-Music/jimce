@@ -68,7 +68,6 @@ This also simplifies usage with react (states).`, // Expandable, more detailed d
                     code: 'TOKEN_PAYLOAD_INVALID'
                 })
             }
-            res.status(200).send({ success: true })
         } catch (err) {
             return failInternal(res, err)
         }

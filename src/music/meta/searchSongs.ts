@@ -19,7 +19,7 @@ type MinimalState<T> = {
     get: () => T
     set: (v: T) => void
 }
-function ministate<T>(initialValue: T): MinimalState<T> {
+export function ministate<T>(initialValue: T): MinimalState<T> {
     let value: T = initialValue
 
     return {

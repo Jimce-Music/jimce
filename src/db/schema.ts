@@ -1,4 +1,14 @@
-import { pgTable, uniqueIndex, uuid, text, boolean } from 'drizzle-orm/pg-core'
+import {
+    pgTable,
+    uniqueIndex,
+    uuid,
+    text,
+    boolean,
+    index,
+    varchar,
+    char,
+    date
+} from 'drizzle-orm/pg-core'
 
 // Internal stuff + auth related
 export const usersTable = pgTable(
@@ -13,7 +23,48 @@ export const usersTable = pgTable(
     (table) => [uniqueIndex('username_idx').on(table.username)] // username as secondary index
 )
 
+// File system / Bucket store
+export const assetsTable = pgTable('assets', {
+    id: uuid().notNull().primaryKey().defaultRandom(),
+    filename: text().notNull(),
+    fileExtension: varchar({
+        length: 10
+    }).notNull(),
+
+    assetPath: char({
+        length: 64
+    }).notNull() // actual path in store
+})
+
 // Music related
 export const songsTable = pgTable('songs', {
-    id: uuid().notNull().primaryKey().defaultRandom()
+    id: uuid().notNull().primaryKey().defaultRandom(),
+    downloaded: boolean().notNull().default(false),
+    downloadDate: date(),
+    firstRecognizedDate: date().notNull().defaultNow(),
+    lastPlayedByAnyoneDate: date(),
+    soundDefault: uuid().references(() => assetsTable.id),
+    artistIds: uuid()
+        .notNull()
+        .references(() => artistsTable.id)
+        .array(),
+    mbid: char({
+        length: 36
+    })
 })
+
+export const artistsTable = pgTable(
+    'artists',
+    {
+        id: uuid().notNull().primaryKey().defaultRandom(),
+        name: text().notNull(),
+        description: text(),
+
+        profilePicture: uuid().references(() => assetsTable.id),
+        backgroundPicture: uuid().references(() => assetsTable.id),
+        mbid: char({
+            length: 36
+        })
+    },
+    (table) => [index('artists_name_idx').on(table.name)]
+)

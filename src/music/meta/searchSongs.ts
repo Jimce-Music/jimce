@@ -163,11 +163,12 @@ async function executeFlow(
         let soundProvider = flow[2] ?? invalid()
         if (wasInvalid) return
 
-        if (searchProvider === 'auto') {
-            searchProvider = 'deezer' // TODO: Change based on activated providers or throw if no recommendation exists
-        } else if (searchProvider === 'deezer') {
-            // ! NEW
-            await handleStage1(deezerSearch, query, {
+        async function stage1(
+            searchFn: (
+                query: string
+            ) => Promise<GenericSearchSchemeT[] | MatchingError>
+        ) {
+            return await handleStage1(searchFn, query, {
                 searchProvider,
                 metadataProvider,
                 soundProvider,
@@ -181,9 +182,18 @@ async function executeFlow(
                 STAGE_2_OR_3_ERROR_TRESHOLD,
                 stage2or3Errors
             })
+        }
 
-            // ! OLD
-            // moved to handleStage1
+        if (searchProvider === 'auto') {
+            searchProvider = 'deezer' // TODO: Change based on activated providers or throw if no recommendation exists
+        }
+
+        switch (searchProvider) {
+            case 'deezer':
+                await stage1(deezerSearch)
+                break
+            default:
+                break
         }
 
         return resolveFlow(true) // Success

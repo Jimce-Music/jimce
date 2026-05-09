@@ -247,62 +247,109 @@ async function handleStage1(
                 const result = searchResults.publish(r1ToRes(r1))
 
                 if (metadataProvider === 'auto') {
-                    metadataProvider = 'deezer'
+                    switch (searchProvider) {
+                        case 'deezer':
+                            metadataProvider = 'deezer'
+                            break
+                        default:
+                            metadataProvider = 'deezer'
+                            break
+                    }
                 }
 
+                // ### Stage 2
+                let r2: GenericMetadataSchemeT | MatchingError
                 if (metadataProvider === 'deezer') {
-                    const r2 = await matchDeezerSearchToDeezerMetadata(r1)
-                    if (r2 instanceof MatchingError) {
-                        // ! Errors here must be counted. just a few are fine -> skip. but multiple result in a fallback flow needed
-                        stage2or3Errors.set(stage2or3Errors.get() + 1)
-                        if (
-                            stage2or3Errors.get() > STAGE_2_OR_3_ERROR_THRESHOLD
-                        ) {
-                            // Fallback flow necessary
-                            return resolveFlow(
-                                `Flow failed in stage 2: ${r2.name} ${r2.message} ${r2.cause} ${r2.stack}`
+                    switch (searchProvider) {
+                        case 'deezer':
+                            r2 = await matchDeezerSearchToDeezerMetadata(r1)
+                            break
+                        default:
+                            logger.error(
+                                'Error in stage 2: was not able to identify matching function'
                             )
-                        } else {
-                            // Just log it
-                            logger.warn(
-                                `Search flow ${flow.join(', ')} resulted in a stage 2 error. Still continuing...`
+                            r2 = new MatchingError(
+                                'Error in stage 2: was not able to identify matching function'
                             )
-                            return reject('MatchingError') // just exits this result, not whole flow
-                        }
+                            break
                     }
-                    result.extend(r2ToRes(r2))
+                } /*else if (...) {...}*/ else {
+                    logger.error(
+                        'Error in stage 2: was not able to identify matching function'
+                    )
+                    r2 = new MatchingError(
+                        'Error in stage 2: was not able to identify matching function'
+                    )
+                }
 
-                    // Match to sound
-                    if (soundProvider === 'auto') {
-                        soundProvider = 'youtube'
-                    }
-
-                    if (soundProvider === 'youtube') {
-                        const r3 = await matchDeezerMetadataToYoutubeSound(r2)
-                        if (r3 instanceof MatchingError) {
-                            // ! Errors here must be counted. just a few are fine -> skip. but multiple result in a fallback flow needed
-                            stage2or3Errors.set(stage2or3Errors.get() + 1)
-                            if (
-                                stage2or3Errors.get() >
-                                STAGE_2_OR_3_ERROR_THRESHOLD
-                            ) {
-                                // Fallback flow necessary
-                                return resolveFlow(
-                                    `Flow failed in stage 3: ${r3.name} ${r3.message} ${r3.cause} ${r3.stack}`
-                                )
-                            } else {
-                                // Just log it
-                                logger.warn(
-                                    `Search flow ${flow.join(', ')} resulted in a stage 3 error. Still continuing...`
-                                )
-                                return reject('MatchingError') // just exits this result, not whole flow
-                            }
-                        }
-                        result.extend(r3ToRes(r3))
-
-                        resolve()
+                if (r2 instanceof MatchingError) {
+                    // ! Errors here must be counted. just a few are fine -> skip. but multiple result in a fallback flow needed
+                    stage2or3Errors.set(stage2or3Errors.get() + 1)
+                    if (stage2or3Errors.get() > STAGE_2_OR_3_ERROR_THRESHOLD) {
+                        // Fallback flow necessary
+                        return resolveFlow(
+                            `Flow failed in stage 2: ${r2.name} ${r2.message} ${r2.cause} ${r2.stack}`
+                        )
+                    } else {
+                        // Just log it
+                        logger.warn(
+                            `Search flow ${flow.join(', ')} resulted in a stage 2 error. Still continuing...`
+                        )
+                        return reject('MatchingError') // just exits this result, not whole flow
                     }
                 }
+                result.extend(r2ToRes(r2))
+
+                // ### Stage 3
+                // Match to sound
+                if (soundProvider === 'auto') {
+                    switch (metadataProvider) {
+                        case 'deezer':
+                            soundProvider = 'youtube'
+                            break
+                        default:
+                            soundProvider = 'youtube'
+                            break
+                    }
+                }
+
+                let r3: GenericSoundSchemeT | MatchingError
+                if (soundProvider === 'youtube') {
+                    // default case:
+                    r3 = new MatchingError(
+                        'Error in stage 3: was not able to identify matching function'
+                    )
+
+                    // good cases:
+                    if (metadataProvider === 'deezer')
+                        r3 = await matchDeezerMetadataToYoutubeSound(r2)
+                } /*else if (soundProvider === '...')*/ else {
+                    logger.error(
+                        'Error in stage 3: was not able to identify matching function'
+                    )
+                    r3 = new MatchingError(
+                        'Error in stage 3: was not able to identify matching function'
+                    )
+                }
+                if (r3 instanceof MatchingError) {
+                    // ! Errors here must be counted. just a few are fine -> skip. but multiple result in a fallback flow needed
+                    stage2or3Errors.set(stage2or3Errors.get() + 1)
+                    if (stage2or3Errors.get() > STAGE_2_OR_3_ERROR_THRESHOLD) {
+                        // Fallback flow necessary
+                        return resolveFlow(
+                            `Flow failed in stage 3: ${r3.name} ${r3.message} ${r3.cause} ${r3.stack}`
+                        )
+                    } else {
+                        // Just log it
+                        logger.warn(
+                            `Search flow ${flow.join(', ')} resulted in a stage 3 error. Still continuing...`
+                        )
+                        return reject('MatchingError') // just exits this result, not whole flow
+                    }
+                }
+                result.extend(r3ToRes(r3))
+
+                resolve()
             })
         )
     }

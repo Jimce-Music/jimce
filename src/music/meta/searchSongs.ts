@@ -14,6 +14,26 @@ import type { GenericMetadataSchemeT } from './song/metadata/GenericMetadataSche
 import { matchDeezerMetadataToYoutubeSound } from './song/sound/matchers/deezer-to-youtube'
 import type { GenericSoundSchemeT } from './song/sound/GenericSoundScheme'
 
+// minimal state like
+type MinimalState<T> = {
+    get: () => T
+    set: (v: T) => void
+}
+function ministate<T>(initialValue: T): MinimalState<T> {
+    let value: T = initialValue
+
+    return {
+        get() {
+            return value
+        },
+
+        set(v) {
+            value = v
+        }
+    }
+}
+
+// Handles execution of all flows
 export default function searchSongs(
     query: string
 ): StreamableResultList<JimceSongSearchResult> {
@@ -115,6 +135,7 @@ export default function searchSongs(
     return searchResults
 }
 
+// Used for a single flow
 /**
  * @returns true when successful, or err message when failing at stage 1
  */
@@ -123,7 +144,7 @@ async function executeFlow(
     query: string,
     searchResults: StreamableResultList<JimceSongSearchResult>
 ): Promise<true | string> {
-    let stage2or3Errors = 0
+    let stage2or3Errors = ministate(0)
     const STAGE_2_OR_3_ERROR_TRESHOLD = 8
 
     return new Promise(async (resolveFlow, rejectFlow) => {
@@ -133,8 +154,8 @@ async function executeFlow(
 
         let wasInvalid = false
         function invalid(): 'auto' {
-            throw resolveFlow('provider may not be undefined')
             wasInvalid = true
+            throw resolveFlow('provider may not be undefined')
         }
 
         let searchProvider = flow[0] ?? invalid()
@@ -145,88 +166,140 @@ async function executeFlow(
         if (searchProvider === 'auto') {
             searchProvider = 'deezer' // TODO: Change based on activated providers or throw if no recommendation exists
         } else if (searchProvider === 'deezer') {
-            const r1all = await deezerSearch(query)
-            if (r1all instanceof MatchingError) {
-                return resolveFlow(
-                    `Flow failed in stage 1: ${r1all.name} ${r1all.message} ${r1all.cause} ${r1all.stack}`
-                )
-            }
-            const promises: Promise<void>[] = []
-            for (const r1 of r1all) {
-                promises.push(
-                    new Promise(async (resolve, reject) => {
-                        const result = searchResults.publish(r1ToRes(r1))
+            // ! NEW
+            await handleStage1(deezerSearch, query, {
+                searchProvider,
+                metadataProvider,
+                soundProvider,
+                flow,
 
-                        if (metadataProvider === 'auto') {
-                            metadataProvider = 'deezer'
-                        }
+                resolveFlow,
+                rejectFlow,
 
-                        if (metadataProvider === 'deezer') {
-                            const r2 =
-                                await matchDeezerSearchToDeezerMetadata(r1)
-                            if (r2 instanceof MatchingError) {
-                                // ! Errors here must be counted. just a few are fine -> skip. but multiple result in a fallback flow needed
-                                stage2or3Errors += 1
-                                if (
-                                    stage2or3Errors >
-                                    STAGE_2_OR_3_ERROR_TRESHOLD
-                                ) {
-                                    // Fallback flow necessary
-                                    return resolveFlow(
-                                        `Flow failed in stage 2: ${r2.name} ${r2.message} ${r2.cause} ${r2.stack}`
-                                    )
-                                } else {
-                                    // Just log it
-                                    logger.warn(
-                                        `Search flow ${flow.join(', ')} resulted in a stage 2 error. Still continuing...`
-                                    )
-                                    return reject('MatchingError') // just exits this result, not whole flow
-                                }
-                            }
-                            result.extend(r2ToRes(r2))
+                searchResults,
 
-                            // Match to sound
-                            if (soundProvider === 'auto') {
-                                soundProvider = 'youtube'
-                            }
+                STAGE_2_OR_3_ERROR_TRESHOLD,
+                stage2or3Errors
+            })
 
-                            if (soundProvider === 'youtube') {
-                                const r3 =
-                                    await matchDeezerMetadataToYoutubeSound(r2)
-                                if (r3 instanceof MatchingError) {
-                                    // ! Errors here must be counted. just a few are fine -> skip. but multiple result in a fallback flow needed
-                                    stage2or3Errors += 1
-                                    if (
-                                        stage2or3Errors >
-                                        STAGE_2_OR_3_ERROR_TRESHOLD
-                                    ) {
-                                        // Fallback flow necessary
-                                        return resolveFlow(
-                                            `Flow failed in stage 3: ${r3.name} ${r3.message} ${r3.cause} ${r3.stack}`
-                                        )
-                                    } else {
-                                        // Just log it
-                                        logger.warn(
-                                            `Search flow ${flow.join(', ')} resulted in a stage 3 error. Still continuing...`
-                                        )
-                                        return reject('MatchingError') // just exits this result, not whole flow
-                                    }
-                                }
-                                result.extend(r3ToRes(r3))
-
-                                resolve()
-                            }
-                        }
-                    })
-                )
-            }
-            await Promise.allSettled(promises) // wait until all done
+            // ! OLD
+            // moved to handleStage1
         }
 
         return resolveFlow(true) // Success
         // TODO: Add all other providers
     })
 }
+
+// Handle different stages (inside of executeFlow)
+async function handleStage1(
+    searchFn: (
+        query: string
+    ) => Promise<GenericSearchSchemeT[] | MatchingError>,
+    query: string,
+    multiple: {
+        searchProvider: ProviderIdentifierT | 'auto'
+        metadataProvider: ProviderIdentifierT | 'auto'
+        soundProvider: ProviderIdentifierT | 'auto'
+        flow: (ProviderIdentifierT | 'auto')[]
+
+        resolveFlow: (value: string | true | PromiseLike<string | true>) => void
+        rejectFlow: (reason?: any) => void
+
+        searchResults: StreamableResultList<JimceSongSearchResult>
+
+        STAGE_2_OR_3_ERROR_TRESHOLD: number
+        stage2or3Errors: MinimalState<number>
+    }
+): Promise<void> {
+    const {
+        resolveFlow,
+        rejectFlow,
+        STAGE_2_OR_3_ERROR_TRESHOLD,
+        stage2or3Errors,
+        flow,
+        searchResults
+    } = multiple
+
+    // modifiable bc may be overwritten when === 'auto'
+    let { searchProvider, metadataProvider, soundProvider } = multiple
+
+    const r1all = await searchFn(query)
+    if (r1all instanceof MatchingError) {
+        return resolveFlow(
+            `Flow failed in stage 1: ${r1all.name} ${r1all.message} ${r1all.cause} ${r1all.stack}`
+        )
+    }
+    const promises: Promise<void>[] = []
+    for (const r1 of r1all) {
+        promises.push(
+            new Promise(async (resolve, reject) => {
+                const result = searchResults.publish(r1ToRes(r1))
+
+                if (metadataProvider === 'auto') {
+                    metadataProvider = 'deezer'
+                }
+
+                if (metadataProvider === 'deezer') {
+                    const r2 = await matchDeezerSearchToDeezerMetadata(r1)
+                    if (r2 instanceof MatchingError) {
+                        // ! Errors here must be counted. just a few are fine -> skip. but multiple result in a fallback flow needed
+                        stage2or3Errors.set(stage2or3Errors.get() + 1)
+                        if (
+                            stage2or3Errors.get() > STAGE_2_OR_3_ERROR_TRESHOLD
+                        ) {
+                            // Fallback flow necessary
+                            return resolveFlow(
+                                `Flow failed in stage 2: ${r2.name} ${r2.message} ${r2.cause} ${r2.stack}`
+                            )
+                        } else {
+                            // Just log it
+                            logger.warn(
+                                `Search flow ${flow.join(', ')} resulted in a stage 2 error. Still continuing...`
+                            )
+                            return reject('MatchingError') // just exits this result, not whole flow
+                        }
+                    }
+                    result.extend(r2ToRes(r2))
+
+                    // Match to sound
+                    if (soundProvider === 'auto') {
+                        soundProvider = 'youtube'
+                    }
+
+                    if (soundProvider === 'youtube') {
+                        const r3 = await matchDeezerMetadataToYoutubeSound(r2)
+                        if (r3 instanceof MatchingError) {
+                            // ! Errors here must be counted. just a few are fine -> skip. but multiple result in a fallback flow needed
+                            stage2or3Errors.set(stage2or3Errors.get() + 1)
+                            if (
+                                stage2or3Errors.get() >
+                                STAGE_2_OR_3_ERROR_TRESHOLD
+                            ) {
+                                // Fallback flow necessary
+                                return resolveFlow(
+                                    `Flow failed in stage 3: ${r3.name} ${r3.message} ${r3.cause} ${r3.stack}`
+                                )
+                            } else {
+                                // Just log it
+                                logger.warn(
+                                    `Search flow ${flow.join(', ')} resulted in a stage 3 error. Still continuing...`
+                                )
+                                return reject('MatchingError') // just exits this result, not whole flow
+                            }
+                        }
+                        result.extend(r3ToRes(r3))
+
+                        resolve()
+                    }
+                }
+            })
+        )
+    }
+    await Promise.allSettled(promises) // wait until all done
+}
+
+// ###### Mapping functions: map GenericXScheme to a JimceSongSearchResult
 
 function r1ToRes(r1: GenericSearchSchemeT): Partial<JimceSongSearchResult> {
     return {

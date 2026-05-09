@@ -955,6 +955,8 @@
     },
     "/api/search/streamed/search-songs": {
       "get": {
+        "summary": "Search for songs (STREAMED)",
+        "description": "This allows to search for songs by a specified query and returns multiple, streamed lines of json.\nThis route is not supported by the normal OpenAPI clients but should be used in combination with fetch and the official https://github.com/Jimce-Music/streamed-result-list package, which allows parsing the streamed result back into a list.\nThis also simplifies usage with react (states).",
         "parameters": [
           {
             "schema": {
@@ -966,14 +968,17 @@
             "required": true
           }
         ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "responses": {
           "200": {
             "description": "Default Response",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/success-indicator-response"
-                }
+                "schema": {}
               }
             }
           },

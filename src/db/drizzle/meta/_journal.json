@@ -43,6 +43,20 @@
       "when": 1778348663216,
       "tag": "0005_nosy_ezekiel",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1778349671901,
+      "tag": "0006_luxuriant_the_captain",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1778350551658,
+      "tag": "0007_jazzy_shockwave",
+      "breakpoints": true
     }
   ]
 }

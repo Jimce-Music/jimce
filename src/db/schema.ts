@@ -7,7 +7,8 @@ import {
     index,
     varchar,
     char,
-    date
+    date,
+    integer
 } from 'drizzle-orm/pg-core'
 
 // Internal stuff + auth related
@@ -57,14 +58,20 @@ export const artistsTable = pgTable(
     'artists',
     {
         id: uuid().notNull().primaryKey().defaultRandom(),
-        name: text().notNull(),
+        name: text().notNull().unique(),
         description: text(),
 
         profilePicture: uuid().references(() => assetsTable.id),
         backgroundPicture: uuid().references(() => assetsTable.id),
+
+        // additional data to identify artists
         mbid: char({
             length: 36
-        })
+        }),
+        deezerId: integer()
     },
-    (table) => [index('artists_name_idx').on(table.name)]
+    (table) => [
+        uniqueIndex('artists_name_idx').on(table.name),
+        index('artists_deezer_id_idx').on(table.deezerId)
+    ]
 )

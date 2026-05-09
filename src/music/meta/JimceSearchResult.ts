@@ -1,8 +1,10 @@
 import * as z from 'zod'
+import { JimceArtistZ } from './artist/JimceArtist'
 
 export const JimceSongSearchResultZ = z.object({
     // Metadata
     name: z.string(),
+    artists: JimceArtistZ.array(),
     artistName: z.string(),
     image: z.string().meta({ description: 'Url to the album cover' }),
 

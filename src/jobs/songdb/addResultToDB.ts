@@ -9,6 +9,8 @@ export async function addResultToDB(
 ): Promise<{
     success: boolean
 }> {
+    // Check for already existing entry in database
+
     return {
         success: true
     }

@@ -897,6 +897,27 @@
                       "name": {
                         "type": "string"
                       },
+                      "artists": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "artistId": {
+                              "type": "string",
+                              "minLength": 1
+                            }
+                          },
+                          "required": [
+                            "name",
+                            "artistId"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
                       "artistName": {
                         "type": "string"
                       },

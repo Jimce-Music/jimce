@@ -1,5 +1,6 @@
 import * as z from 'zod'
 import { ProviderIdentifierZ } from '../../ProviderIdentifierT'
+import { JimceArtistZ } from '../../artist/JimceArtist'
 
 // Zod / actual type declaration
 
@@ -7,7 +8,7 @@ import { ProviderIdentifierZ } from '../../ProviderIdentifierT'
 const BaseZ = z.object({
     title: z.string(),
     lengthInSeconds: z.number().positive(),
-    // artists: [...] coming soon, list of artists with serverside id, maybe connect to musicbrainz always
+    artists: JimceArtistZ.array(),
     artistQualifiedName: z.string().meta({
         description:
             'The artist name in a standard, qualified form. => Likely to not be a Lyrics Video Channel name but the actual artist'

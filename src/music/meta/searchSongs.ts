@@ -368,6 +368,7 @@ function r2ToRes(r2: GenericMetadataSchemeT): Partial<JimceSongSearchResult> {
     return {
         name: r2.title,
         artistName: r2.artistQualifiedName,
+        artists: r2.artists,
         image: r2.image
     }
 }

@@ -13,6 +13,7 @@ import { matchDeezerSearchToDeezerMetadata } from './song/metadata/matchers/deez
 import type { GenericMetadataSchemeT } from './song/metadata/GenericMetadataScheme'
 import { matchDeezerMetadataToYoutubeSound } from './song/sound/matchers/deezer-to-youtube'
 import type { GenericSoundSchemeT } from './song/sound/GenericSoundScheme'
+import { mapResultToDB } from '../../jobs/songdb/addResultToDB'
 
 // minimal state like
 type MinimalState<T> = {
@@ -298,7 +299,7 @@ async function handleStage1(
                         return reject('MatchingError') // just exits this result, not whole flow
                     }
                 }
-                result.extend(r2ToRes(r2))
+                result.extend(await r2ToRes(r2))
 
                 // ### Stage 3
                 // Match to sound
@@ -347,7 +348,7 @@ async function handleStage1(
                         return reject('MatchingError') // just exits this result, not whole flow
                     }
                 }
-                result.extend(r3ToRes(r3))
+                result.extend(await r3ToRes(r3))
 
                 resolve()
             })
@@ -364,16 +365,20 @@ function r1ToRes(r1: GenericSearchSchemeT): Partial<JimceSongSearchResult> {
     }
 }
 
-function r2ToRes(r2: GenericMetadataSchemeT): Partial<JimceSongSearchResult> {
-    return {
+async function r2ToRes(
+    r2: GenericMetadataSchemeT
+): Promise<Partial<JimceSongSearchResult>> {
+    return await mapResultToDB({
         name: r2.title,
         artistName: r2.artistQualifiedName,
         artists: r2.artists,
         image: r2.image
-    }
+    })
 }
 
-function r3ToRes(r3: GenericSoundSchemeT): Partial<JimceSongSearchResult> {
+async function r3ToRes(
+    r3: GenericSoundSchemeT
+): Promise<Partial<JimceSongSearchResult>> {
     return {
         sound: {
             'yt:id': r3.identifierFields['yt:id']

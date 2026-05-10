@@ -57,6 +57,13 @@
       "when": 1778350551658,
       "tag": "0007_jazzy_shockwave",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1778430339028,
+      "tag": "0008_glossy_frank_castle",
+      "breakpoints": true
     }
   ]
 }

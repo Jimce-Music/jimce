@@ -3,6 +3,7 @@ import { JimceArtistZ } from './artist/JimceArtist'
 
 export const JimceSongSearchResultZ = z.object({
     // Metadata
+    songId: z.string(),
     name: z.string(),
     artists: JimceArtistZ.array(),
     artistName: z.string(),

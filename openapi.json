@@ -894,6 +894,9 @@
                   "items": {
                     "type": "object",
                     "properties": {
+                      "songId": {
+                        "type": "string"
+                      },
                       "name": {
                         "type": "string"
                       },

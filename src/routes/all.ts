@@ -40,6 +40,10 @@ import './api/search/simple/getSearch-songs.ts' // GET /api/search/simple/search
 // Package: search/streamed
 import './api/search/streamed/getSearch-songs.ts' // GET /api/search/streamed/search-songs
 // --api-search/streamed--§NEW_HERE§--
+
+// Package: dummy/schemas
+import './api/dummy/schemas/getSearch-schema.ts' // GET /api/dummy/schemas/search-schema
+// --api-dummy/schemas--§NEW_HERE§--
 // END API
 
 // START 404 / Catch-All

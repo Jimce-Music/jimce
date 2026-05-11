@@ -18,6 +18,7 @@
         "tmpfs",
         "userid",
         "youtube",
+        "ytid",
         "ytmusic"
     ],
     "sqltools.connections": [

@@ -32,20 +32,6 @@ fastify.withTypeProvider<FastifyZodOpenApiTypeProvider>().get(
     {
         onRequest: [fastify.authenticate], // Secures route with JWT
 
-        // <-- inject CORS header early on in dev mode
-        preHandler: (req, reply, done) => {
-            if (meta.is_dev) {
-                reply.header('Access-Control-Allow-Origin', '*')
-                // optional: expose other CORS headers you need
-                reply.header('Access-Control-Allow-Methods', 'GET,OPTIONS')
-                reply.header(
-                    'Access-Control-Allow-Headers',
-                    'Content-Type,Authorization'
-                )
-            }
-            done()
-        },
-
         schema: {
             hide: false,
             summary: 'Search for songs (STREAMED)', // TODO: Add summary and description
@@ -88,6 +74,15 @@ This also simplifies usage with react (states).`, // Expandable, more detailed d
 
         res.type('application/jsonl')
         res.header('Transfer-Encoding', 'chunked')
+        // CORS
+        if (meta.is_dev) {
+            res.header('Access-Control-Allow-Origin', '*')
+            res.header('Access-Control-Allow-Methods', 'GET,OPTIONS')
+            res.header(
+                'Access-Control-Allow-Headers',
+                'Content-Type,Authorization'
+            )
+        }
 
         const stream = res.raw
 

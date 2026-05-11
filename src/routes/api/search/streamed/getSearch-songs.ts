@@ -85,6 +85,14 @@ This also simplifies usage with react (states).`, // Expandable, more detailed d
         }
 
         const stream = res.raw
+        if (meta.is_dev) {
+            stream.setHeader('Access-Control-Allow-Origin', '*')
+            stream.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS')
+            stream.setHeader(
+                'Access-Control-Allow-Headers',
+                'Content-Type,Authorization'
+            )
+        }
 
         // Start search and stream chunks
         const searchResults = searchSongs(req.query.q)

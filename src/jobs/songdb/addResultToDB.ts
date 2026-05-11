@@ -89,7 +89,24 @@ export async function mapResultToDB(
     }
 }
 
-// TODO: also update db with ytid once sound was fetched (or any other form of sound id)
-export async function addSoundToResult(soundSourceObj: { ytid?: string }) {
-    // TODO:
+export async function addSoundToResult(
+    songId: string,
+    soundSourceObj: { ytid?: string }
+) {
+    if (Object.keys(soundSourceObj).length === 0) return // no info to add
+
+    try {
+        await db
+            .update(songsTable)
+            .set(soundSourceObj)
+            .where(eq(songsTable.id, songId))
+    } catch (err) {
+        logger.error('Error in addSoundToResult:')
+        logger.error(err)
+        return
+    } finally {
+        logger.info(
+            `Added ${JSON.stringify(soundSourceObj)} for song ${songId}`
+        )
+    }
 }

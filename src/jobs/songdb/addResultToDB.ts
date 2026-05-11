@@ -90,3 +90,6 @@ export async function mapResultToDB(
 }
 
 // TODO: also update db with ytid once sound was fetched (or any other form of sound id)
+export async function addSoundToResult(soundSourceObj: {}) {
+    // TODO:
+}

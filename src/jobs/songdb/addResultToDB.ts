@@ -2,7 +2,7 @@ import { and, eq } from 'drizzle-orm'
 import db from '../../db'
 import { songsTable } from '../../db/schema'
 import type { JimceSongSearchResult } from '../../music/meta/JimceSearchResult'
-import { buildAssetURIFromUUID } from '../../utils/assets'
+import { Asset, buildAssetURIFromUUID } from '../../utils/assets'
 import logger from '../../logger'
 
 /**
@@ -52,20 +52,56 @@ export async function mapResultToDB(
             image: img
         }
     } else {
+        let newId: string | undefined
+
+        // Start image asset download
+        let imgAssetId: string | undefined
+        if (song.image) {
+            try {
+                const asset = await Asset.fromURL(
+                    song.image,
+                    async (success) => {
+                        if (success) {
+                            logger.info(
+                                `Successfully downloaded cover image for song ${song.name} by ${song.artistName}`
+                            )
+                        } else {
+                            logger.info(
+                                `As asset download for image for song ${song.name} by ${song.artistName} failed, songsTable will now be updated`
+                            )
+
+                            // Remove img urls from database as asset does not exist
+                            await db
+                                .update(songsTable)
+                                .set({
+                                    coverImage: null,
+                                    coverImagePreview: null
+                                })
+                                .where(eq(songsTable.id, newId ?? 'unknown-id'))
+                        }
+                    }
+                )
+                imgAssetId = asset.id
+            } catch (err) {
+                logger.warn(`Quitting image download in mapResultToDB: ${err}`)
+            }
+        }
+
         // Add song to db
-        // TODO: also create assets for cover image and cover image preview + download them
         const newDbEntry = await db
             .insert(songsTable)
             .values({
                 name: `${song.name}`,
                 artistIds: song.artists?.map((a) => a.artistId) || [],
-                downloaded: false
+                downloaded: false,
+                coverImage: imgAssetId,
+                coverImagePreview: imgAssetId // TODO: Register job to resize to a good preview size after downloading the asset
             })
             .onConflictDoNothing()
             .returning()
 
         // Handle race condition for adding songs at the same time
-        let newId: string | undefined =
+        newId =
             Array.isArray(newDbEntry) && newDbEntry[0]
                 ? newDbEntry[0].id
                 : (newDbEntry as any).id

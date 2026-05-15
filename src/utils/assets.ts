@@ -5,6 +5,9 @@ import mime from 'mime'
 import fsExtra from 'fs-extra/esm'
 import { eq } from 'drizzle-orm'
 import logger from '../logger'
+import { v4 } from 'uuid'
+import { createWriteStream } from 'fs'
+import { Readable } from 'stream'
 
 export async function buildAssetURIFromUUID(uuid: string): Promise<string> {
     // TODO: implement, for now just dummy
@@ -12,7 +15,7 @@ export async function buildAssetURIFromUUID(uuid: string): Promise<string> {
 }
 
 export function getAssetPath(assetId: string) {
-    return path.join(process.cwd(), assetId.slice(0, 2), assetId)
+    return path.join(process.cwd(), 'assets', assetId.slice(0, 2), assetId)
 }
 
 export class Asset {
@@ -71,13 +74,16 @@ export class Asset {
     }
 
     async existsInFs() {
-        return await fsExtra.pathExists(this.getPath())
+        return await fsExtra.pathExists(await this.getPath())
     }
 
     /**
      * @returns Path of the asset in the server's fs
      */
-    getPath() {
+    async getPath() {
+        await fsExtra.ensureDir(
+            path.join(process.cwd(), 'assets', this.id.slice(0, 2))
+        )
         return getAssetPath(this.id)
     }
 
@@ -96,6 +102,16 @@ export class Asset {
         this.mimeType = data.mimeType
 
         this.#wasFetched = true
+    }
+
+    /**
+     * Deletes an asset from the fs and database
+     */
+    async delete() {
+        const file = await this.getPath()
+
+        await fsExtra.remove(file)
+        await db.delete(assetsTable).where(eq(assetsTable.id, this.id))
     }
 
     /**
@@ -137,5 +153,63 @@ export class Asset {
         })
 
         return asset
+    }
+
+    /**
+     * Downloads an asset from an URL and saves it. Returns the asset directly, calls callback when done
+     * @param url Url to asset
+     */
+    static fromURL(url: string, doneCallback: (success: boolean) => void) {
+        return new Promise<Asset>(async (resolve, reject) => {
+            const res = await fetch(url)
+            if (!res.ok) {
+                logger.warn(
+                    `Aborting asset download of ${url}: HTTP ${res.status}`
+                )
+                reject(`Aborting asset download of ${url}: HTTP ${res.status}`)
+            }
+
+            function warnOctetStream() {
+                logger.warn(
+                    `Unable to identify mime-type based on header for ${url}. Falling back to 'application/octet-stream'`
+                )
+                return 'application/octet-stream'
+            }
+
+            const mimeType =
+                res.headers.get('content-type') ??
+                res.headers.get('Content-Type') ??
+                warnOctetStream()
+
+            const asset = await Asset.create(v4(), mimeType)
+            resolve(asset)
+
+            // Now start actual download
+            const fPath = await asset.getPath()
+            const fStream = createWriteStream(fPath)
+
+            if (res.body) {
+                Readable.fromWeb(res.body)
+                    .pipe(fStream)
+                    .on('finish', () => {
+                        doneCallback(true)
+                    })
+                    .on('error', async (err) => {
+                        logger.error(
+                            `Error while downloading asset from ${url}: failed to pipe body (error event) into ${fPath}`
+                        )
+                        logger.error(err)
+                        await asset.delete()
+                        reject(err)
+                        doneCallback(false)
+                    })
+            } else {
+                const err = `Error while downloading asset from ${url}: failed to pipe body (because it's null) into ${fPath}`
+                logger.error(err)
+                await asset.delete()
+                reject(err)
+                doneCallback(false)
+            }
+        })
     }
 }

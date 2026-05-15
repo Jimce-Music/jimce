@@ -42,3 +42,9 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 
 # API clients
 api-clients/typescript-api-client/src/client/
+
+
+
+
+
+assets/

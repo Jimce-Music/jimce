@@ -27,14 +27,24 @@ export const usersTable = pgTable(
 // File system / Bucket store
 export const assetsTable = pgTable('assets', {
     id: uuid().notNull().primaryKey().defaultRandom(),
+    /**
+     * Does not include the file extension
+     */
     filename: text().notNull(),
+    /**
+     * Prefixed with a dot, e.g. ".mp3"
+     */
     fileExtension: varchar({
         length: 10
     }).notNull(),
 
-    assetPath: char({
-        length: 64
-    }).notNull() // actual path in store
+    mimeType: varchar({
+        length: 128
+    }).notNull(),
+
+    creationDate: date().notNull().defaultNow()
+
+    // No need to store path, as path will always be UUID[:2]/UUID --> e.g.: 00/00abc8j[...]
 })
 
 // Music related

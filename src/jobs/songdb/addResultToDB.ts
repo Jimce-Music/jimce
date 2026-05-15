@@ -2,7 +2,7 @@ import { and, eq } from 'drizzle-orm'
 import db from '../../db'
 import { songsTable } from '../../db/schema'
 import type { JimceSongSearchResult } from '../../music/meta/JimceSearchResult'
-import { buildAssetURIFromUUID } from '../../utils/asseturi'
+import { buildAssetURIFromUUID } from '../../utils/assets'
 import logger from '../../logger'
 
 /**

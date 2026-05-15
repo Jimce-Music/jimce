@@ -15,6 +15,7 @@ import fastifySwagger from '@fastify/swagger'
 import fastifySwaggerUI from '@fastify/swagger-ui'
 import RateLimiter from '@fastify/rate-limit'
 import fastifyCors from '@fastify/cors'
+import fastifyStatic from '@fastify/static'
 
 // Define app / server / fastify 'instance'
 const fastify = Fastify({
@@ -73,6 +74,13 @@ await fastify.register(fastifySwagger, {
     ...fastifyZodOpenApiTransformers
 })
 await fastify.register(fastifySwaggerUI, { routePrefix: '/api-docs' })
+
+// Enable fastify/static for sending files
+await fastify.register(fastifyStatic, {
+    serve: false,
+    acceptRanges: true,
+    contentType: false // set manually with db data
+})
 
 // Export app
 export default fastify

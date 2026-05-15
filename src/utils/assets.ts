@@ -9,9 +9,9 @@ import { v4 } from 'uuid'
 import { createWriteStream } from 'fs'
 import { Readable } from 'stream'
 
-export async function buildAssetURIFromUUID(uuid: string): Promise<string> {
-    // TODO: implement, for now just dummy
-    return `dummy-asset-uri(${uuid})`
+export function buildAssetURIFromUUID(uuid: string): string {
+    const asset = new Asset(uuid)
+    return asset.buildURI()
 }
 
 export function getAssetPath(assetId: string) {
@@ -38,7 +38,7 @@ export class Asset {
      * Builds a client available URI without fetching
      */
     buildURI() {
-        return `/api/asset/${this.id} `
+        return `/api/asset/${this.id}`
     }
 
     /**
@@ -85,6 +85,16 @@ export class Asset {
             path.join(process.cwd(), 'assets', this.id.slice(0, 2))
         )
         return getAssetPath(this.id)
+    }
+
+    /**
+     * @returns Path of the asset relative to the server's fs assets dir
+     */
+    async getRelativePath() {
+        await fsExtra.ensureDir(
+            path.join(process.cwd(), 'assets', this.id.slice(0, 2))
+        )
+        return path.join(this.id.slice(0, 2), this.id)
     }
 
     /**

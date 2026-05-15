@@ -44,6 +44,10 @@ import './api/search/streamed/getSearch-songs.ts' // GET /api/search/streamed/se
 // Package: dummy/schemas
 import './api/dummy/schemas/getSearch-schema.ts' // GET /api/dummy/schemas/search-schema
 // --api-dummy/schemas--§NEW_HERE§--
+
+// Package: asset
+import './api/asset/get[assetuuid].ts' // GET /api/asset/:assetuuid
+// --api-asset--§NEW_HERE§--
 // END API
 
 // START 404 / Catch-All

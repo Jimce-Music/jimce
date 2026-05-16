@@ -33,10 +33,10 @@ fastify.withTypeProvider<FastifyZodOpenApiTypeProvider>().get(
 
             response: {
                 200: {
-                    description: 'pong',
+                    description: 'pong with identifier',
                     content: {
                         'text/plain': {
-                            schema: z.literal('pong')
+                            schema: z.literal('pong by jimce backend')
                         }
                     }
                 },
@@ -49,7 +49,7 @@ fastify.withTypeProvider<FastifyZodOpenApiTypeProvider>().get(
     },
     async (req, res) => {
         try {
-            res.status(200).send('pong')
+            res.status(200).send('pong by jimce backend')
         } catch (err) {
             return failInternal(res, err)
         }

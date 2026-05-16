@@ -27,7 +27,7 @@ describe('GET /api/search/streamed/search-songs', async () => {
             method: 'GET',
             url: '/api/search/streamed/search-songs',
             headers: {
-                authorization: `Bearer ${user.jwt}` // or: process.env.ADMIN_JWT
+                authorization: `Bearer ${user.jwt}` // or: ADMIN_JWT
             }
         })
 
@@ -42,7 +42,7 @@ describe('GET /api/search/streamed/search-songs', async () => {
             method: 'GET',
             url: '/api/search/streamed/search-songs?q=never+gonna+give+you+up',
             headers: {
-                authorization: `Bearer ${user.jwt}` // or: process.env.ADMIN_JWT
+                authorization: `Bearer ${user.jwt}` // or: ADMIN_JWT
             }
         })
         // wait for first data chunk, expect it to be initPacket
@@ -64,7 +64,7 @@ describe('GET /api/search/streamed/search-songs', async () => {
             method: 'GET',
             url: '/api/search/streamed/search-songs?q=never+gonna+give+you+up',
             headers: {
-                authorization: `Bearer ${user.jwt}` // or: process.env.ADMIN_JWT
+                authorization: `Bearer ${user.jwt}` // or: ADMIN_JWT
             }
         })
 

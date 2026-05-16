@@ -18,19 +18,18 @@ describe('GET /api/asset/:assetuuid', async () => {
         CT_JWT_checks('GET', '/api/admin/users/list-users') // TODO: Add valid body if required by the endpoint
     )
 
-    
-
     //! Check main functionality
-    test('Main functionality', async () => { // TODO: Add a descriptive title
+    test('Main functionality', async () => {
+        // TODO: Add a descriptive title
         const user = await getBurnerUser(false)
 
         // TODO: Test core functionality
-        
+
         const res = await fastify.inject({
             method: 'GET',
             url: '/api/asset/:assetuuid',
             headers: {
-                authorization: `Bearer ${user.jwt}` // or: process.env.ADMIN_JWT
+                authorization: `Bearer ${user.jwt}` // or: ADMIN_JWT
             }
         })
         expect(res.statusCode).toBe(200)

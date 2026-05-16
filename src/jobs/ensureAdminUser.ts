@@ -6,7 +6,11 @@ import meta from '../meta'
 import chalk from 'chalk'
 
 export default async function ensureAdminUsers(): Promise<void> {
-    if (!meta.execution.disable_background_jobs && !meta.execution.disable_db) {
+    if (
+        (!meta.execution.disable_background_jobs &&
+            !meta.execution.disable_db) ||
+        (meta.execution.is_ci_run && meta.execution.disable_background_jobs)
+    ) {
         const adminUsers = await db
             .select()
             .from(usersTable)

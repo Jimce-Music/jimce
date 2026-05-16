@@ -12,9 +12,7 @@ import type { $DefaultResponse } from '../../src/routes/api/auth/postLogin-basic
 import * as z from 'zod'
 import logger from '../../src/logger'
 import fastify from '../../src/fastify'
-
-const META_PATH = path.resolve(__dirname, '../../meta.yml')
-const originalRaw = await readFile(META_PATH, 'utf8')
+import { resetMetaYAML } from './setup-meta-yaml'
 
 beforeAll(async () => {
     // Initialize the test run
@@ -52,25 +50,14 @@ beforeAll(async () => {
     await import('../../src/index')
 
     // 6. Generate an admin JWT for the test run
-    const admin_login_res = await fastify.inject({
-        method: 'post',
-        url: '/api/auth/login-basic',
-        body: {
-            username: 'admin',
-            password: '123456789abc'
-        }
-    })
-    const admin_login_data =
-        admin_login_res.json<z.infer<typeof $DefaultResponse>>()
-    const admin_jwt = admin_login_data.token
-    process.env.ADMIN_JWT = admin_jwt
+    // done in test-admin-jwt.ts
 })
 
 afterAll(async () => {
     // Finalize the test run and restore old state
 
     // 1. Reset meta.yml
-    await writeFile(META_PATH, originalRaw)
+    await resetMetaYAML()
 
     // 2. Close fastify server
     await fastify.close()

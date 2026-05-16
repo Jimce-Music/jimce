@@ -10,6 +10,7 @@ import * as uuid from 'uuid'
 import db from '../../../../../../src/db'
 import { usersTable } from '../../../../../../src/db/schema'
 import { eq } from 'drizzle-orm'
+import logger from '../../../../../../src/logger'
 
 describe('GET /api/dummy/schemas/search-schema', async () => {
     //! Check for auth
@@ -25,16 +26,14 @@ describe('GET /api/dummy/schemas/search-schema', async () => {
     )
 
     //! Check main functionality
-    test('Main functionality', async () => { // TODO: Add a descriptive title
-        const user = await getBurnerUser(false)
+    test('Should return code 200', async () => {
+        const user = await getBurnerUser(true)
 
-        // TODO: Test core functionality
-        
         const res = await fastify.inject({
             method: 'GET',
             url: '/api/dummy/schemas/search-schema',
             headers: {
-                authorization: `Bearer ${user.jwt}` // or: process.env.ADMIN_JWT
+                authorization: `Bearer ${user.jwt}` // or: ADMIN_JWT
             }
         })
         expect(res.statusCode).toBe(200)

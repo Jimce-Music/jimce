@@ -28,7 +28,7 @@ if (meta.execution.disable_db) {
 
 // ################################################ //
 // Create admin users if none exist
-if (meta.execution.disable_background_jobs) {
+if (meta.execution.disable_background_jobs && !meta.execution.is_ci_run) {
     logger.info("Won't ensure admin user, as background jobs are disabled")
 } else {
     await ensureAdminUsers()

@@ -76,7 +76,7 @@ export default function searchSongs(
     }
 
     // Execute all preferred flows at the same time
-    for (const preferredFlow of config.metadata.flows.preferred) {
+    for (const [preferredFlowIndex, preferredFlow] of config.metadata.flows.preferred.entries()) {
         const i = preferredFlowDoneStates.push(false) - 1
 
         // Execute all flow stages
@@ -90,7 +90,7 @@ export default function searchSongs(
                 } else {
                     // Flow failed. Log that. Not a problem unless all flows fail
                     logger.warn(
-                        `Search flow ${preferredFlow.join(', ')} failed`
+                        `Search flow #${preferredFlowIndex + 1} failed`
                     )
                     preferredFlowDoneStates[i] = 'failed'
                     maybeDone()
@@ -106,7 +106,7 @@ export default function searchSongs(
 
     // Code for fallback flows
     async function runFallbackFlows() {
-        for (const fallbackFlow of config.metadata.flows.fallback) {
+        for (const [fallbackFlowIndex, fallbackFlow] of config.metadata.flows.fallback.entries()) {
             try {
                 const retv = await executeFlow(
                     fallbackFlow,
@@ -116,12 +116,12 @@ export default function searchSongs(
 
                 if (retv === true) {
                     logger.info(
-                        `Fallback flow ${fallbackFlow.join(', ')} was successful`
+                        `Fallback flow #${fallbackFlowIndex + 1} was successful`
                     )
                     return searchResults.close()
                 } else {
                     logger.warn(
-                        `Fallback search flow ${fallbackFlow.join(', ')} failed`
+                        `Fallback search flow #${fallbackFlowIndex + 1} failed`
                     )
                 }
             } catch (err) {

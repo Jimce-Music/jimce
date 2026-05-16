@@ -1,4 +1,4 @@
-// Unit test for deezer search provide
+// Unit test for deezer search provider
 import { expect, test, describe } from 'bun:test'
 import findByQuery from '../../../../../../../src/music/meta/song/search/providers/deezer'
 import MatchingError from '../../../../../../../src/music/meta/MatchingError'

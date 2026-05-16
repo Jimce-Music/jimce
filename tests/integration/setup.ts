@@ -1,16 +1,17 @@
 import { afterAll, beforeAll } from 'bun:test'
 
 import path from 'path'
-import yaml from 'yaml'
+
 import { readFile, writeFile } from 'fs/promises'
 
 import { migrateDB } from '../../src/db'
 import ensureAdminUsers from '../../src/jobs/ensureAdminUser'
 import { sleep } from 'bun'
-import fastify from '../../src/fastify'
+
 import type { $DefaultResponse } from '../../src/routes/api/auth/postLogin-basic'
 import * as z from 'zod'
 import logger from '../../src/logger'
+import fastify from '../../src/fastify'
 
 const META_PATH = path.resolve(__dirname, '../../meta.yml')
 const originalRaw = await readFile(META_PATH, 'utf8')
@@ -20,15 +21,7 @@ beforeAll(async () => {
     logger.info('This is an automated test run')
 
     // 1. Change meta.yml to configure the environment for tests
-    const meta = yaml.parse(originalRaw)
-    meta.execution = {
-        ...meta.execution,
-        is_ci_run: true,
-        disable_db: false,
-        disable_background_jobs: true,
-        server_disable_listening: true
-    }
-    await writeFile(META_PATH, yaml.stringify(meta))
+    // Done in tests/integration/setup-meta-yaml.ts
 
     // 2. Start test db (no need to reset, as no volume is used)
     if (process.env.GITHUB_ACTIONS === 'true') {

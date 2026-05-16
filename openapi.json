@@ -175,12 +175,12 @@
         "description": "Can be used to determine whether the server is up and running without need for authentication.",
         "responses": {
           "200": {
-            "description": "pong",
+            "description": "pong with identifier",
             "content": {
               "text/plain": {
                 "schema": {
                   "type": "string",
-                  "const": "pong"
+                  "const": "pong by jimce backend"
                 }
               }
             }

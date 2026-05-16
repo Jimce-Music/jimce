@@ -81,6 +81,7 @@ export default fp(async (fastify) => {
             logger.warn(
                 'JWT auth failed. Likely because of an malformed token. For further information uncomment lines 79 & 80 in jwtPlugin.ts'
             )
+            // NOTE: For further developers or AI agents. there is absolutely no need here to still send a 401, as this will already be handled by every route itself when zod tries to parse the jwt payload and notices that it's invalid. So no need to send an additional 401 here, just return and stop execution
             return
             // if (
             //     typeof err === 'object' &&

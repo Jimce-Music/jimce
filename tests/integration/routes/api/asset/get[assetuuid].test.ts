@@ -14,10 +14,21 @@ import logger from '../../../../../src/logger'
 
 describe('GET /api/asset/:assetuuid', async () => {
     //! Check for auth
-    test(
-        'Authentication works fine',
-        CT_JWT_checks('GET', '/api/asset/asset-that-will-never-exist') // TODO: Add valid body if required by the endpoint
-    )
+    test('Authentication works fine', async () => {
+        const existingAsset = (await db.select().from(assetsTable).limit(1))[0]
+
+        if (!existingAsset) {
+            logger.error(
+                'Cannot test get[assetuuid], as no assets are registered in the db'
+            )
+            expect(1).toBe(2)
+        } else {
+            return await CT_JWT_checks(
+                'GET',
+                `/api/asset/${existingAsset.id}`
+            )()
+        }
+    })
 
     //! 404
     test('Shows 404 on non-existing assets', async () => {

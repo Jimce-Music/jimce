@@ -26,7 +26,7 @@ describe('GET /api/dummy/schemas/search-schema', async () => {
     )
 
     //! Check main functionality
-    test('Should return code 200', async () => {
+    test('Should return code 204', async () => {
         const user = await getBurnerUser(true)
 
         const res = await fastify.inject({
@@ -36,6 +36,6 @@ describe('GET /api/dummy/schemas/search-schema', async () => {
                 authorization: `Bearer ${user.jwt}` // or: ADMIN_JWT
             }
         })
-        expect(res.statusCode).toBe(200)
+        expect(res.statusCode).toBe(204)
     })
 })

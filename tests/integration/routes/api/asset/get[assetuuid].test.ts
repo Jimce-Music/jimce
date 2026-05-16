@@ -8,8 +8,9 @@ import getBurnerUser from '../../../../../tests/integration/getBurnerUser'
 import CT_ADMIN_checks from '../../../../../tests/integration/components/CT_ADMIN_checks'
 import * as uuid from 'uuid'
 import db from '../../../../../src/db'
-import { usersTable } from '../../../../../src/db/schema'
+import { assetsTable, usersTable } from '../../../../../src/db/schema'
 import { eq } from 'drizzle-orm'
+import logger from '../../../../../src/logger'
 
 describe('GET /api/asset/:assetuuid', async () => {
     //! Check for auth
@@ -18,20 +19,47 @@ describe('GET /api/asset/:assetuuid', async () => {
         CT_JWT_checks('GET', '/api/admin/users/list-users') // TODO: Add valid body if required by the endpoint
     )
 
-    //! Check main functionality
-    test('Main functionality', async () => {
-        // TODO: Add a descriptive title
+    //! 404
+    test('Shows 404 on non-existing assets', async () => {
         const user = await getBurnerUser(false)
-
-        // TODO: Test core functionality
 
         const res = await fastify.inject({
             method: 'GET',
-            url: '/api/asset/:assetuuid',
+            url: '/api/asset/asset-that-will-never-exist',
             headers: {
                 authorization: `Bearer ${user.jwt}` // or: ADMIN_JWT
             }
         })
-        expect(res.statusCode).toBe(200)
+        expect(res.statusCode).toBe(404)
+    })
+
+    //! Check main functionality
+    test('Loads an existing asset successfully and supports range headers', async () => {
+        const user = await getBurnerUser(false)
+
+        const existingAsset = (await db.select().from(assetsTable).limit(1))[0]
+
+        if (!existingAsset) {
+            logger.error(
+                'Cannot test get[assetuuid], as no assets are registered in the db'
+            )
+            expect(1).toBe(2)
+        } else {
+            const res = await fastify.inject({
+                method: 'GET',
+                url: `/api/asset/${existingAsset.id}`,
+                headers: {
+                    authorization: `Bearer ${user.jwt}` // or: ADMIN_JWT
+                }
+            })
+            expect(res.statusCode).toBe(200)
+            expect(res.headers['accept-ranges']).toBe('bytes')
+            expect(res.headers['content-type']).toBe(existingAsset.mimeType)
+            expect(
+                typeof res.headers['content-length'] === 'number'
+                    ? res.headers['content-length']
+                    : parseInt(res.headers['content-length'] ?? '0')
+            ).toBeGreaterThan(30) // min: 30 bytes
+        }
     })
 })

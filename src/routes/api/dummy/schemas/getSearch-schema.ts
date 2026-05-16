@@ -39,7 +39,7 @@ fastify.withTypeProvider<FastifyZodOpenApiTypeProvider>().get(
 
             response: {
                 200: JimceSongSearchResultZ,
-                201: z.null(),
+                204: z.null(),
                 400: BadRequestResponseZ,
                 401: UnauthorizedResponseZ,
                 403: ForbiddenResponseZ,
@@ -71,7 +71,7 @@ fastify.withTypeProvider<FastifyZodOpenApiTypeProvider>().get(
                 })
             }
 
-            res.status(201).send(null)
+            res.status(204).send(null)
         } catch (err) {
             return failInternal(res, err)
         }

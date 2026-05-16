@@ -105,6 +105,8 @@ export const artistsTable = pgTable(
     },
     (table) => [
         uniqueIndex('artists_name_idx').on(table.name),
-        index('artists_deezer_id_idx').on(table.deezerId)
+        index('artists_deezer_id_idx').on(table.deezerId),
+        index('artists_spotify_id_idx').on(table.spotifyId),
+        index('artists_mbid_idx').on(table.mbid)
     ]
 )

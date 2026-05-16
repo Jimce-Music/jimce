@@ -31,7 +31,7 @@ export default async function findByQuery(
             hints: {
                 spotify: {
                     id: result.id,
-                    fullMetadata: extractSpotifyMetadataFromResult(result)
+                    fullMetadata: await extractSpotifyMetadataFromResult(result)
                 }
             }
         })

@@ -98,7 +98,10 @@ export const artistsTable = pgTable(
         mbid: char({
             length: 36
         }),
-        deezerId: integer()
+        deezerId: integer(),
+        spotifyId: varchar({
+            length: 255
+        })
     },
     (table) => [
         uniqueIndex('artists_name_idx').on(table.name),

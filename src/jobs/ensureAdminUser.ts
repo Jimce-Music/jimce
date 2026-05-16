@@ -7,9 +7,8 @@ import chalk from 'chalk'
 
 export default async function ensureAdminUsers(): Promise<void> {
     if (
-        (!meta.execution.disable_background_jobs &&
-            !meta.execution.disable_db) ||
-        (meta.execution.is_ci_run && meta.execution.disable_background_jobs)
+        !meta.execution.disable_db &&
+        (!meta.execution.disable_background_jobs || meta.execution.is_ci_run)
     ) {
         const adminUsers = await db
             .select()

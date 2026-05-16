@@ -147,8 +147,10 @@ export class Asset {
             })
             .returning()
 
-        function _failThrow(): string {
-            throw `Creation of asset ${basename}${extname} failed: id is not a string`
+        function _failThrow(): never {
+            throw new Error(
+                `Creation of asset ${basename}${extname} failed: id is not a string`
+            )
         }
 
         const id: string = newDbEntries[0]?.id ?? _failThrow()

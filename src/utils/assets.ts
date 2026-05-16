@@ -177,6 +177,7 @@ export class Asset {
                     `Aborting asset download of ${url}: HTTP ${res.status}`
                 )
                 reject(`Aborting asset download of ${url}: HTTP ${res.status}`)
+                return
             }
 
             function warnOctetStream() {

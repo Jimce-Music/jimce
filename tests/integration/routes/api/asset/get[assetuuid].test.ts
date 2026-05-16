@@ -16,7 +16,7 @@ describe('GET /api/asset/:assetuuid', async () => {
     //! Check for auth
     test(
         'Authentication works fine',
-        CT_JWT_checks('GET', '/api/admin/users/list-users') // TODO: Add valid body if required by the endpoint
+        CT_JWT_checks('GET', '/api/asset/asset-that-will-never-exist') // TODO: Add valid body if required by the endpoint
     )
 
     //! 404

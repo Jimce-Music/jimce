@@ -197,7 +197,7 @@ async function executeFlow(
                 await stage1(deezerSearch)
                 break
             default:
-                break
+                return resolveFlow(`Unhandled search provider: ${searchProvider}`)
         }
 
         return resolveFlow(true) // Success

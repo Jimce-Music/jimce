@@ -53,10 +53,8 @@ export const songsTable = pgTable(
     {
         id: uuid().notNull().primaryKey().defaultRandom(),
         name: text().notNull(),
-        artistIds: uuid()
-            .notNull()
-            .references(() => artistsTable.id)
-            .array(),
+        // This is not a DB-enforced foreign-key array, but it is expected to contain artist IDs from artistsTable.
+        artistIds: uuid().notNull().array(),
 
         downloaded: boolean().notNull().default(false),
 

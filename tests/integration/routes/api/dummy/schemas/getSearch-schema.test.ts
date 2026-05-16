@@ -16,13 +16,13 @@ describe('GET /api/dummy/schemas/search-schema', async () => {
     //! Check for auth
     test(
         'Authentication works fine',
-        CT_JWT_checks('GET', '/api/admin/users/list-users') // TODO: Add valid body if required by the endpoint
+        CT_JWT_checks('GET', '/api/dummy/schemas/search-schema') // TODO: Add valid body if required by the endpoint
     )
 
     //! Check admin permissions
     test(
         'Admin permissions required',
-        CT_ADMIN_checks('GET', '/api/admin/users/list-users') // TODO: Add valid body if required by the endpoint
+        CT_ADMIN_checks('GET', '/api/dummy/schemas/search-schema') // TODO: Add valid body if required by the endpoint
     )
 
     //! Check main functionality

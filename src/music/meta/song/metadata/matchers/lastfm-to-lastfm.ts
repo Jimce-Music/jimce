@@ -5,8 +5,19 @@ import config from '../../../../../config'
 import type { GenericMetadataSchemeT } from '../GenericMetadataScheme'
 import type { GenericSearchSchemeT } from '../../search/GenericSearchScheme'
 import naturalLangEnumerate from '../../../../../utils/naturalLangEnumerate'
-import { LastFMTrack } from 'lastfm-ts-api'
+import { LastFMTrack, type LastFMTrackGetInfoResponse } from 'lastfm-ts-api'
 import MatchingError from '../../../MatchingError'
+import type { JimceArtistT } from '../../../artist/JimceArtist'
+import { matchArtistViaMBID } from './utility/artistByMBID'
+
+export async function matchArtistLastfm(
+    trackInfo: LastFMTrackGetInfoResponse
+): Promise<JimceArtistT> {
+    return await matchArtistViaMBID({
+        mbid: trackInfo.track.artist.mbid,
+        name: trackInfo.track.artist.name
+    })
+}
 
 /**
  * Takes a last.fm search result (according to GenericSearchScheme) as input and matches it to a GenericMetadataScheme
@@ -95,6 +106,7 @@ export async function matchLastfmSearchToLastfmMetadata(
         lengthInSeconds: duration,
         artistQualifiedName: trackInfo.track.artist.name,
         image: imageUrl,
+        artists: [await matchArtistLastfm(trackInfo)],
 
         hints: {}
     }

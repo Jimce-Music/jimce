@@ -1,18 +1,28 @@
 {
     "cSpell.words": [
+        "assetuuid",
         "bunx",
+        "deezer",
+        "extralarge",
         "healthcheck",
         "jimce",
+        "lastfm",
         "mbid",
         "musicbrainz",
         "openapi",
         "postgres",
         "postgresql",
+        "prettyname",
         "rawlist",
         "spotify",
+        "streamable",
+        "Streamable",
+        "theaudiodb",
         "tmpfs",
         "userid",
-        "youtube"
+        "youtube",
+        "ytid",
+        "ytmusic"
     ],
     "sqltools.connections": [
         {

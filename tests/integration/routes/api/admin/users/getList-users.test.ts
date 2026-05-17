@@ -4,7 +4,7 @@ import CT_JWT_checks from '../../../../components/CT_JWT_checks'
 import CT_ADMIN_checks from '../../../../components/CT_ADMIN_checks'
 import db from '../../../../../../src/db'
 import { usersTable } from '../../../../../../src/db/schema'
-
+import { ADMIN_JWT } from '../../../../test-admin-jwt'
 
 describe('GET /api/admin/users/list-users', async () => {
     //! Check for auth
@@ -26,7 +26,7 @@ describe('GET /api/admin/users/list-users', async () => {
             method: 'GET',
             url: '/api/admin/users/list-users',
             headers: {
-                authorization: `Bearer ${process.env.ADMIN_JWT}`
+                authorization: `Bearer ${ADMIN_JWT}`
             }
         })
         expect(res.statusCode).toBe(200)

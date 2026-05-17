@@ -1,34 +1,25 @@
 import { afterAll, beforeAll } from 'bun:test'
 
 import path from 'path'
-import yaml from 'yaml'
+
 import { readFile, writeFile } from 'fs/promises'
 
 import { migrateDB } from '../../src/db'
 import ensureAdminUsers from '../../src/jobs/ensureAdminUser'
 import { sleep } from 'bun'
-import fastify from '../../src/fastify'
+
 import type { $DefaultResponse } from '../../src/routes/api/auth/postLogin-basic'
 import * as z from 'zod'
 import logger from '../../src/logger'
-
-const META_PATH = path.resolve(__dirname, '../../meta.yml')
-const originalRaw = await readFile(META_PATH, 'utf8')
+import fastify from '../../src/fastify'
+import { resetMetaYAML } from './setup-meta-yaml'
 
 beforeAll(async () => {
     // Initialize the test run
     logger.info('This is an automated test run')
 
     // 1. Change meta.yml to configure the environment for tests
-    const meta = yaml.parse(originalRaw)
-    meta.execution = {
-        ...meta.execution,
-        is_ci_run: true,
-        disable_db: false,
-        disable_background_jobs: true,
-        server_disable_listening: true
-    }
-    await writeFile(META_PATH, yaml.stringify(meta))
+    // Done in tests/integration/setup-meta-yaml.ts
 
     // 2. Start test db (no need to reset, as no volume is used)
     if (process.env.GITHUB_ACTIONS === 'true') {
@@ -59,25 +50,14 @@ beforeAll(async () => {
     await import('../../src/index')
 
     // 6. Generate an admin JWT for the test run
-    const admin_login_res = await fastify.inject({
-        method: 'post',
-        url: '/api/auth/login-basic',
-        body: {
-            username: 'admin',
-            password: '123456789abc'
-        }
-    })
-    const admin_login_data =
-        admin_login_res.json<z.infer<typeof $DefaultResponse>>()
-    const admin_jwt = admin_login_data.token
-    process.env.ADMIN_JWT = admin_jwt
+    // done in test-admin-jwt.ts
 })
 
 afterAll(async () => {
     // Finalize the test run and restore old state
 
     // 1. Reset meta.yml
-    await writeFile(META_PATH, originalRaw)
+    await resetMetaYAML()
 
     // 2. Close fastify server
     await fastify.close()

@@ -1,41 +1,83 @@
 {
-    "version": "7",
-    "dialect": "postgresql",
-    "entries": [
-        {
-            "idx": 0,
-            "version": "7",
-            "when": 1766519003034,
-            "tag": "0000_kind_jane_foster",
-            "breakpoints": true
-        },
-        {
-            "idx": 1,
-            "version": "7",
-            "when": 1766525717356,
-            "tag": "0001_naive_charles_xavier",
-            "breakpoints": true
-        },
-        {
-            "idx": 2,
-            "version": "7",
-            "when": 1766525847619,
-            "tag": "0002_milky_kat_farrell",
-            "breakpoints": true
-        },
-        {
-            "idx": 3,
-            "version": "7",
-            "when": 1766844195857,
-            "tag": "0003_furry_ozymandias",
-            "breakpoints": true
-        },
-        {
-            "idx": 4,
-            "version": "7",
-            "when": 1766960227624,
-            "tag": "0004_plain_forgotten_one",
-            "breakpoints": true
-        }
-    ]
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1766519003034,
+      "tag": "0000_kind_jane_foster",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1766525717356,
+      "tag": "0001_naive_charles_xavier",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1766525847619,
+      "tag": "0002_milky_kat_farrell",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1766844195857,
+      "tag": "0003_furry_ozymandias",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1766960227624,
+      "tag": "0004_plain_forgotten_one",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1778348663216,
+      "tag": "0005_nosy_ezekiel",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1778349671901,
+      "tag": "0006_luxuriant_the_captain",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1778350551658,
+      "tag": "0007_jazzy_shockwave",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1778430339028,
+      "tag": "0008_glossy_frank_castle",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1778839018631,
+      "tag": "0009_small_vargas",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1778926597453,
+      "tag": "0010_heavy_crusher_hogan",
+      "breakpoints": true
+    }
+  ]
 }

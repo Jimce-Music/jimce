@@ -35,6 +35,7 @@ services:
       - ./config-docker.test.yml:/app/config.yml # config.yml
       - ./.env:/app/.env # .env
       - ./logs:/app/logs # Logs
+      - ./assets:/app/assets # Assets store (songs, images, etc.)
 
 volumes:
   jimce_docker_test_db_data:

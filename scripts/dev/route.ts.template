@@ -46,8 +46,8 @@ fastify.withTypeProvider<FastifyZodOpenApiTypeProvider>().$METHOD_LOWERCASE$(
     },
     async (req, res) => {
         try {
-            $ADMIN_2$
             $AUTH_3$
+            $ADMIN_2$
 
             res.status(200).send({ success: true })
         } catch (err) {

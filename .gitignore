@@ -1,5 +1,6 @@
 # dependencies (bun install)
 node_modules
+package-lock.json
 
 # output
 out
@@ -41,3 +42,9 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 
 # API clients
 api-clients/typescript-api-client/src/client/
+
+
+
+
+
+assets/

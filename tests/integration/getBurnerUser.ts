@@ -6,6 +6,8 @@ import * as uuid from 'uuid'
 import type { $DefaultResponse } from '../../src/routes/api/auth/postLogin-basic'
 import fastify from '../../src/fastify'
 import * as z from 'zod'
+import logger from '../../src/logger'
+import { ADMIN_JWT } from './test-admin-jwt'
 
 export interface UserData {
     username: string
@@ -34,7 +36,7 @@ export default async function getBurnerUser(
             isAdmin
         },
         headers: {
-            authorization: `Bearer ${process.env.ADMIN_JWT}`
+            authorization: `Bearer ${ADMIN_JWT}`
         }
     })
 

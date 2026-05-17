@@ -15,6 +15,8 @@ import fastifySwagger from '@fastify/swagger'
 import fastifySwaggerUI from '@fastify/swagger-ui'
 import RateLimiter from '@fastify/rate-limit'
 import fastifyCors from '@fastify/cors'
+import fastifyStatic from '@fastify/static'
+import logger from './logger.ts'
 
 // Define app / server / fastify 'instance'
 const fastify = Fastify({
@@ -24,11 +26,16 @@ const fastify = Fastify({
 })
 
 // Set up rate-limiting
-await fastify.register(RateLimiter, {
-    allowList: [],
-    max: 150,
-    timeWindow: 1000 * 70 // 1 minute + 10 seconds
-})
+if (meta.execution.is_ci_run) {
+    logger.info('Disabling rate limiting for CI purposes')
+} else {
+    // disable rate limiting in CI runs (automated tests)
+    await fastify.register(RateLimiter, {
+        allowList: [],
+        max: 150,
+        timeWindow: 1000 * 70 // 1 minute + 10 seconds
+    })
+}
 
 // Set up CORS in dev mode
 if (meta.is_dev) {
@@ -73,6 +80,13 @@ await fastify.register(fastifySwagger, {
     ...fastifyZodOpenApiTransformers
 })
 await fastify.register(fastifySwaggerUI, { routePrefix: '/api-docs' })
+
+// Enable fastify/static for sending files
+await fastify.register(fastifyStatic, {
+    serve: false,
+    acceptRanges: true,
+    contentType: false // set manually with db data
+})
 
 // Export app
 export default fastify

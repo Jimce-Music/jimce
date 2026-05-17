@@ -1,0 +1,399 @@
+{
+    "id": "91825410-8539-4328-9af9-95b97e8166fe",
+    "prevId": "e5913ba9-62f8-47dd-a721-a85f51f5d84a",
+    "version": "7",
+    "dialect": "postgresql",
+    "tables": {
+        "public.artists": {
+            "name": "artists",
+            "schema": "",
+            "columns": {
+                "id": {
+                    "name": "id",
+                    "type": "uuid",
+                    "primaryKey": true,
+                    "notNull": true,
+                    "default": "gen_random_uuid()"
+                },
+                "name": {
+                    "name": "name",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "description": {
+                    "name": "description",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": false
+                },
+                "profilePicture": {
+                    "name": "profilePicture",
+                    "type": "uuid",
+                    "primaryKey": false,
+                    "notNull": false
+                },
+                "backgroundPicture": {
+                    "name": "backgroundPicture",
+                    "type": "uuid",
+                    "primaryKey": false,
+                    "notNull": false
+                },
+                "mbid": {
+                    "name": "mbid",
+                    "type": "char(36)",
+                    "primaryKey": false,
+                    "notNull": false
+                },
+                "deezerId": {
+                    "name": "deezerId",
+                    "type": "integer",
+                    "primaryKey": false,
+                    "notNull": false
+                }
+            },
+            "indexes": {
+                "artists_name_idx": {
+                    "name": "artists_name_idx",
+                    "columns": [
+                        {
+                            "expression": "name",
+                            "isExpression": false,
+                            "asc": true,
+                            "nulls": "last"
+                        }
+                    ],
+                    "isUnique": true,
+                    "concurrently": false,
+                    "method": "btree",
+                    "with": {}
+                },
+                "artists_deezer_id_idx": {
+                    "name": "artists_deezer_id_idx",
+                    "columns": [
+                        {
+                            "expression": "deezerId",
+                            "isExpression": false,
+                            "asc": true,
+                            "nulls": "last"
+                        }
+                    ],
+                    "isUnique": false,
+                    "concurrently": false,
+                    "method": "btree",
+                    "with": {}
+                }
+            },
+            "foreignKeys": {
+                "artists_profilePicture_assets_id_fk": {
+                    "name": "artists_profilePicture_assets_id_fk",
+                    "tableFrom": "artists",
+                    "tableTo": "assets",
+                    "columnsFrom": ["profilePicture"],
+                    "columnsTo": ["id"],
+                    "onDelete": "no action",
+                    "onUpdate": "no action"
+                },
+                "artists_backgroundPicture_assets_id_fk": {
+                    "name": "artists_backgroundPicture_assets_id_fk",
+                    "tableFrom": "artists",
+                    "tableTo": "assets",
+                    "columnsFrom": ["backgroundPicture"],
+                    "columnsTo": ["id"],
+                    "onDelete": "no action",
+                    "onUpdate": "no action"
+                }
+            },
+            "compositePrimaryKeys": {},
+            "uniqueConstraints": {
+                "artists_name_unique": {
+                    "name": "artists_name_unique",
+                    "nullsNotDistinct": false,
+                    "columns": ["name"]
+                }
+            },
+            "policies": {},
+            "checkConstraints": {},
+            "isRLSEnabled": false
+        },
+        "public.assets": {
+            "name": "assets",
+            "schema": "",
+            "columns": {
+                "id": {
+                    "name": "id",
+                    "type": "uuid",
+                    "primaryKey": true,
+                    "notNull": true,
+                    "default": "gen_random_uuid()"
+                },
+                "filename": {
+                    "name": "filename",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "fileExtension": {
+                    "name": "fileExtension",
+                    "type": "varchar(10)",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "mimeType": {
+                    "name": "mimeType",
+                    "type": "varchar(128)",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "creationDate": {
+                    "name": "creationDate",
+                    "type": "date",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "now()"
+                }
+            },
+            "indexes": {},
+            "foreignKeys": {},
+            "compositePrimaryKeys": {},
+            "uniqueConstraints": {},
+            "policies": {},
+            "checkConstraints": {},
+            "isRLSEnabled": false
+        },
+        "public.songs": {
+            "name": "songs",
+            "schema": "",
+            "columns": {
+                "id": {
+                    "name": "id",
+                    "type": "uuid",
+                    "primaryKey": true,
+                    "notNull": true,
+                    "default": "gen_random_uuid()"
+                },
+                "name": {
+                    "name": "name",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "artistIds": {
+                    "name": "artistIds",
+                    "type": "uuid[]",
+                    "primaryKey": false,
+                    "notNull": false
+                },
+                "downloaded": {
+                    "name": "downloaded",
+                    "type": "boolean",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": false
+                },
+                "downloadDate": {
+                    "name": "downloadDate",
+                    "type": "date",
+                    "primaryKey": false,
+                    "notNull": false
+                },
+                "firstRecognizedDate": {
+                    "name": "firstRecognizedDate",
+                    "type": "date",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "now()"
+                },
+                "lastPlayedByAnyoneDate": {
+                    "name": "lastPlayedByAnyoneDate",
+                    "type": "date",
+                    "primaryKey": false,
+                    "notNull": false
+                },
+                "soundDefault": {
+                    "name": "soundDefault",
+                    "type": "uuid",
+                    "primaryKey": false,
+                    "notNull": false
+                },
+                "mbid": {
+                    "name": "mbid",
+                    "type": "char(36)",
+                    "primaryKey": false,
+                    "notNull": false
+                },
+                "ytid": {
+                    "name": "ytid",
+                    "type": "varchar(16)",
+                    "primaryKey": false,
+                    "notNull": false
+                },
+                "coverImage": {
+                    "name": "coverImage",
+                    "type": "uuid",
+                    "primaryKey": false,
+                    "notNull": false
+                },
+                "coverImagePreview": {
+                    "name": "coverImagePreview",
+                    "type": "uuid",
+                    "primaryKey": false,
+                    "notNull": false
+                }
+            },
+            "indexes": {
+                "songs_ytid_idx": {
+                    "name": "songs_ytid_idx",
+                    "columns": [
+                        {
+                            "expression": "ytid",
+                            "isExpression": false,
+                            "asc": true,
+                            "nulls": "last"
+                        }
+                    ],
+                    "isUnique": false,
+                    "concurrently": false,
+                    "method": "btree",
+                    "with": {}
+                },
+                "songs_mbid_idx": {
+                    "name": "songs_mbid_idx",
+                    "columns": [
+                        {
+                            "expression": "mbid",
+                            "isExpression": false,
+                            "asc": true,
+                            "nulls": "last"
+                        }
+                    ],
+                    "isUnique": false,
+                    "concurrently": false,
+                    "method": "btree",
+                    "with": {}
+                },
+                "songs_name_idx": {
+                    "name": "songs_name_idx",
+                    "columns": [
+                        {
+                            "expression": "name",
+                            "isExpression": false,
+                            "asc": true,
+                            "nulls": "last"
+                        }
+                    ],
+                    "isUnique": false,
+                    "concurrently": false,
+                    "method": "btree",
+                    "with": {}
+                }
+            },
+            "foreignKeys": {
+                "songs_soundDefault_assets_id_fk": {
+                    "name": "songs_soundDefault_assets_id_fk",
+                    "tableFrom": "songs",
+                    "tableTo": "assets",
+                    "columnsFrom": ["soundDefault"],
+                    "columnsTo": ["id"],
+                    "onDelete": "no action",
+                    "onUpdate": "no action"
+                },
+                "songs_coverImage_assets_id_fk": {
+                    "name": "songs_coverImage_assets_id_fk",
+                    "tableFrom": "songs",
+                    "tableTo": "assets",
+                    "columnsFrom": ["coverImage"],
+                    "columnsTo": ["id"],
+                    "onDelete": "no action",
+                    "onUpdate": "no action"
+                },
+                "songs_coverImagePreview_assets_id_fk": {
+                    "name": "songs_coverImagePreview_assets_id_fk",
+                    "tableFrom": "songs",
+                    "tableTo": "assets",
+                    "columnsFrom": ["coverImagePreview"],
+                    "columnsTo": ["id"],
+                    "onDelete": "no action",
+                    "onUpdate": "no action"
+                }
+            },
+            "compositePrimaryKeys": {},
+            "uniqueConstraints": {},
+            "policies": {},
+            "checkConstraints": {},
+            "isRLSEnabled": false
+        },
+        "public.users": {
+            "name": "users",
+            "schema": "",
+            "columns": {
+                "id": {
+                    "name": "id",
+                    "type": "uuid",
+                    "primaryKey": true,
+                    "notNull": true,
+                    "default": "gen_random_uuid()"
+                },
+                "username": {
+                    "name": "username",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "email": {
+                    "name": "email",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": false
+                },
+                "pwHash": {
+                    "name": "pwHash",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": false
+                },
+                "isAdmin": {
+                    "name": "isAdmin",
+                    "type": "boolean",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": false
+                }
+            },
+            "indexes": {
+                "username_idx": {
+                    "name": "username_idx",
+                    "columns": [
+                        {
+                            "expression": "username",
+                            "isExpression": false,
+                            "asc": true,
+                            "nulls": "last"
+                        }
+                    ],
+                    "isUnique": true,
+                    "concurrently": false,
+                    "method": "btree",
+                    "with": {}
+                }
+            },
+            "foreignKeys": {},
+            "compositePrimaryKeys": {},
+            "uniqueConstraints": {},
+            "policies": {},
+            "checkConstraints": {},
+            "isRLSEnabled": false
+        }
+    },
+    "enums": {},
+    "schemas": {},
+    "sequences": {},
+    "roles": {},
+    "policies": {},
+    "views": {},
+    "_meta": {
+        "columns": {},
+        "schemas": {},
+        "tables": {}
+    }
+}

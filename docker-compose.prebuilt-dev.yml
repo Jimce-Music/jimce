@@ -34,6 +34,7 @@ services:
       - ./meta.yml:/app/meta.yml # meta.yml
       - ./.env:/app/.env # .env
       - ./logs:/app/logs # Logs
+      - ./assets:/app/assets # Assets store (songs, images, etc.)
 
 volumes:
   jimce_prod_db_data:

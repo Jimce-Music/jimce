@@ -7,6 +7,7 @@ import * as uuid from 'uuid'
 import db from '../../../../../../src/db'
 import { usersTable } from '../../../../../../src/db/schema'
 import { eq } from 'drizzle-orm'
+import { ADMIN_JWT } from '../../../../test-admin-jwt'
 
 describe('DELETE /api/admin/users/user', async () => {
     // Get burner user
@@ -46,7 +47,7 @@ describe('DELETE /api/admin/users/user', async () => {
                 id: db_users_before[0]?.id
             },
             headers: {
-                authorization: `Bearer ${process.env.ADMIN_JWT}`
+                authorization: `Bearer ${ADMIN_JWT}`
             }
         })
         expect(res.statusCode).toBe(200)

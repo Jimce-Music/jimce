@@ -1,6 +1,7 @@
 import { expect } from 'bun:test'
 import fastify from '../../../src/fastify'
 import getBurnerUser from '../getBurnerUser'
+import logger from '../../../src/logger'
 
 export type HTTPMethod =
     | 'DELETE'
@@ -106,6 +107,8 @@ export default function CT_JWT_checks(
             },
             body: validBody
         })
-        expect(res.statusCode).toBe(200)
+        // Expect 200-204 code
+        expect(res.statusCode).toBeGreaterThanOrEqual(200)
+        expect(res.statusCode).toBeLessThanOrEqual(204)
     }
 }

@@ -132,6 +132,7 @@ async function main(): Promise<void> {
         PACKAGE_TEST_PATH,
         `${answers.method.toLowerCase()}${ROUTE_NAME}.test.ts`
     )
+    await fsExtra.ensureDir(PACKAGE_TEST_PATH)
 
     // Create route file
     let dotDotCountUntilSrcDir = 1
@@ -311,7 +312,7 @@ describe('${answers.method.toUpperCase()} ${FULL_API_URL}', async () => {
             method: '${answers.method.toUpperCase()}',
             url: '${FULL_API_URL}',
             headers: {
-                authorization: \`Bearer \${user.jwt}\` // or: process.env.ADMIN_JWT
+                authorization: \`Bearer \${user.jwt}\` // or: ADMIN_JWT
             }
         })
         expect(res.statusCode).toBe(200)

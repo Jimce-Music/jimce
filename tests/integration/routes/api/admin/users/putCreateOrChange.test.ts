@@ -4,6 +4,7 @@ import CT_JWT_checks from '../../../../components/CT_JWT_checks'
 import getBurnerUser from '../../../../getBurnerUser'
 import CT_ADMIN_checks from '../../../../components/CT_ADMIN_checks'
 import * as uuid from 'uuid'
+import { ADMIN_JWT } from '../../../../test-admin-jwt'
 
 describe('PUT /api/admin/users/create-or-change', async () => {
     // Get burner user
@@ -45,7 +46,7 @@ describe('PUT /api/admin/users/create-or-change', async () => {
                 isAdmin: true
             },
             headers: {
-                authorization: `Bearer ${process.env.ADMIN_JWT}`
+                authorization: `Bearer ${ADMIN_JWT}`
             }
         })
         expect(r1.statusCode).toBe(200)
@@ -91,7 +92,7 @@ describe('PUT /api/admin/users/create-or-change', async () => {
                 isAdmin: false
             },
             headers: {
-                authorization: `Bearer ${process.env.ADMIN_JWT}`
+                authorization: `Bearer ${ADMIN_JWT}`
             }
         })
         expect(r1.statusCode).toBe(200)

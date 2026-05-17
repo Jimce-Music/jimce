@@ -29,6 +29,25 @@ import './api/auth/putChange-password.ts' // PUT /api/auth/change-password
 // Package: me
 import './api/me/getUserinfo.ts' // GET /api/me/userinfo
 // --api-me--§NEW_HERE§--
+
+// Package: search
+// --api-search--§NEW_HERE§--
+
+// Package: search/simple
+import './api/search/simple/getSearch-songs.ts' // GET /api/search/simple/search-songs
+// --api-search/simple--§NEW_HERE§--
+
+// Package: search/streamed
+import './api/search/streamed/getSearch-songs.ts' // GET /api/search/streamed/search-songs
+// --api-search/streamed--§NEW_HERE§--
+
+// Package: dummy/schemas
+import './api/dummy/schemas/getSearch-schema.ts' // GET /api/dummy/schemas/search-schema
+// --api-dummy/schemas--§NEW_HERE§--
+
+// Package: asset
+import './api/asset/get[assetuuid].ts' // GET /api/asset/:assetuuid
+// --api-asset--§NEW_HERE§--
 // END API
 
 // START 404 / Catch-All

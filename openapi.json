@@ -175,12 +175,12 @@
         "description": "Can be used to determine whether the server is up and running without need for authentication.",
         "responses": {
           "200": {
-            "description": "pong",
+            "description": "pong with identifier",
             "content": {
               "text/plain": {
                 "schema": {
                   "type": "string",
-                  "const": "pong"
+                  "const": "pong by jimce backend"
                 }
               }
             }
@@ -330,6 +330,7 @@
         "summary": "Creates or changes a new user",
         "description": "Based on provided username, password, email and isAdmin bool, this route will create or update a new user.\n                When the user with the provided username already exists, the user will be updated instead of re-created.\n            \n                **Requires authentication**\n                **Requires admin privileges** \n            ",
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
@@ -380,8 +381,7 @@
                 ]
               }
             }
-          },
-          "required": true
+          }
         },
         "security": [
           {
@@ -445,6 +445,7 @@
     "/api/admin/users/user": {
       "delete": {
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
@@ -461,8 +462,7 @@
                 ]
               }
             }
-          },
-          "required": true
+          }
         },
         "security": [
           {
@@ -625,6 +625,7 @@
         "summary": "Login via basic auth",
         "description": "Ask server to issue a JWT based on user & password credentials",
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
@@ -645,8 +646,7 @@
                 ]
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "200": {
@@ -710,6 +710,7 @@
         "summary": "Changes the password",
         "description": "Changes the password for the currently logged in user",
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
@@ -729,8 +730,7 @@
                 ]
               }
             }
-          },
-          "required": true
+          }
         },
         "security": [
           {
@@ -847,6 +847,396 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/401-unauthorized-response"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/500-internal-server-error-response"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/search/simple/search-songs": {
+      "get": {
+        "summary": "Search for songs (NOT STREAMED)",
+        "description": "This allows to search for songs by a specified query and returns the results once all are available. This is more of a fallback route as streamed search is preferred.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            },
+            "in": "query",
+            "name": "q",
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "songId": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "artists": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "artistId": {
+                              "type": "string",
+                              "minLength": 1
+                            }
+                          },
+                          "required": [
+                            "name",
+                            "artistId"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "artistName": {
+                        "type": "string"
+                      },
+                      "image": {
+                        "type": "string",
+                        "description": "Url to the album cover"
+                      },
+                      "sound": {
+                        "type": "object",
+                        "properties": {
+                          "yt:id": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": false
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/400-bad-request-response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/401-unauthorized-response"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/500-internal-server-error-response"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/search/streamed/search-songs": {
+      "get": {
+        "summary": "Search for songs (STREAMED)",
+        "description": "This allows to search for songs by a specified query and returns multiple, streamed lines of json.\nThis route is not supported by the normal OpenAPI clients but should be used in combination with fetch and the official https://github.com/Jimce-Music/streamed-result-list package, which allows parsing the streamed result back into a list.\nThis also simplifies usage with react (states).",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            },
+            "in": "query",
+            "name": "q",
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "400": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/400-bad-request-response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/401-unauthorized-response"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/500-internal-server-error-response"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/dummy/schemas/search-schema": {
+      "get": {
+        "summary": "Dummy route for search schema",
+        "description": "This route is just a dummy to export the JimceSongSearchResult type via the api client package",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "songId": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "artists": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "artistId": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        },
+                        "required": [
+                          "name",
+                          "artistId"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "artistName": {
+                      "type": "string"
+                    },
+                    "image": {
+                      "type": "string",
+                      "description": "Url to the album cover"
+                    },
+                    "sound": {
+                      "type": "object",
+                      "properties": {
+                        "yt:id": {
+                          "type": "string"
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "songId",
+                    "name",
+                    "artists",
+                    "artistName",
+                    "image",
+                    "sound"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/400-bad-request-response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/401-unauthorized-response"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/403-forbidden-response"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/500-internal-server-error-response"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/asset/{assetuuid}/{prettyname}?": {
+      "get": {
+        "summary": "Sends back the specified asset (also streamable via HTTP range requests)",
+        "description": "Can be used directly in the browser with fetch, blob and object url. Recommended to cache via service workers and media cache api.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "assetuuid",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "prettyname",
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "400": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/400-bad-request-response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/401-unauthorized-response"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "msg"
+                  ],
+                  "additionalProperties": false
                 }
               }
             }

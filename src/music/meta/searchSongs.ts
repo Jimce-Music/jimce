@@ -152,6 +152,15 @@ async function executeFlow(
     const STAGE_2_OR_3_ERROR_THRESHOLD = 8
 
     return new Promise(async (resolveFlow, rejectFlow) => {
+        let flowResolved = false
+        function resolveFlowSafe(
+            value: string | true | PromiseLike<string | true>
+        ) {
+            if (flowResolved) return
+            flowResolved = true
+            resolveFlow(value)
+        }
+
         if (flow.length !== 3) throw 'Config flow has incorrect length'
 
         logger.info(`Executing flow: ${flow.join(', ')}`)
@@ -159,12 +168,21 @@ async function executeFlow(
         let wasInvalid = false
         function invalid(): 'auto' {
             wasInvalid = true
-            throw resolveFlow('provider may not be undefined')
+            resolveFlowSafe('provider may not be undefined')
+            throw new Error('provider may not be undefined')
         }
 
-        let searchProvider = flow[0] ?? invalid()
-        let metadataProvider = flow[1] ?? invalid()
-        let soundProvider = flow[2] ?? invalid()
+        let searchProvider: ProviderIdentifierT | 'auto'
+        let metadataProvider: ProviderIdentifierT | 'auto'
+        let soundProvider: ProviderIdentifierT | 'auto'
+        try {
+            searchProvider = flow[0] ?? invalid()
+            metadataProvider = flow[1] ?? invalid()
+            soundProvider = flow[2] ?? invalid()
+        } catch (err) {
+            if (wasInvalid) return
+            return rejectFlow(err)
+        }
         if (wasInvalid) return
 
         async function stage1(
@@ -178,7 +196,7 @@ async function executeFlow(
                 soundProvider,
                 flow,
 
-                resolveFlow,
+                resolveFlow: resolveFlowSafe,
                 rejectFlow,
 
                 searchResults,
@@ -194,13 +212,20 @@ async function executeFlow(
 
         switch (searchProvider) {
             case 'deezer':
-                await stage1(deezerSearch)
+                const successfulResults = await stage1(deezerSearch)
+                if (flowResolved) return
+                if (successfulResults < 1) {
+                    return resolveFlowSafe(
+                        `Flow failed in stage 1-3: no successful results for ${flow.join(', ')}`
+                    )
+                }
                 break
             default:
-                return resolveFlow(`Unhandled search provider: ${searchProvider}`)
+                return resolveFlowSafe(`Unhandled search provider: ${searchProvider}`)
         }
 
-        return resolveFlow(true) // Success
+        if (flowResolved) return
+        return resolveFlowSafe(true) // Success
         // TODO: Add all other providers
     })
 }
@@ -225,7 +250,7 @@ async function handleStage1(
         STAGE_2_OR_3_ERROR_THRESHOLD: number
         stage2or3Errors: MinimalState<number>
     }
-): Promise<void> {
+): Promise<number> {
     const {
         resolveFlow,
         rejectFlow,
@@ -240,11 +265,13 @@ async function handleStage1(
 
     const r1all = await searchFn(query)
     if (r1all instanceof MatchingError) {
-        return resolveFlow(
+        resolveFlow(
             `Flow failed in stage 1: ${r1all.name} ${r1all.message} ${r1all.cause} ${r1all.stack}`
         )
+        return 0
     }
     const promises: Promise<void>[] = []
+    let successfulResults = 0
     for (const r1 of r1all) {
         promises.push(
             new Promise(async (resolve, reject) => {
@@ -291,9 +318,10 @@ async function handleStage1(
                     stage2or3Errors.set(stage2or3Errors.get() + 1)
                     if (stage2or3Errors.get() > STAGE_2_OR_3_ERROR_THRESHOLD) {
                         // Fallback flow necessary
-                        return resolveFlow(
+                        resolveFlow(
                             `Flow failed in stage 2: ${r2.name} ${r2.message} ${r2.cause} ${r2.stack}`
                         )
+                        return reject('MatchingError')
                     } else {
                         // Just log it
                         logger.warn(
@@ -341,9 +369,10 @@ async function handleStage1(
                     stage2or3Errors.set(stage2or3Errors.get() + 1)
                     if (stage2or3Errors.get() > STAGE_2_OR_3_ERROR_THRESHOLD) {
                         // Fallback flow necessary
-                        return resolveFlow(
+                        resolveFlow(
                             `Flow failed in stage 3: ${r3.name} ${r3.message} ${r3.cause} ${r3.stack}`
                         )
+                        return reject('MatchingError')
                     } else {
                         // Just log it
                         logger.warn(
@@ -355,9 +384,10 @@ async function handleStage1(
                 if (!r2Res.songId) {
                     stage2or3Errors.set(stage2or3Errors.get() + 1)
                     if (stage2or3Errors.get() > STAGE_2_OR_3_ERROR_THRESHOLD) {
-                        return resolveFlow(
+                        resolveFlow(
                             'Flow failed in stage 3: missing songId from stage 2 mapping'
                         )
+                        return reject('Missing songId')
                     } else {
                         logger.warn(
                             `Search flow ${flow.join(', ')} had no songId in stage 3. Still continuing...`
@@ -367,12 +397,14 @@ async function handleStage1(
                 }
 
                 result.extend(await r3ToRes(r3, r2Res.songId))
+                successfulResults++
 
                 resolve()
             })
         )
     }
     await Promise.allSettled(promises) // wait until all done
+    return successfulResults
 }
 
 // ###### Mapping functions: map GenericXScheme to a JimceSongSearchResult

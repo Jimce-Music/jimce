@@ -52,50 +52,13 @@ export async function mapResultToDB(
             image: img
         }
     } else {
-        let newId: string | undefined
-
-        // Start image asset download
-        let imgAssetId: string | undefined
-        if (song.image) {
-            try {
-                const asset = await Asset.fromURL(
-                    song.image,
-                    async (success) => {
-                        if (success) {
-                            logger.info(
-                                `Successfully downloaded cover image for song ${song.name} by ${song.artistName}`
-                            )
-                        } else {
-                            logger.info(
-                                `As asset download for image for song ${song.name} by ${song.artistName} failed, songsTable will now be updated`
-                            )
-
-                            // Remove img urls from database as asset does not exist
-                            await db
-                                .update(songsTable)
-                                .set({
-                                    coverImage: null,
-                                    coverImagePreview: null
-                                })
-                                .where(eq(songsTable.id, newId ?? 'unknown-id'))
-                        }
-                    }
-                )
-                imgAssetId = asset.id
-            } catch (err) {
-                logger.warn(`Quitting image download in mapResultToDB: ${err}`)
-            }
-        }
-
         // Add song to db
         const newDbEntry = await db
             .insert(songsTable)
             .values({
                 name: `${song.name}`,
                 artistIds: song.artists?.map((a) => a.artistId) || [],
-                downloaded: false,
-                coverImage: imgAssetId,
-                coverImagePreview: imgAssetId // TODO: Register job to resize to a good preview size after downloading the asset
+                downloaded: false
             })
             .onConflictDoNothing()
             .returning()
@@ -109,6 +72,33 @@ export async function mapResultToDB(
             // invalid, refetch; probably invalid bc of previous conflict (race condition)
             const songByName = await fetchSongByName()
             if (songByName) newId = songByName.id
+        }
+
+        // Start image asset download only once song id is known
+        if (song.image && newId) {
+            try {
+                await Asset.fromURL(song.image, async (success) => {
+                    if (success) {
+                        logger.info(
+                            `Successfully downloaded cover image for song ${song.name} by ${song.artistName}`
+                        )
+                    } else {
+                        logger.info(
+                            `As asset download for image for song ${song.name} by ${song.artistName} failed, songsTable stays without cover image`
+                        )
+                    }
+                }).then(async (asset) => {
+                    await db
+                        .update(songsTable)
+                        .set({
+                            coverImage: asset.id,
+                            coverImagePreview: asset.id // TODO: Register job to resize to a good preview size after downloading the asset
+                        })
+                        .where(eq(songsTable.id, newId))
+                })
+            } catch (err) {
+                logger.warn(`Quitting image download in mapResultToDB: ${err}`)
+            }
         }
 
         // return with new id appended

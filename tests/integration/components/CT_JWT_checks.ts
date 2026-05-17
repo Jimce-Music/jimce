@@ -108,9 +108,7 @@ export default function CT_JWT_checks(
             body: validBody
         })
         // Expect 200-204 code
-        setTimeout(() => {
-            expect(res.statusCode).toBeGreaterThanOrEqual(200)
-            expect(res.statusCode).toBeLessThanOrEqual(204)
-        }, 1000)
+        expect(res.statusCode).toBeGreaterThanOrEqual(200)
+        expect(res.statusCode).toBeLessThanOrEqual(204)
     }
 }

@@ -53,6 +53,8 @@ export async function mapResultToDB(
             image: img
         }
     } else {
+        let newId: string | undefined
+
         // Add song to db
         const newDbEntry = await db
             .insert(songsTable)

@@ -34,6 +34,7 @@ export async function mapResultToDB(
         return match
     }
     let match = await fetchSongByName()
+    let newId: string
 
     if (match) {
         // Return JimceSongSearchResult with id and data updated from db

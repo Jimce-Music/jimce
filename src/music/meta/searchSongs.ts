@@ -352,7 +352,21 @@ async function handleStage1(
                         return reject('MatchingError') // just exits this result, not whole flow
                     }
                 }
-                result.extend(await r3ToRes(r3, r2Res.songId ?? 'dummysong'))
+                if (!r2Res.songId) {
+                    stage2or3Errors.set(stage2or3Errors.get() + 1)
+                    if (stage2or3Errors.get() > STAGE_2_OR_3_ERROR_THRESHOLD) {
+                        return resolveFlow(
+                            'Flow failed in stage 3: missing songId from stage 2 mapping'
+                        )
+                    } else {
+                        logger.warn(
+                            `Search flow ${flow.join(', ')} had no songId in stage 3. Still continuing...`
+                        )
+                        return reject('Missing songId')
+                    }
+                }
+
+                result.extend(await r3ToRes(r3, r2Res.songId))
 
                 resolve()
             })

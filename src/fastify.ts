@@ -32,7 +32,7 @@ if (meta.execution.is_ci_run) {
     // disable rate limiting in CI runs (automated tests)
     await fastify.register(RateLimiter, {
         allowList: [],
-        max: 150,
+        max: 300,
         timeWindow: 1000 * 70 // 1 minute + 10 seconds
     })
 }

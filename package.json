@@ -4,7 +4,7 @@
     "type": "module",
     "private": true,
     "devDependencies": {
-        "@hey-api/openapi-ts": "^0.97.1",
+        "@hey-api/openapi-ts": "^0.97.2",
         "@types/bun": "^1.3.14",
         "delay-cli": "^3.0.0",
         "drizzle-kit": "^0.31.10",
